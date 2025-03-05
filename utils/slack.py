@@ -45,7 +45,7 @@ def post_slack_log_message(message, context, message_type):
             "elements": [
                 {
                     "type": "mrkdwn",
-                    "text": context.get('airtable_update_msg', '')
+                    "text": context.get('agate_update_msg', '')
                 }
             ]
         },
@@ -56,17 +56,17 @@ def post_slack_log_message(message, context, message_type):
               "type": "button",
               "text": {
                 "type": "plain_text",
-                "text": "View in Arc"
+                "text": "View payload"
               },
-              "url": context.get('arc_url', '')
+              "url": context.get('storage_url', '')
             },
             {
               "type": "button",
               "text": {
                 "type": "plain_text",
-                "text": "View in Conductor"
+                "text": "View article"
               },
-              "url": context.get('airtable_url', '')
+              "url": context.get('article_url', '')
             }
           ]
         }
@@ -98,18 +98,11 @@ def post_slack_log_message(message, context, message_type):
                 }
             },
             {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": "*Payload:*\n```%s```" % str(context.get('payload', '')) or ''
-                }
-            },
-            {
                 "type": "context",
                 "elements": [
                     {
                         "type": "mrkdwn",
-                        "text": context.get('airtable_update_msg', '') or ''
+                        "text": context.get('agate_update_msg', '') or ''
                     }
                 ]
             },
@@ -120,90 +113,9 @@ def post_slack_log_message(message, context, message_type):
                         "type": "button",
                         "text": {
                             "type": "plain_text",
-                            "text": "View in Conductor"
+                            "text": "View payload"
                         },
-                        "url": context.get('airtable_url', '')
-                    }
-                ]
-            }
-        ]
-    }
-
-    # The block structure to be used if an update is successful
-    update_success_blocks = {
-      "blocks": [
-        {
-          "type": "section",
-          "text": {
-            "type": "mrkdwn",
-            "text": ':heavy_check_mark: ' + message
-          }
-        },
-        {
-          "type": "actions",
-          "elements": [
-            {
-              "type": "button",
-              "text": {
-                "type": "plain_text",
-                "text": "View in Arc"
-              },
-              "url": context.get('arc_url', '')
-            },
-            {
-              "type": "button",
-              "text": {
-                "type": "plain_text",
-                "text": "View in Conductor"
-              },
-              "url": context.get('airtable_url', '')
-            }
-          ]
-        }
-      ]
-    }
-
-    # The block structure to be used if an update is unsuccessful
-    update_error_blocks = {
-        "blocks": [
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": ':x: ' + message
-                }
-            },
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": "*Error:* " + context.get('error_message', '')
-                }
-            },
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": "*Traceback:*\n```%s```" % str(context.get('traceback', ''))
-                }
-            },
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": "*Payload:*\n```%s```" % str(context.get('payload', '')) or ''
-                }
-            },
-            {
-                "type": "actions",
-                "elements": [
-                    {
-                        "type": "button",
-                        "text": {
-                            "type": "plain_text",
-                            "text": "View in Conductor"
-                        },
-                        "url": context.get('airtable_url', '')
+                        "url": context.get('storage_url', '')
                     }
                 ]
             }
@@ -216,10 +128,6 @@ def post_slack_log_message(message, context, message_type):
         payload = create_success_blocks
     elif message_type == 'create_error':
         payload = create_error_blocks
-    elif message_type == 'update_success':
-        payload = update_success_blocks
-    elif message_type == 'update_error':
-        payload = update_error_blocks
 
     # Structure payload for Slack API post
     byte_length = str(sys.getsizeof(payload))
@@ -229,6 +137,7 @@ def post_slack_log_message(message, context, message_type):
     }
 
     try: # Post to Slack, fail silently with logging
+        print(json.dumps(payload))
         response = requests.post(SLACK_LOG_WEBHOOK_URL, 
             data=json.dumps(payload),
             headers=headers)

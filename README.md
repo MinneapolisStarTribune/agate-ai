@@ -8,7 +8,7 @@ The resulting information can be used both to create products that might be usef
 
 This tool is in VERY early development. It's mostly just a fancy prototype at this point. But it works well enough to be promising ...
 
-## Why Agate?
+## Why call it Agate?
 
 [Agate](https://en.wikipedia.org/wiki/Agate_(typography)) is a typographical term that is often used as shorthand to refer to the pages of a newspaper that contain structured and tabular data, such as sports box scores, stock tables and legal notices.
 

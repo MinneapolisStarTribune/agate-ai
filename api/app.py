@@ -1,8 +1,8 @@
-import logging
+import logging, sys
 from flask import Blueprint, jsonify, Flask, request
 from worker.workflows import process_locations
 from utils.scrape import _normalize_url
-import sys
+from utils.slack import post_slack_log_message
 
 # Configure logging to output to stdout
 logging.basicConfig(

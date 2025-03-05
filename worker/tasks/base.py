@@ -69,6 +69,7 @@ def _classify_story(self, payload):
     """
     text = payload.get("text", "")
     headline = payload.get("headline", "")
+    url = payload.get("url", "")
     try:
         # Get the story type prompt
         with open('utils/prompts/type.txt', 'r') as f:
@@ -84,7 +85,7 @@ def _classify_story(self, payload):
             logging.info(f"Story classified as: {story_type}")
             
             # Return both classification and original text for next task
-            return {"story_type": story_type, "text": text, "headline": headline}
+            return {"story_type": story_type, "text": text, "headline": headline, "url": url}
             
         except Exception as e:
             # Calculate backoff time: 2^retry_count seconds

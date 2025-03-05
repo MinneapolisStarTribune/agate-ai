@@ -8,9 +8,11 @@ from celery import Celery
 from celery.exceptions import MaxRetriesExceededError
 from dotenv import load_dotenv
 from utils.llm import get_json_openai
+from utils.slack import post_slack_log_message
 from worker.tasks.base import _classify_story
 from conf.settings import CELERY_BROKER_URL, CELERY_RESULT_BACKEND,\
-    CELERY_QUEUE_NAME, CELERY_BROKER_TRANSPORT_OPTIONS, AZURE_NER_ENDPOINT, AZURE_KEY, GOOGLE_MAPS_API_KEY
+    CELERY_QUEUE_NAME, CELERY_BROKER_TRANSPORT_OPTIONS, AZURE_NER_ENDPOINT, AZURE_KEY, GOOGLE_MAPS_API_KEY,\
+    AZURE_STORAGE_CONTAINER_NAME, AZURE_STORAGE_ACCOUNT_NAME
 
 logging.basicConfig(level=logging.INFO)
 
@@ -50,6 +52,7 @@ def _extract_locations(self, payload):
     try:
         story_type = payload.get('story_type', {}).get('category')
         text = payload.get('text')
+        url = payload.get('url')
         
         if not text:
             logging.info("No text provided, skipping location extraction")
@@ -83,6 +86,7 @@ def _extract_locations(self, payload):
             
             # Add locations to payload
             payload['locations'] = locations.get('locations')
+            payload['url'] = url
             return payload
             
         except Exception as e:
@@ -291,7 +295,19 @@ def _save_to_azure(self, payload):
                 content_type='application/json'
             )
             
+            # Construct the blob URL
+            storage_account = os.getenv('AZURE_STORAGE_ACCOUNT_NAME')
+            container_name = os.getenv('AZURE_STORAGE_CONTAINER_NAME')
+            blob_url = f"https://{storage_account}.blob.core.windows.net/{container_name}/{blob_name}"
+            
             logging.info(f"Successfully saved payload to blob: {blob_name}")
+            post_slack_log_message(f"Successfully processed locations!", {
+                'agate_update_msg': "View the payload below:",
+                'storage_url': blob_url,
+                'headline': payload.get('headline', ''),
+                'article_url': payload.get('url', '')
+            }, 'create_success')
+
             return payload
             
         except Exception as e:

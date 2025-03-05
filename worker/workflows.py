@@ -1,10 +1,7 @@
+import logging, sys, os, redis
+from celery import Celery
 from worker.tasks.locations import _classify_story, _extract_locations, _coref_dedupe, _geocode, _cross_check, _save_to_azure
 from worker.tasks.base import _scrape_article
-import logging
-import sys
-from celery import Celery
-import os
-import redis
 
 ########## CELERY INITIALIZATION ##########
 
