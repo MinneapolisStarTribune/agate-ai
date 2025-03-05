@@ -3,6 +3,8 @@ from bs4 import BeautifulSoup
 import logging
 import urllib.parse
 from conf.settings import SCRAPER_API_KEY
+from utils.scrapers.strib import StarTribuneArticle
+from utils.scrapers.philly import PhillyInquirerArticle
 
 logging.basicConfig(level=logging.INFO)
 
@@ -119,85 +121,6 @@ def _get_article(url):
         logging.error(f"Error in _get_article: {str(e)}")
         return None
 
-def _extract_headline(soup):
-    """
-    Extract headline from article using various selectors
-    
-    Args:
-        soup: BeautifulSoup object of the article page
-        
-    Returns:
-        Headline text if found, None if not found
-    """
-    # Try different selectors for the headline
-    selectors = [
-        ('h1', {'data-testid': 'article-hero-header'}),
-    ]
-    
-    for tag, attrs in selectors:
-        headline_tag = soup.find(tag, attrs=attrs)
-        if headline_tag:
-            headline = headline_tag.get_text().strip()
-            logging.info(f"Found headline using selector {tag}, {attrs}: {headline}")
-            return headline
-            
-    logging.error("Could not find headline with any selector")
-    return "Unknown Headline"  # Return a default value instead of None
-
-def _extract_body(soup):
-    """
-    Extract article body text using various selectors
-    
-    Args:
-        soup: BeautifulSoup object of the article page
-        
-    Returns:
-        Article body text if found, None if not found
-    """
-    # Try different selectors for the article body
-    body_selectors = [
-        ('div', {'data-testid': 'article-body'})
-    ]
-    
-    paragraph_selectors = [
-        ('p', {'class': 'rt-Text'})    ]
-    
-    # Try to find the article body
-    for body_tag, body_attrs in body_selectors:
-        body_divs = soup.find_all(body_tag, attrs=body_attrs)
-        if body_divs:
-            logging.info(f"Found article body using selector {body_tag}, {body_attrs}")
-            
-            all_paragraphs = []
-            for div in body_divs:
-                # Try different paragraph selectors
-                for p_tag, p_attrs in paragraph_selectors:
-                    paragraphs = div.find_all(p_tag, attrs=p_attrs)
-                    if paragraphs:
-                        logging.info(f"Found paragraphs using selector {p_tag}, {p_attrs}")
-                        all_paragraphs.extend(p.get_text().strip() for p in paragraphs)
-                        break
-            
-            # Join all paragraphs with newlines
-            text = '\n\n'.join(p for p in all_paragraphs if p)
-            if text:
-                return text
-    
-    # If we couldn't find the article body using the selectors, try a more general approach
-    logging.warning("Could not find article body with specific selectors, trying general approach")
-    
-    # Get all paragraphs in the document
-    paragraphs = soup.find_all('p')
-    if paragraphs:
-        # Filter out short paragraphs (likely not part of the main content)
-        paragraphs = [p.get_text().strip() for p in paragraphs if len(p.get_text().strip()) > 50]
-        text = '\n\n'.join(paragraphs)
-        if text:
-            return text
-    
-    logging.error("Could not extract any text from the article")
-    return "No article text found"  # Return a default value instead of None
-
 ########## PUBLIC FUNCTIONS ##########
 
 def scrape(url):
@@ -211,18 +134,25 @@ def scrape(url):
         # Log the normalized URL
         logging.info(f"Scraping URL: {url}")
         
-        # Get article content
-        soup = _get_article(url)
-        if not soup:
+        # Get article content, using appropriate parser
+        if "startribune.com" in url:
+            article = StarTribuneArticle(_get_article(url))
+        elif "inquirer.com" in url:
+            article = PhillyInquirerArticle(_get_article(url))
+        else:
+            # TODO: Ideally this would have a generic parser
+            article = None
+
+        if not article:
             logging.error("Failed to get article content")
             return None
             
         # Extract text and headline
-        text = _extract_body(soup)
+        text = article.body
         if not text:
             logging.error("Failed to extract article body")
             
-        headline = _extract_headline(soup)
+        headline = article.headline
         if not headline:
             logging.error("Failed to extract headline")
         
