@@ -8,6 +8,12 @@ The resulting information can be used both to create products that might be usef
 
 This tool is in VERY early development. It's mostly just a fancy prototype at this point. But it works well enough to be promising ...
 
+## Why Agate?
+
+[Agate](https://en.wikipedia.org/wiki/Agate_(typography)) is a typographical term that is often used as shorthand to refer to the pages of a newspaper that contain structured and tabular data, such as sports box scores, stock tables and legal notices.
+
+Agate AI turns unstructured data into structured data. The connection seemed to make sense ...
+
 ## Endpoints
 
 Agate exposes endpoints for different types of entity extraction. Each endpoint currently accepts a public URL to a Star Tribune article, via the `?url=` GET parameter. Ultimately it will accept URLs from other news websites, as well as raw text.
