@@ -285,7 +285,11 @@ def _save_to_azure(self, payload):
             
             # Upload to blob storage
             blob_client = container_client.get_blob_client(blob_name)
-            blob_client.upload_blob(json_data, overwrite=True)
+            blob_client.upload_blob(
+                json_data, 
+                overwrite=True,
+                content_type='application/json'
+            )
             
             logging.info(f"Successfully saved payload to blob: {blob_name}")
             return payload

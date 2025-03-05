@@ -74,7 +74,7 @@ resource "azurerm_storage_account" "storage" {
 resource "azurerm_storage_container" "container" {
   name                  = "agate"
   storage_account_name  = azurerm_storage_account.storage.name
-  container_access_type = "private"
+  container_access_type = "blob"
 }
 
 # Container Apps Environment
