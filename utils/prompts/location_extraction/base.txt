@@ -1,0 +1,67 @@
+You will be given a news story. Your job is to identify the locations in the story that are most relevant to readers. Additional rules specific to certain types of news stories may be provided at the end of this prompt.
+
+Locations come in two types: "primary" and "secondary." Primary locations are places that are directly involved in the eventsof a story, such as the location of a crime, the address of a restaurant being reviewed, or the locations affected by a policy change. "Secondary" locations are all other locations, including those that describe secondary events, people interviewed for the story, or other context.
+
+For each primary location, you should also assign a "nature" attribute that describes the relationship of the location to the events of the story. Acceptable values for "nature" are as follows:
+
+* happened_at: The primary news event, or events, described by the story happened at this location. Examples include the location of a crime, traffic incident, or civic event.
+
+* located_at: The location of any place or places that are subjects of the story. Examples include the construction of a new building, the address of a restaurant being reviewed, or the headquarters of a company. This attribute is typically used in cases where a place or institution is the subject of a story.
+
+* affected_by: Locations affected by the news event, or events, described in the story. Examples include cities or areas that are affected by policies.
+
+* lawmaker_from: The location represented by any lawmaker or public officials cited in the story. State and federal legislators are often styled like this: Joe Smith, R-Elk River. Where the R- represents their party affiliation and "Elk River" represents the main city in their district. In these cases, return the city.
+
+* voice_scene: Geographic information about any person interviewed to describe the event, excluding any spokespeople or officials.
+
+Secondary locations always have a blank "nature" attribute.
+
+Here are some general rules to follow as you extract locations:
+
+* Return geocodable address strings in all cases where doing so is possible. For example, if a city is mentioned, like "Minnetonka" you should return "Minnetonka, MN" if it is clear from the story that Minnetonka, MN is the city being referenced. The same logic should be applied to places, addresses intersections and other geographies. You may use the context of the story to fill out information that might not specifically be mentioned. States and countries can be presented on their own: "Minnesota" and not "Minnesota, MN" for example.
+
+* Block numbers should be returned as addresses. For example, "200 block of Smith St." should be returned as "200 Smith St., Minneapolis, MN"
+
+* A given location should only appear once in the final list, even if it is mentioned multiple times in the text. Minimize geographic redundancy. If an address is listed, its city, county and state should not be listed as separate entities. Likewise, if a city is listed, its county and state do not need to be listed as separate entities. And so on.
+
+* Non-geocodable details (e.g., "eastbound lanes" or vague references like "metro" without a clear definition) should be omitted unless they are necessary for meaningful distinction.
+
+* If a story describes the location of an incident in imprecise terms, such as happening "near" a town, but a precise place/landmark, intersection or location is not given, return only the name of the town. For instance "Highway 61 near Grand Marais" should just return "Grand Marais, MN"
+
+* If a story describes a road span, such as "I-35 between Pine City and Hinckley" or "I-94 between 46th Street and Nicollet Ave" return both first part and second of the span as discrete location objects (for instance "Pine City, MN" and "Hinckley, MN" in the first case  or "I-94 and 46th St., Minneapolis, MN" and "I-94 and Nicollet Ave., Minneapolis, MN in the second case).
+
+* If a story includes a list of locations, like "Freeborn, Faribault, Blue Earth, Brown, Waseca, Nicollet, Le Sueur, Rock and Sibley counties all received snow," return each item in the list as a separate location (for instance, "Freeborn County, MN", "Faribault County, MN", etc.)
+
+* Identifiable places and landmarks should be included with as much geographic information as can be inferred from the story if their presence in the story is relevant geographically. If the story mentions a hospital where a person is taken, for example, it would be included. If it references the hospital as an abstract entity or business, where its physical location is not relevant to the context, it should be excluded.
+
+* Location names that clearly correspond to non-geographic entities should be omitted. For instance, Cape Cod in reference to a style of a house, or Minnesota when it it used as a synonym for Minnesota Twins.
+
+The results should be returned in a JSON that looks like this:
+
+ {
+    "locations": [
+    {
+      "original_text": "100 block of Fake St.",
+      "location": "100 Fake St., Minneapolis, MN",
+      "type": "primary",
+      "nature": "affected_by",
+      "description:": "The car crash happened at this location"
+    },
+    {
+      "original_text": "Austin",
+      "location": "Austin, MN",
+      "type": "primary",
+      "nature": "affected_by",
+      "description:": "Received six inches of snowfall"
+    },
+    {
+      "original_text": "Phoenix",
+      "location": "Phoenix, AZ",
+      "type": "secondary",
+      "nature": "",
+      "description": "The place Joe Smith said he wished he lived, given Minnesota weather"
+    }
+  ]
+}
+
+Here are additional rules to consider, as well as the text of the article:

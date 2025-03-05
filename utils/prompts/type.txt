@@ -1,0 +1,58 @@
+You will be given a headline and some text describing a local news event. Your job is to classify it into one of the following categories.
+
+You should approach this problem in descending order of specificity. First determine if the story fits one of the highly specific categories in Group 1. If it does, assign it. If it does not, determine whether it fits one of the more general categories in Group 2. If it does, assign it. If it does not, assign one of the highly general categories in Group 3.
+
+Only assign a category if you are very confident that the story belongs to that category. It is better to assign a more general category you are highly confident in than a more specific category you are not.
+
+Here are the categories, divided into groups:
+
+Group 1 (most specific):
+
+crime_public_safety: A story about a crime or public safety incident, including things like shootings, thefts, car crashes, plane crashes and other discrete newsworthy events that typically involve police, fire departments or medical personnel. Importantly, this should only include discrete crime or public safety events, not trends or issue stories related to public safety agencies.
+
+weather: Stories about the weather, including its impacts. All stories by Paul Douglas, which begin with "Douglas:" belong in this category.
+
+elections: Stories related to campaigns or elections, including candidate interviews, coverage of rallies, polls, and stories that interview voters about their thoughts and opinions.
+
+building_zoning: A story about the zoning, building or improvement of either public or private buildings or infrastructure. Also includes stories about construction or that is in the process of being approved or debated. Does not include stories about road construction, which are handled by the roads_traffic category.
+
+policy_legislation: Stories related to decisions and deliberations made by public officials, such as legislatures, city councils, school boards, governors, mayors, etc. These stories oftne explain the effects of these decisions and may include points-of-view from supporters, opposition and members of the public. This excludes issues of construction and zoning, which are covered under the building_zoning category.
+
+roads_traffic: A story about incidents or issues that impact traffic and commuting, such as road closures and construction.
+
+court_case: Stories about court cases and proceedings, including convictions and sentencings for crime and public safety incidents.
+
+community_event: Stories about community events and gatherings such as parades, demonstrations, volunteering, public entertainment, etc.
+
+grant_award: Stories about monetary awards or grants supporting projects or initiatives with clear locations.
+
+promotion_appointment: Stories about people being promoted or appointed to new positions, such as new CEOs being selected or judges being appointed to the bench. This does not include the winners of elections.
+
+nature_environment: Stories about natural places and phenomena
+
+restaurants: Stories about restaurants, including reviews eviews, news about a restaurant opening or closing, or descriptions of the dishes it serves (such as a "Five Things We Ate This Week" feature).
+
+Group 2 (medium specific):
+
+person_feature: A story for which the primary subject is a person, people or institution. Likely includes details of the subject's life, perspectives and actions. Includes profiles and obituaries.
+
+place_feature: A story for which the primary subject is a place or institution and the purpose of the story is to discuss the history, meaning or importance of that place.
+
+issue_feature: Story that explores or attempts to explain a topic or issue, often talking to experts, or presenting information in the form of an explainer.
+
+voice_commentary: A column or commentary piece that represents a writer's opinion or voice. These are typically written in the first or second person, and the headline often begins with the writer's name, like this "Smith:"
+
+Group 3 (most general):
+
+news_event: A story about a distinct news event that does not fit into the categories above.
+
+other: Any other type of story, such as a company announcement or editors note.
+
+For each item, return a brief rationale for why you have classified into the category you chose, as well as an estimate of your confidence from 0.0 to 1.0. Return a JSON object that looks like this, including an object for each headline."
+
+{
+  "headline": "Car crash on I-35 kills one",
+  "category:" "crime_public_safety",
+  "rationale": "A fatal car accident is a public safety event",
+  "confidence": 1.0
+}

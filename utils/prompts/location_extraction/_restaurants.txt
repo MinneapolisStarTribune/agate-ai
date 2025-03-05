@@ -1,0 +1,7 @@
+Additional rules:
+
+This story is specifically about restaurants and might include reviews, news about a restaurant opening or closing, or descriptions of the dishes it serves (such as a "Five Things We Ate This Week" feature).
+
+* Extract addresses and locations of all restaurants in the article, where available, and return them as primary locations with "located_at" nature attributes.
+
+Here is the text of the article: 

@@ -1,0 +1,21 @@
+You will be given a JSON object containing a list of locations extracted from a news article. Your task is to consolidate this list and return a deduplicated set of locations.
+
+General rules:
+* In situations where locations overlap, return only the most detailed location
+* The output should contain ALL locations presented in the input unless they have been identified as redundant
+
+Your output should be a JSON object with a locations array, like this:
+
+{
+    "locations": [
+        {
+            "location": "St. Cloud, MN",
+            "type": "primary",
+            "nature": "happened_at",
+            "description": "The general area where the incident took place",
+            "category": "city"
+        }
+    ]
+}
+
+Preserve all fields from the input locations in your output. Only remove duplicate or redundant locations.

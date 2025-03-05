@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  web:
+    build:
+      context: .
+      platforms:
+        - linux/amd64
+    image: agateprd.azurecr.io/agate-web:latest
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/usr/src/app
+    entrypoint: ["/usr/src/app/conf/docker/entrypoints/entrypoint-web.sh"]
+    depends_on:
+      - redis
+
+  worker:
+    build:
+      context: .
+      platforms:
+        - linux/amd64
+    image: agateprd.azurecr.io/agate-worker:latest
+    volumes:
+      - .:/usr/src/app
+    entrypoint: ["/usr/src/app/conf/docker/entrypoints/entrypoint-worker.sh"]
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:6-alpine
+    ports:
+      - "6379:6379"

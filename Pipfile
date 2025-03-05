@@ -1,0 +1,30 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+azure-ai-textanalytics = "*"
+spacy = "<3.0.0,>=2.1.0"
+cython = ">=0.25"
+openai = "*"
+celery = "*"
+boto3 = "*"
+flask = "*"
+peewee = "*"
+python-dotenv = "*"
+redis = "*"
+langchain-community = "*"
+googlemaps = "*"
+azure-storage-blob = "*"
+azure-identity = "*"
+braintrust = "*"
+autoevals = "*"
+bs4 = "*"
+gunicorn = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.11"
+python_full_version = "3.11.11"

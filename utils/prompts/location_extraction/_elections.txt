@@ -1,0 +1,7 @@
+Additional rules:
+
+This story is specifically about elections and campaigns.
+
+* Pay special attention to extract information about the areas represented by candidates and lawmakers.  For example, Joe Smith, a Republican from Elk River, "represents" Elk River, MN. This information is often expressed like this: Joe Smith, R-Elk River, with the "R-Elk River" meaning he is a Republican. In these cases, always make sure to extract the "Elk River" from that string.
+
+Here is the text of the article:

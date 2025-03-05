@@ -1,0 +1,37 @@
+services:
+
+  web:
+    build: .
+    image: web
+    container_name: web
+    ports:
+      - 5004:5000
+    command: python manage.py run -h 0.0.0.0
+    volumes:
+      - .:/usr/src/app
+    environment:
+      - ENV=dev
+      - FLASK_DEBUG=1
+      - APP_SETTINGS=conf.settings.FlaskDevelopmentConfig
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+      - redis
+
+  worker:
+    build: .
+    command: celery --app worker.workflows.celery worker --loglevel=info
+    volumes:
+      - .:/usr/src/app
+    environment:
+      - ENV=dev
+      - FLASK_DEBUG=1
+      - APP_SETTINGS=conf.settings.FlaskDevelopmentConfig
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+      - web
+      - redis
+
+  redis:
+    image: redis:6-alpine

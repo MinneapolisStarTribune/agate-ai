@@ -1,0 +1,93 @@
+.env
+.env.bak
+conf/env/azure.env
+conf/env/local.env
+notes.txt
+
+!local.sample.env
+!azure.sample.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Environment Files
+!local.sample.env
+!azure.sample.env
+
+# Azure
+.azure/
+azure.*.json
+*.pubxml
+*.azurepubxml
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+logs/
+log/
+
+# Docker
+.docker/
+docker-compose.override.yml
+
+# Project specific
+celerybeat-schedule
+celerybeat.pid
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+
+# Local development
+local_settings.py
+local.py
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+.*.swp
+*~.nib
+
+# Database
+*.sqlite3
+*.db
+
+# Redis
+dump.rdb
+
+# Azure Container Apps
+*.containerapp
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
