@@ -96,28 +96,6 @@ def post_slack_log_message(message, context, message_type):
                     "type": "mrkdwn",
                     "text": "*Traceback:*\n```%s```" % str(context.get('traceback', ''))
                 }
-            },
-            {
-                "type": "context",
-                "elements": [
-                    {
-                        "type": "mrkdwn",
-                        "text": context.get('agate_update_msg', '') or ''
-                    }
-                ]
-            },
-            {
-                "type": "actions",
-                "elements": [
-                    {
-                        "type": "button",
-                        "text": {
-                            "type": "plain_text",
-                            "text": "View payload"
-                        },
-                        "url": context.get('storage_url', '')
-                    }
-                ]
             }
         ]
     }

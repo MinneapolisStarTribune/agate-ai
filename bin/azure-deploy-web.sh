@@ -96,6 +96,7 @@ AZURE_STORAGE_CONTAINER_NAME=$(terraform -chdir=terraform/azure/prd output -raw 
 REDIS_KEY=$(terraform -chdir=terraform/azure/prd output -raw redis_key)
 SERVICE_BUS_CONNECTION_STRING=$(terraform -chdir=terraform/azure/prd output -raw service_bus_connection_string)
 AZURE_STORAGE_CONNECTION_STRING=$(terraform -chdir=terraform/azure/prd output -raw storage_connection_string)
+SLACK_LOG_WEBHOOK_URL=$(grep SLACK_LOG_WEBHOOK_URL .env | cut -d '=' -f2)
 
 # Update container app
 print_yellow "Updating web container app..."
@@ -117,6 +118,7 @@ az containerapp update \
     "AZURE_STORAGE_CONNECTION_STRING=${AZURE_STORAGE_CONNECTION_STRING}" \
     "CELERY_BROKER_URL=rediss://:${REDIS_KEY}@${REDIS_HOST}:${REDIS_PORT}/0?ssl_cert_reqs=none" \
     "CELERY_RESULT_BACKEND=rediss://:${REDIS_KEY}@${REDIS_HOST}:${REDIS_PORT}/0?ssl_cert_reqs=none" \
+    "SLACK_LOG_WEBHOOK_URL=${SLACK_LOG_WEBHOOK_URL}" \
     "PYTHONPATH=/usr/src/app"
 
 # Get the web app URL

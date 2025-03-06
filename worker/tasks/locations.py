@@ -1,4 +1,4 @@
-import json, logging, os
+import json, logging, os, traceback
 from dateutil.parser import parse as date_parse
 from azure.ai.textanalytics import TextAnalyticsClient
 from azure.core.credentials import AzureKeyCredential
@@ -96,11 +96,19 @@ def _extract_locations(self, payload):
             
     except MaxRetriesExceededError as e:
         logging.error(f"Max retries exceeded for location extraction: {str(e)}")
+        post_slack_log_message('Error extracting locations %s (max retries exceeded)' % url, {
+            'error_message':  str(e.args[0]),
+            'traceback': traceback.format_exc()
+        }, 'create_error')
         payload['locations'] = None
         return payload
         
     except Exception as err:
         logging.error(f"Error in location extraction: {err}")
+        post_slack_log_message('Error extracting locations %s' % url, {
+            'error_message':  str(err.args[0]),
+            'traceback':  traceback.format_exc()
+        }, 'create_error')
         payload['locations'] = None
         return payload
 
@@ -157,6 +165,10 @@ def _coref_dedupe(self, payload):
             
     except MaxRetriesExceededError as e:
         logging.error(f"Max retries exceeded for coreference resolution: {str(e)}")
+        post_slack_log_message('Error resolving locations %s (max retries exceeded)' % url, {
+            'error_message':  str(e.args[0]),
+            'traceback':  traceback.format_exc()
+        }, 'create_error')
         # On max retries, keep original locations
         payload['locations'] = locations
         return payload
@@ -169,6 +181,8 @@ def _geocode(self, payload):
     """
     try:
         locations = payload.get('locations', [])
+        url = payload.get('url')
+        
         if not locations:
             logging.info("No locations to geocode")
             return payload
@@ -202,6 +216,14 @@ def _geocode(self, payload):
         payload['locations'] = geocoded_locations
         return payload
         
+    except MaxRetriesExceededError as max_retries_err:
+        logging.error(f"Max retries exceeded for geocoding: {str(max_retries_err)}")
+        post_slack_log_message('Error geocoding locations %s (max retries exceeded)' % url, {
+            'error_message': str(max_retries_err),
+            'traceback':  traceback.format_exc()
+        }, 'create_error')
+        return payload
+
     except Exception as e:
         backoff = 2 ** self.request.retries
         logging.error(f"Geocoding failed, retrying in {backoff} seconds. Error: {str(e)}")
@@ -216,7 +238,8 @@ def _cross_check(self, payload):
     try:
         locations = payload.get('locations', [])
         text = payload.get('text', '')
-        
+        url = payload.get('url')
+
         if not locations:
             logging.info("No locations provided, skipping cross-check")
             return payload
@@ -257,10 +280,18 @@ def _cross_check(self, payload):
             
     except MaxRetriesExceededError as e:
         logging.error(f"Max retries exceeded for cross-check: {str(e)}")
+        post_slack_log_message('Error cross-checking locations %s (max retries exceeded)' % url, {
+            'error_message':  str(e.args[0]),
+            'traceback':  traceback.format_exc()
+        }, 'create_error')
         return payload
         
     except Exception as err:
         logging.error(f"Error in cross-check: {err}")
+        post_slack_log_message('Error cross-checking locations %s' % url, {
+            'error_message':  str(err.args[0]),
+            'traceback':  traceback.format_exc()
+        }, 'create_error')
         return payload
 
 
@@ -273,8 +304,9 @@ def _save_to_azure(self, payload):
         logging.info('Saving to Azure:')
         logging.info(json.dumps(payload, indent=2))
         
-        # Get task ID from the request
+        # Get task ID and URL from the request
         task_id = self.request.id
+        url = payload.get('url')
         
         try:
             # Get container client
@@ -318,8 +350,16 @@ def _save_to_azure(self, payload):
             
     except MaxRetriesExceededError as e:
         logging.error(f"Max retries exceeded for Azure save: {str(e)}")
+        post_slack_log_message('Error saving to Azure %s (max retries exceeded)' % url, {
+            'error_message':  str(e.args[0]),
+            'traceback':  traceback.format_exc()
+        }, 'create_error')
         return payload
         
     except Exception as e:
         logging.error(f"Error in saving to Azure: {e}")
+        post_slack_log_message('Error saving to Azure %s' % url, {
+            'error_message':  str(e.args[0]),
+            'traceback':  traceback.format_exc()
+        }, 'create_error')
         return payload

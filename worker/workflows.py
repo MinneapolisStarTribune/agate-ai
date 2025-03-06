@@ -1,7 +1,8 @@
-import logging, sys, os, redis
+import logging, sys, os, redis, traceback
 from celery import Celery
 from worker.tasks.locations import _classify_story, _extract_locations, _coref_dedupe, _geocode, _cross_check, _save_to_azure
 from worker.tasks.base import _scrape_article
+from utils.slack import post_slack_log_message
 
 ########## CELERY INITIALIZATION ##########
 
@@ -69,4 +70,8 @@ def process_locations(url):
         return {"status": "success", "task_id": result.id}
     except Exception as e:
         logging.error(f"Error processing locations: {str(e)}")
+        post_slack_log_message('Error processing locations %s' % url, {
+            'error_message':  str(e.args[0]),
+            'traceback':  traceback.format_exc()
+        }, 'create_error')
         return {"status": "error", "error": str(e)}

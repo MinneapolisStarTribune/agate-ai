@@ -1,8 +1,9 @@
-import logging
+import logging, traceback
 from utils.llm import get_json_openai
 from utils.scrape import scrape
 from celery import Celery
 from celery.exceptions import MaxRetriesExceededError
+from utils.slack import post_slack_log_message
 
 celery = Celery(__name__)
 
@@ -53,11 +54,18 @@ def _scrape_article(self, url):
     
     except self.MaxRetriesExceededError:
         logging.error(f"SCRAPE TASK ERROR: Max retries exceeded for scraping article: {url}")
+        post_slack_log_message('Error scraping %s (max retries exceeded)' % url, {
+            'error_message':  str(e.args[0]),
+            'traceback':  traceback.format_exc()
+        }, 'create_error')
         return {"status": "error", "error": f"Max retries exceeded for scraping article: {url}"}
     except Exception as e:
         logging.error(f"SCRAPE TASK ERROR: Unexpected error: {str(e)}")
-        import traceback
         logging.error(f"SCRAPE TASK ERROR TRACEBACK: {traceback.format_exc()}")
+        post_slack_log_message('Error scraping %s' % url, {
+            'error_message':  str(e.args[0]),
+            'traceback':  traceback.format_exc()
+        }, 'create_error')
         return {"status": "error", "error": str(e)}
 
 
@@ -97,8 +105,16 @@ def _classify_story(self, payload):
             
     except MaxRetriesExceededError as e:
         logging.error(f"Max retries exceeded for story classification: {str(e)}")
+        post_slack_log_message('Error classifying story %s (max retries exceeded)' % url, {
+            'error_message':  str(e.args[0]),
+            'traceback':  traceback.format_exc()
+        }, 'create_error')
         return {"story_type": None, "text": text, "headline": headline}
         
     except Exception as err:
         logging.error(f"Error in story classification: {err}")
+        post_slack_log_message('Error classifying story %s' % url, {
+            'error_message':  str(err.args[0]),
+            'traceback':  traceback.format_exc()
+        }, 'create_error')
         return {"story_type": None, "text": text, "headline": headline}
