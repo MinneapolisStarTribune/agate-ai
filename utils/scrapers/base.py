@@ -5,6 +5,14 @@ class Article(object):
         self.soup = soup
 
     @property
+    def author(self):
+        return
+    
+    @property
+    def pub_date(self):
+        return
+
+    @property
     def headline(self):
         return
 

@@ -4,6 +4,8 @@ conf/env/azure.env
 conf/env/local.env
 notes.txt
 
+scratch/
+
 !local.sample.env
 !azure.sample.env
 

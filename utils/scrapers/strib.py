@@ -8,6 +8,26 @@ class StarTribuneArticle(Article):
         self.soup = soup
 
     @property
+    def author(self):
+        author_tag = self.soup.find('meta', {'name': 'article:author'})
+        if author_tag:
+            author = author_tag.get('content', '').strip()
+            logging.info(f"Found author: {author}")
+            return author
+        logging.error("Could not find author")
+        return None
+
+    @property
+    def pub_date(self):
+        pub_date_tag = self.soup.find('meta', {'name': 'article:published_time'})
+        if pub_date_tag:
+            pub_date = pub_date_tag.get('content', '').strip()
+            logging.info(f"Found publication date: {pub_date}")
+            return pub_date
+        logging.error("Could not find publication date")
+        return None
+
+    @property
     def headline(self):
         '''
         Return a headline to a Star Tribune article, based on our knowledge of the

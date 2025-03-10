@@ -187,8 +187,18 @@ def _geocode(self, payload):
             logging.info("No locations to geocode")
             return payload
             
+        # Define valid location types for geocoding
+        geocodable_types = ['place', 'address_intersection', 'neighborhood', 'city']
+        
         geocoded_locations = []
         for location in locations:
+            # Skip locations that don't have a valid type
+            location_type = location.get('type', '').lower()
+            if location_type not in geocodable_types:
+                logging.info(f"Skipping geocoding for location type: {location_type}")
+                geocoded_locations.append(location)
+                continue
+            
             try:
                 # Get geocoding result
                 result = GMAPS_CLIENT.geocode(location['location'])
@@ -203,6 +213,7 @@ def _geocode(self, payload):
                         'lat': first_result['geometry']['location']['lat'],
                         'lng': first_result['geometry']['location']['lng'],
                         'place_id': first_result['place_id'],
+                        'location_type': first_result['geometry']['location_type'],
                         'types': first_result['types']
                     })
                 

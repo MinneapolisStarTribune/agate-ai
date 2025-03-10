@@ -169,6 +169,8 @@ def scrape(url):
             logging.error("Failed to extract headline")
         
         result = {
+            "author": article.author,
+            "pub_date": article.pub_date,
             "text": text,
             "headline": headline,
             "url": url

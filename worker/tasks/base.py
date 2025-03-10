@@ -47,6 +47,8 @@ def _scrape_article(self, url):
             raise self.retry(countdown=retry_delay)
         
         return {
+            "author": article.get("author", ""),
+            "pub_date": article.get("pub_date", ""),
             "headline": headline,
             "text": text,
             "url": url
@@ -93,7 +95,14 @@ def _classify_story(self, payload):
             logging.info(f"Story classified as: {story_type}")
             
             # Return both classification and original text for next task
-            return {"story_type": story_type, "text": text, "headline": headline, "url": url}
+            return {
+                "story_type": story_type,
+                "text": text,
+                "headline": headline,
+                "url": url,
+                "author": payload.get("author", ""),
+                "pub_date": payload.get("pub_date", "")
+            }
             
         except Exception as e:
             # Calculate backoff time: 2^retry_count seconds
