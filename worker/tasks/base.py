@@ -8,7 +8,7 @@ from utils.slack import post_slack_log_message
 celery = Celery(__name__)
 
 @celery.task(name="scrape_article", bind=True, max_retries=3, default_retry_delay=60)
-def _scrape_article(self, url):
+def _scrape_article(self, url, output_filename):
     """
     Scrape article from URL and process locations
     """
@@ -20,6 +20,15 @@ def _scrape_article(self, url):
             logging.info(f"SCRAPE TASK: Calling scrape function for URL: {url}")
             article = scrape(url)
             logging.info(f"SCRAPE TASK: Scrape function returned: {article is not None}")
+            if article:
+                return {
+                    "author": article.get("author", ""),
+                    "pub_date": article.get("pub_date", ""),
+                    "headline": article.get("headline", ""),
+                    "text": article.get("text", ""),
+                    "url": url,
+                    "output_filename": output_filename
+                }
         except Exception as e:
             logging.error(f"SCRAPE TASK ERROR: Error scraping article: {str(e)}")
             import traceback
@@ -51,7 +60,8 @@ def _scrape_article(self, url):
             "pub_date": article.get("pub_date", ""),
             "headline": headline,
             "text": text,
-            "url": url
+            "url": url,
+            "output_filename": output_filename
         }
     
     except self.MaxRetriesExceededError:
@@ -101,7 +111,8 @@ def _classify_story(self, payload):
                 "headline": headline,
                 "url": url,
                 "author": payload.get("author", ""),
-                "pub_date": payload.get("pub_date", "")
+                "pub_date": payload.get("pub_date", ""),
+                "output_filename": payload.get("output_filename")
             }
             
         except Exception as e:
@@ -118,7 +129,7 @@ def _classify_story(self, payload):
             'error_message':  str(e.args[0]),
             'traceback':  traceback.format_exc()
         }, 'create_error')
-        return {"story_type": None, "text": text, "headline": headline}
+        return {"story_type": None, "text": text, "headline": headline, "output_filename": ""}
         
     except Exception as err:
         logging.error(f"Error in story classification: {err}")
@@ -126,4 +137,4 @@ def _classify_story(self, payload):
             'error_message':  str(err.args[0]),
             'traceback':  traceback.format_exc()
         }, 'create_error')
-        return {"story_type": None, "text": text, "headline": headline}
+        return {"story_type": None, "text": text, "headline": headline, "output_filename": ""}

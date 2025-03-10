@@ -87,6 +87,8 @@ def _extract_locations(self, payload):
             # Add locations to payload
             payload['locations'] = locations.get('locations')
             payload['url'] = url
+            # Preserve output_filename
+            payload['output_filename'] = payload.get('output_filename')
             return payload
             
         except Exception as e:
@@ -156,6 +158,8 @@ def _coref_dedupe(self, payload):
             
             # Update payload with cleaned locations
             payload['locations'] = cleaned_locations
+            # Preserve output_filename
+            payload['output_filename'] = payload.get('output_filename')
             return payload
             
         except Exception as e:
@@ -225,6 +229,8 @@ def _geocode(self, payload):
                 
         # Update payload with geocoded locations
         payload['locations'] = geocoded_locations
+        # Preserve output_filename
+        payload['output_filename'] = payload.get('output_filename')
         return payload
         
     except MaxRetriesExceededError as max_retries_err:
@@ -282,6 +288,8 @@ def _cross_check(self, payload):
             else:
                 payload['cross_check'] = {"check": "ok"}
                 
+            # Preserve output_filename
+            payload['output_filename'] = payload.get('output_filename')
             return payload
             
         except Exception as e:
@@ -324,9 +332,14 @@ def _save_to_azure(self, payload):
             container_client = AZURE_BLOB_SERVICE_CLIENT.get_container_client(
                 AZURE_STORAGE_CONTAINER_NAME)
             
-            # Create blob name using task ID
-            blob_name = f"{task_id}.json"
+            # Get output filename from payload
+            blob_name = payload.get('output_filename')
+            logging.info(f"Payload contents: {json.dumps(payload, indent=2)}")
+            logging.info(f"Container name: {AZURE_STORAGE_CONTAINER_NAME}, Blob name: {blob_name}")
             
+            if not blob_name:
+                raise ValueError("Missing output_filename in payload")
+                          
             # Convert payload to JSON string
             json_data = json.dumps(payload, indent=2)
             
@@ -339,8 +352,8 @@ def _save_to_azure(self, payload):
             )
             
             # Construct the blob URL
-            storage_account = os.getenv('AZURE_STORAGE_ACCOUNT_NAME')
-            container_name = os.getenv('AZURE_STORAGE_CONTAINER_NAME')
+            storage_account = AZURE_STORAGE_ACCOUNT_NAME
+            container_name = AZURE_STORAGE_CONTAINER_NAME
             blob_url = f"https://{storage_account}.blob.core.windows.net/{container_name}/{blob_name}"
             
             logging.info(f"Successfully saved payload to blob: {blob_name}")

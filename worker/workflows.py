@@ -1,4 +1,4 @@
-import logging, sys, os, redis, traceback
+import logging, sys, os, redis, traceback, hashlib
 from celery import Celery
 from worker.tasks.locations import _classify_story, _extract_locations, _coref_dedupe, _geocode, _cross_check, _save_to_azure
 from worker.tasks.base import _scrape_article
@@ -53,9 +53,12 @@ def process_locations(url):
     try:
         logging.info(f"Processing locations from url: {url}")
         
+        # Generate output filename
+        output_filename = f"{hashlib.sha256(url.encode()).hexdigest()[:20]}.json"
+        
         # Create a chain that executes once
         workflow = (
-            _scrape_article.si(url) | # Use .si() for immutable signatures
+            _scrape_article.si(url, output_filename) | # Pass filename through chain
             _classify_story.s() |
             _extract_locations.s() |
             _coref_dedupe.s() |

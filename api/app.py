@@ -1,4 +1,4 @@
-import logging, sys
+import logging, sys, hashlib
 from flask import Blueprint, jsonify, Flask, request
 from worker.workflows import process_locations
 from utils.scrape import _normalize_url
@@ -57,9 +57,10 @@ def process_url(url=None):
         
         return jsonify({
             "status": "success",
-            "message": "Article scraping started",
+            "message": "Article processing started",
             "task_id": task.id,
-            "url": url
+            "url": url,
+            "output_filename": f"{hashlib.sha256(url.encode()).hexdigest()[:20]}.json"
         }), 202  # 202 Accepted
         
     except Exception as e:
