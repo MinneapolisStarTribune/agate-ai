@@ -124,6 +124,8 @@ def _coref_dedupe(self, payload):
     try:
         # Get locations from payload, handling both formats
         locations = payload.get('locations', [])
+        url = payload.get('url')
+        
         if isinstance(locations, dict):
             locations = locations.get('locations', [])
         
@@ -193,7 +195,7 @@ def _geocode(self, payload):
             return payload
             
         # Define valid location types for geocoding
-        geocodable_types = ['place', 'address_intersection', 'neighborhood', 'city', 'street_road']
+        geocodable_types = ['place', 'address_intersection', 'neighborhood', 'city', 'street_road', 'county']
         
         geocoded_locations = []
         for location in locations:
