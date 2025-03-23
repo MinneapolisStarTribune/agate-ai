@@ -40,6 +40,9 @@ CELERY_UPDATE_THROTTLE = os.environ.get("CELERY_UPDATE_THROTTLE") or 30
 # Slack credentials, set by environment variables
 SLACK_LOG_WEBHOOK_URL = os.getenv('SLACK_LOG_WEBHOOK_URL') or ''
 
+# Context API
+CONTEXT_API_URL = os.getenv('CONTEXT_API_URL') or ''
+
 # Star Tribune base URL, for new open in website button
 STAR_TRIBUNE_BASE_URL = os.getenv('STAR_TRIBUNE_BASE_URL') or ''
 

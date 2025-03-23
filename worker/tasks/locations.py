@@ -12,7 +12,8 @@ from utils.slack import post_slack_log_message
 from worker.tasks.base import _classify_story
 from conf.settings import CELERY_BROKER_URL, CELERY_RESULT_BACKEND,\
     CELERY_QUEUE_NAME, CELERY_BROKER_TRANSPORT_OPTIONS, AZURE_NER_ENDPOINT, AZURE_KEY, GOOGLE_MAPS_API_KEY,\
-    AZURE_STORAGE_CONTAINER_NAME, AZURE_STORAGE_ACCOUNT_NAME
+    AZURE_STORAGE_CONTAINER_NAME, AZURE_STORAGE_ACCOUNT_NAME, CONTEXT_API_URL
+import requests
 
 logging.basicConfig(level=logging.INFO)
 
@@ -192,10 +193,12 @@ def _geocode(self, payload):
             return payload
             
         # Define valid location types for geocoding
-        geocodable_types = ['place', 'address_intersection', 'neighborhood', 'city']
+        geocodable_types = ['place', 'address_intersection', 'neighborhood', 'city', 'street_road']
         
         geocoded_locations = []
         for location in locations:
+            location['geography'] = {}
+
             # Skip locations that don't have a valid type
             location_type = location.get('type', '').lower()
             if location_type not in geocodable_types:
@@ -212,14 +215,14 @@ def _geocode(self, payload):
                     first_result = result[0]
                     
                     # Add geocoding data to location object
-                    location.update({
+                    location['geography'] = {
                         'formatted_address': first_result['formatted_address'],
                         'lat': first_result['geometry']['location']['lat'],
                         'lng': first_result['geometry']['location']['lng'],
-                        'place_id': first_result['place_id'],
-                        'location_type': first_result['geometry']['location_type'],
-                        'types': first_result['types']
-                    })
+                        'google_place_id': first_result['place_id'],
+                        'google_precision': first_result['geometry']['location_type'],
+                        'google_types': first_result['types']
+                    }
                 
                 geocoded_locations.append(location)
                 
@@ -244,6 +247,124 @@ def _geocode(self, payload):
     except Exception as e:
         backoff = 2 ** self.request.retries
         logging.error(f"Geocoding failed, retrying in {backoff} seconds. Error: {str(e)}")
+        raise self.retry(exc=e, countdown=backoff)
+
+
+@celery.task(name="context", bind=True, max_retries=3)
+def _context(self, payload):
+    """
+    Canonicalize and contextualize locations.
+    """
+    try:
+        logging.info("Contextualizing locations")
+        locations = payload.get('locations', [])
+        url = payload.get('url')
+
+        if not locations:
+            logging.info("No locations to contextualize")
+            return payload
+
+        contextualized_locations = []
+        for location in locations:
+            logging.info("Contextualizing location: %s" % location)
+            try:
+                # Skip if we don't have coordinates
+                if not location.get('geography', {}).get('lat') or not location.get('geography', {}).get('lng'):
+                    location_type = location.get('type', '').lower()
+                    location_name = location.get('location', '')
+                    
+                    if location_type == 'state':
+                        logging.info(f"Looking up state context for: {location_name}")
+                        response = requests.get(
+                            CONTEXT_API_URL + "locations/state",
+                            params={'q': location_name}
+                        )
+                        response.raise_for_status()
+                        logging.info("Response: %s" % response.json())
+                        
+                        context_data = response.json()
+                        location['geography']['boundaries'] = context_data
+                        contextualized_locations.append(location)
+                        continue
+
+                    elif location_type == 'county':
+                        logging.info(f"Looking up county context for: {location_name}")
+                        response = requests.get(
+                            CONTEXT_API_URL + "locations/county",
+                            params={'q': location_name}
+                        )
+                        response.raise_for_status()
+                        logging.info("Response: %s" % response.json())
+                        
+                        context_data = response.json()
+                        location['geography']['boundaries'] = context_data
+                        contextualized_locations.append(location)
+                        continue
+                        
+                    elif location_type == 'city':
+                        logging.info(f"Looking up city context for: {location_name}")
+                        response = requests.get(
+                            CONTEXT_API_URL + "locations/city",
+                            params={'q': location_name}
+                        )
+                        response.raise_for_status()
+                        logging.info("Response: %s" % response.json())
+                        
+                        context_data = response.json()
+                        location['geography']['boundaries'] = context_data
+                        contextualized_locations.append(location)
+                        continue
+                        
+                    else:
+                        logging.info(f"Skipping context for location without coordinates: {location_name}")
+                        contextualized_locations.append(location)
+                        continue
+
+                # Make request to context API for locations with coordinates
+                logging.info("Requesting context for location ...")
+                params = {
+                    'lat': location['geography']['lat'],
+                    'lng': location['geography']['lng']
+                }
+                
+                # Exclude neighorhoods if precision isn't ROOFTOP
+                if location.get('geography', {}).get('google_precision') != 'ROOFTOP':
+                    params['include'] = 'region,state,county,city'
+                    logging.info("Adding region includes due to non-ROOFTOP precision")
+                
+                response = requests.get(
+                    CONTEXT_API_URL + "locations/boundary",
+                    params=params
+                )
+                response.raise_for_status()
+                logging.info("Response: %s" % response.json())
+
+                # Add context data to location
+                context_data = response.json()
+                location['geography']['boundaries'] = context_data
+                contextualized_locations.append(location)
+
+            except Exception as e:
+                logging.error(f"Error getting context for location {location}: {str(e)}")
+                contextualized_locations.append(location)  # Keep original if context fails
+
+        # Update payload with contextualized locations
+        payload['locations'] = contextualized_locations
+        # Preserve output_filename
+        payload['output_filename'] = payload.get('output_filename')
+        return payload
+
+    except MaxRetriesExceededError as max_retries_err:
+        logging.error(f"Max retries exceeded for context: {str(max_retries_err)}")
+        post_slack_log_message('Error getting context for locations %s (max retries exceeded)' % url, {
+            'error_message': str(max_retries_err),
+            'traceback': traceback.format_exc()
+        }, 'create_error')
+        return payload
+
+    except Exception as e:
+        backoff = 2 ** self.request.retries
+        logging.error(f"Context failed, retrying in {backoff} seconds. Error: {str(e)}")
         raise self.retry(exc=e, countdown=backoff)
 
 

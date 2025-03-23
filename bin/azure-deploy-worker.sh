@@ -37,6 +37,7 @@ REDIS_KEY=$(terraform -chdir=terraform/azure/prd output -raw redis_key)
 SERVICE_BUS_CONNECTION_STRING=$(terraform -chdir=terraform/azure/prd output -raw service_bus_connection_string)
 AZURE_STORAGE_CONNECTION_STRING=$(terraform -chdir=terraform/azure/prd output -raw storage_connection_string)
 SLACK_LOG_WEBHOOK_URL=$(grep SLACK_LOG_WEBHOOK_URL .env | cut -d '=' -f2)
+CONTEXT_API_URL=$(grep CONTEXT_API_URL .env | cut -d '=' -f2)
 
 # Set variables
 RESOURCE_GROUP=${RESOURCE_GROUP:-agate-prd}
@@ -91,7 +92,8 @@ az containerapp update \
     "CELERY_BROKER_URL=rediss://:${REDIS_KEY}@${REDIS_HOST}:${REDIS_PORT}/0?ssl_cert_reqs=none" \
     "CELERY_RESULT_BACKEND=rediss://:${REDIS_KEY}@${REDIS_HOST}:${REDIS_PORT}/0?ssl_cert_reqs=none" \
     "SLACK_LOG_WEBHOOK_URL=${SLACK_LOG_WEBHOOK_URL}" \
-    "PYTHONPATH=/usr/src/app"
+    "PYTHONPATH=/usr/src/app" \
+    "CONTEXT_API_URL=${CONTEXT_API_URL}"
 
 print_green "Worker container deployed successfully!"
 

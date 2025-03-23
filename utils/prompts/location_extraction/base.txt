@@ -14,6 +14,7 @@ Classify each location by the type of geography it represents. Valid types are:
 * span: A span of road between two points. For example: "I-35 between Pine City and Hinckley". Both a road and at least two reference points marking the beginning and end of a span must be present.
 * neighborhood: Explicit mentions of neighborhood names
 * city: The name of a city
+* county: The name of a county in a state
 * region_state: The name of a region or a general area being described within a state
 * state: A state
 * region_national: The name of a region or a general area being described within the United States

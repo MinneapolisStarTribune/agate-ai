@@ -56,7 +56,7 @@ def process_url(url=None):
         logging.info(f"LOCATION TASK CREATED: Task ID: {task.id} for URL: {url}")
         
         return jsonify({
-            "status": "success",
+            "status": "submitted",
             "message": "Article processing started",
             "task_id": task.id,
             "url": url,
