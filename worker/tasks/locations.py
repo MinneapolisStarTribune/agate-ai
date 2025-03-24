@@ -1,4 +1,5 @@
 import json, logging, os, traceback
+from collections import defaultdict
 from dateutil.parser import parse as date_parse
 from azure.ai.textanalytics import TextAnalyticsClient
 from azure.core.credentials import AzureKeyCredential
@@ -41,6 +42,152 @@ GMAPS_CLIENT = GoogleMaps(key=GOOGLE_MAPS_API_KEY)
 AZURE_BLOB_SERVICE_CLIENT = BlobServiceClient.from_connection_string(
     os.getenv('AZURE_STORAGE_CONNECTION_STRING'))
 AZURE_STORAGE_CONTAINER_NAME = os.getenv('AZURE_STORAGE_CONTAINER_NAME')
+
+########## HELPER FUNCTIONS ##########
+
+def consolidate_geographies(locations):
+    """
+    Consolidates redundant geographies from a list of locations into a structured hierarchy.
+    Each unique geography is included only once, with combined metadata.
+    Places are any locations with lat/lng coordinates.
+    """
+    # Initialize containers for each geography type
+    consolidated = {
+        "states": defaultdict(lambda: {"mentions": []}),
+        "regions": defaultdict(lambda: {"mentions": []}),
+        "counties": defaultdict(lambda: {"mentions": []}),
+        "cities": defaultdict(lambda: {"mentions": []}),
+        "neighborhoods": defaultdict(lambda: {"mentions": []}),
+        "places": defaultdict(lambda: {"mentions": []})
+    }
+
+    # Process each location
+    for loc in locations:
+        geography = loc.get('geography', {})
+        boundaries = geography.get('boundaries', {})
+        
+        # If location type indicates a place, process it
+        if loc['type'] in ['place', 'address_intersection', 'street_road', 'span']:
+            place_id = geography.get('google_place_id', '')
+            if not place_id and geography.get('lat') and geography.get('lng'):  # Fallback to lat/lng if available
+                place_id = f"{geography['lat']},{geography['lng']}"
+            elif not place_id:  # If no place_id and no coordinates, use location name
+                place_id = loc['location']
+                
+            consolidated['places'][place_id].update({
+                'name': loc['location'],
+                'formatted_address': geography.get('formatted_address'),
+                'lat': geography.get('lat'),
+                'lng': geography.get('lng'),
+                'google_place_id': geography.get('google_place_id'),
+                'google_precision': geography.get('google_precision'),
+                'google_types': geography.get('google_types'),
+                'id': place_id
+            })
+            consolidated['places'][place_id]['mentions'].append({
+                'context': loc['description'],
+                'nature': loc['nature'],
+                'importance': loc.get('importance'),
+                'type': loc['type']
+            })
+
+        # Process boundaries
+        if state := boundaries.get('state'):
+            state_id = state['id']
+            consolidated['states'][state_id].update({
+                'name': state['name'],
+                'wikidata_url': state.get('wikidata_url'),
+                'id': state_id
+            })
+            consolidated['states'][state_id]['mentions'].append({
+                'context': loc['description'],
+                'nature': loc['nature'],
+                'importance': loc.get('importance')
+            })
+
+        # Process region
+        if region := boundaries.get('regions'):
+            # Handle case where region is a list
+            if isinstance(region, list):
+                for r in region:
+                    region_id = r['id']
+                    consolidated['regions'][region_id].update({
+                        'name': r['name'],
+                        'id': region_id
+                    })
+                    consolidated['regions'][region_id]['mentions'].append({
+                        'context': loc['description'],
+                        'nature': loc['nature'],
+                        'importance': loc.get('importance')
+                    })
+            # Handle case where region is a single object
+            else:
+                region_id = region['id']
+                consolidated['regions'][region_id].update({
+                    'name': region['name'],
+                    'id': region_id
+                })
+                consolidated['regions'][region_id]['mentions'].append({
+                    'context': loc['description'],
+                    'nature': loc['nature'],
+                    'importance': loc.get('importance')
+                })
+
+        # Process county
+        if county := boundaries.get('county'):
+            county_id = county['id']
+            consolidated['counties'][county_id].update({
+                'name': county['name'],
+                'wikidata_url': county.get('wikidata_url'),
+                'id': county_id
+            })
+            consolidated['counties'][county_id]['mentions'].append({
+                'context': loc['description'],
+                'nature': loc['nature'],
+                'importance': loc.get('importance')
+            })
+
+        # Process city
+        if city := boundaries.get('city'):
+            city_id = city['id']
+            consolidated['cities'][city_id].update({
+                'name': city['name'],
+                'wikidata_url': city.get('wikidata_url'),
+                'id': city_id
+            })
+            consolidated['cities'][city_id]['mentions'].append({
+                'context': loc['description'],
+                'nature': loc['nature'],
+                'importance': loc.get('importance')
+            })
+
+        # Process neighborhood
+        if neighborhood := boundaries.get('neighborhood'):
+            neighborhood_id = neighborhood['id']
+            consolidated['neighborhoods'][neighborhood_id].update({
+                'name': neighborhood['name'],
+                'wikidata_url': neighborhood.get('wikidata_url'),
+                'id': neighborhood_id
+            })
+            consolidated['neighborhoods'][neighborhood_id]['mentions'].append({
+                'context': loc['description'],
+                'nature': loc['nature'],
+                'importance': loc.get('importance')
+            })
+
+    # Convert defaultdicts to lists and structure final output
+    result = {
+        "locations": {
+            "states": list(consolidated['states'].values()),
+            "regions": list(consolidated['regions'].values()),
+            "counties": list(consolidated['counties'].values()),
+            "cities": list(consolidated['cities'].values()),
+            "neighborhoods": list(consolidated['neighborhoods'].values()),
+            "places": list(consolidated['places'].values())
+        }
+    }
+
+    return result
 
 ########## PRIVATE TASK FUNCTIONS ##########
 
@@ -125,7 +272,7 @@ def _coref_dedupe(self, payload):
         # Get locations from payload, handling both formats
         locations = payload.get('locations', [])
         url = payload.get('url')
-        
+
         if isinstance(locations, dict):
             locations = locations.get('locations', [])
         
@@ -328,12 +475,43 @@ def _context(self, payload):
                     'lat': location['geography']['lat'],
                     'lng': location['geography']['lng']
                 }
+
+                ########## FILTERING FOR GEOGRAPHIC PRECISION ##########
                 
+                # TODO: maybe factor this out into a function ...
+
+                include = 'region,state,county,city,neighborhood'
+
                 # Exclude neighorhoods if precision isn't ROOFTOP
-                if location.get('geography', {}).get('google_precision') != 'ROOFTOP':
-                    params['include'] = 'region,state,county,city'
-                    logging.info("Adding region includes due to non-ROOFTOP precision")
+                if location.get('type', '').lower() == 'place':
+                    if location.get('geography', {}).get('google_precision') != 'ROOFTOP':
+                        include = 'region,state,county,city'
+                        logging.info("Excluding neighborhoods due to non-ROOFTOP precision")
                 
+                if location.get('type', '').lower() == 'address_intersection':
+                    if location.get('geography', {}).get('google_precision') in ['ROOFTOP', 'GEOMETRIC_CENTER']:
+                        include = 'region,state,county,city,neighborhood'
+                        logging.info("Including neighborhoods due to ROOFTOP or GEOMETRIC_CENTER precision")
+
+                if location.get('type', '').lower() == 'span':
+                    if location.get('geography', {}).get('google_precision') in ['RANGE_INTERPOLATED']:
+                        include = 'region,state,county,city,neighborhood'
+                        logging.info("Including neighborhoods due to ROOFTOP or GEOMETRIC_CENTER precision")
+
+                if location.get('type', '').lower() == 'state':
+                    include = 'region,state'
+                    logging.info("Excluding counties due to state precision")
+
+                if location.get('type', '').lower() == 'county':
+                    include = 'region,state,county'
+                    logging.info("Excluding cities due to county precision")
+
+                if location.get('type', '').lower() == 'city':
+                    include = 'region,state,county,city'
+                    logging.info("Excluding neighborhoods due to city precision")
+                
+                params['include'] = include
+
                 response = requests.get(
                     CONTEXT_API_URL + "locations/boundary",
                     params=params
@@ -371,7 +549,7 @@ def _context(self, payload):
 
 
 @celery.task(name="cross_check", bind=True, max_retries=3)
-def _cross_check(self, payload):
+def _consolidate(self, payload):
     """
     Cross-checks the locations against the article text.
     """
@@ -381,58 +559,49 @@ def _cross_check(self, payload):
         url = payload.get('url')
 
         if not locations:
-            logging.info("No locations provided, skipping cross-check")
+            logging.info("No locations provided, skipping consolidation")
             return payload
-            
-        # Get the cross-check prompt
+
+        # Get the consolidation prompt
         try:
-            with open('utils/prompts/cross_check.txt', 'r') as f:
-                cross_check_prompt = f.read()
+            with open('utils/prompts/consolidate.txt', 'r') as f:
+                consolidate_prompt = f.read()
         except FileNotFoundError:
-            logging.info("No cross-check prompt found")
+            logging.info("No consolidation prompt found")
             return payload
-            
+        
         try:
-            # Format locations for the prompt
-            formatted_locations = json.dumps(locations, indent=2)
+            # First consolidate the geographies
+            consolidated = consolidate_geographies(locations)
+
+            # Now prepare the prompt
+            user_prompt = consolidate_prompt + "\n\nHere is the text of the article:\n\n" + text + "\n\nAnd here is the JSON:\n\n" + json.dumps(consolidated, indent=2)
             
-            user_prompt = f"""Here are the extracted locations:
-            {formatted_locations}
-            
-            Here is the article text:
-            {text}"""
-            
-            # Pass to LLM for cross-checking
-            cross_check_results = get_json_openai(cross_check_prompt, user_prompt, force_object=True)
-            
-            # Only include detailed results if there are notes
-            if cross_check_results.get('check') == 'review':
-                payload['cross_check'] = cross_check_results
-            else:
-                payload['cross_check'] = {"check": "ok"}
-                
-            # Preserve output_filename
+            # Pass to LLM for consolidation
+            consolidated_results = get_json_openai(consolidate_prompt, user_prompt, force_object=True)
+
+            # Update payload with consolidated results
+            payload['locations'] = consolidated_results
             payload['output_filename'] = payload.get('output_filename')
             return payload
-            
-        except Exception as e:
-            backoff = 2 ** self.request.retries
-            logging.error(f"Cross-check failed, retrying in {backoff} seconds. Error: {str(e)}")
-            raise self.retry(exc=e, countdown=backoff)
-            
-    except MaxRetriesExceededError as e:
-        logging.error(f"Max retries exceeded for cross-check: {str(e)}")
-        post_slack_log_message('Error cross-checking locations %s (max retries exceeded)' % url, {
-            'error_message':  str(e.args[0]),
-            'traceback':  traceback.format_exc()
-        }, 'create_error')
-        return payload
         
-    except Exception as err:
-        logging.error(f"Error in cross-check: {err}")
-        post_slack_log_message('Error cross-checking locations %s' % url, {
-            'error_message':  str(err.args[0]),
-            'traceback':  traceback.format_exc()
+        except Exception as e:
+            logging.error(f"Error consolidating locations: {str(e)}")
+            return payload
+    
+    except MaxRetriesExceededError as e:
+        logging.error(f"Max retries exceeded for consolidation: {str(e)}")
+        post_slack_log_message('Error consolidating locations %s (max retries exceeded)' % url, {
+            'error_message': str(e.args[0]),
+            'traceback': traceback.format_exc()
+        }, 'create_error')
+        return payload  
+    
+    except Exception as e:
+        logging.error(f"Error in consolidation: {e}")
+        post_slack_log_message('Error consolidating locations %s' % url, {
+            'error_message': str(e.args[0]),
+            'traceback': traceback.format_exc()
         }, 'create_error')
         return payload
 

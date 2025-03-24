@@ -5,7 +5,7 @@ import urllib.parse
 from conf.settings import SCRAPER_API_KEY
 from utils.scrapers.strib import StarTribuneArticle
 from utils.scrapers.philly import PhillyInquirerArticle
-
+from fake_useragent import UserAgent
 logging.basicConfig(level=logging.INFO)
 
 # More realistic browser user agent
@@ -57,7 +57,7 @@ def _normalize_url(url):
         
     return url
 
-def _get_article(url):
+def _get_with_proxy(url):
     """
     Scrape article from a given URL using ScraperAPI
     
@@ -121,11 +121,28 @@ def _get_article(url):
         logging.error(f"Error in _get_article: {str(e)}")
         return None
 
+def _get_with_requests(url):
+    """
+    Attempt to get URL content using simple requests with Chrome-like user agent
+    """
+    ua = UserAgent()
+    headers = {
+        'User-Agent': ua.chrome,
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5',
+        'Connection': 'keep-alive',
+    }
+    logging.info(f"Using requests to fetch URL: {url}")
+    response = requests.get(url, headers=headers, timeout=10)
+    response.raise_for_status()
+    logging.info(f"Successfully fetched URL with requests: {url}")
+    return BeautifulSoup(response.text, "html.parser")
+
 ########## PUBLIC FUNCTIONS ##########
 
 def scrape(url):
     """
-    Scrape article from a given URL, using a proxy service.
+    Scrape article from URL. Try direct request first, fall back to Scraper API if needed.
     """
     try:
         # Normalize URL
@@ -134,11 +151,22 @@ def scrape(url):
         # Log the normalized URL
         logging.info(f"Scraping URL: {url}")
         
+        # First try simple requests
+        try:
+            logging.info("Attempting direct request...")
+            soup = _get_with_requests(url)
+            logging.info("Direct request successful")
+        except Exception as e:
+            logging.info(f"Direct request failed: {str(e)}, falling back to Scraper API")
+            # Fall back to Scraper API
+            soup = _get_with_proxy(url)
+            logging.info("Scraper API request successful")
+        
         # Get article content, using appropriate parser
         if "startribune.com" in url:
-            article = StarTribuneArticle(_get_article(url))
+            article = StarTribuneArticle(soup)
         elif "inquirer.com" in url:
-            article = PhillyInquirerArticle(_get_article(url))
+            article = PhillyInquirerArticle(soup)
         else:
             # TODO: Ideally this would have a generic parser
             article = None

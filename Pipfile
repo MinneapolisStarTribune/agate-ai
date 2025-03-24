@@ -22,6 +22,7 @@ braintrust = "*"
 autoevals = "*"
 bs4 = "*"
 gunicorn = "*"
+fake-useragent = "*"
 
 [dev-packages]
 

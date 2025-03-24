@@ -57,15 +57,13 @@ Here are general rules to follow as you extract locations:
 
 * Block numbers should be returned as addresses. For example, "200 block of Smith St." should be returned as "200 Smith St., Minneapolis, MN"
 
-* A given location should only appear once in the final list, even if it is mentioned multiple times in the text. Minimize geographic redundancy. If an address is listed, its city, county and state should not be listed as separate entities. Likewise, if a city is listed, its county and state do not need to be listed as separate entities. And so on.
-
 * Non-geocodable details (e.g., "eastbound lanes" or vague references like "metro" without a clear definition) should be omitted unless they are necessary for meaningful distinction.
 
 * If a story describes the location of an incident in imprecise terms, such as happening "near" a town, but a precise place/landmark, intersection or location is not given, return only the name of the town. For instance "Highway 61 near Grand Marais" should just return "Grand Marais, MN"
 
 * If a story includes a list of locations, like "Freeborn, Faribault, Blue Earth, Brown, Waseca, Nicollet, Le Sueur, Rock and Sibley counties all received snow," return each item in the list as a separate location (for instance, "Freeborn County, MN", "Faribault County, MN", etc.)
 
-* Identifiable places and landmarks should be included with as much geographic information as can be inferred from the story. For instance, if a story mentions "Memorial Hospital," and later the context makes it clear that the hospital in question is located in "Minneapolis," return "Memorial Hospital, Minneapolis, MN"
+* Identifiable places and landmarks should be included with as much geographic information as can be inferred from the story. For instance, if a story mentions "Memorial Hospital," and later the context makes it clear that the hospital in question is located in "Minneapolis," return "Memorial Hospital, Minneapolis, MN". This also applies to places that are not proper nouns. A reference to something like "Monticello nuclear power plant" should be returned as "Nuclear power plant, Monticello, MN."
 
 * Location names that clearly correspond to non-geographic entities should be omitted. For instance, Cape Cod in reference to a style of a house, or Minnesota when it it used as a synonym for Minnesota Twins.
 

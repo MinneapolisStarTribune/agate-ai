@@ -1,0 +1,73 @@
+You will be given a list of geographies, each with a description and a list of attributes. You will also be given the text of a news story.
+
+Consolidate any duplicate geographies you see and ensure they are returned as lists of distinct states, regions, counties, cities, neighborhoods and places.
+
+Each geography should contain the following attributes, which can be copied from the input JSON:
+
+id: Either the "id" or "google_place_id" of the location object, depending on whether it is a boundary or place
+
+lat and lng: The latitude and longitude of either the centroid (in the case of a boundary) or the place itself (in the case of a place). Should be returned in a subobject called "coordinates".
+
+precision: Either "CENTROID" in the case of a boundary or the value of the "google_precision" field in the case of a place.
+
+geocoded_address: The value of the "formatted_address" field in the case of a place. Only return this for places.
+
+The response should also include a "description" field that summarizes all the ways the geography is relevant to the story. That includes people who are from there, scenes or descriptions from that place, events that took place in or affected the area, etc.
+    
+Finally, it should include a determination of whether the geography's importance to the story is "high," "medium" or "low." This can be inferred from the "importance" attributes in each "mention" object attached to the geography.
+
+The description can be based on the text of the story, as well as the "description" fields included in the mentions for each geography.
+
+Return the result in a JSON format that generally looks like this:
+
+  {
+      "locations": {
+          "states": [
+              {
+                  "id": "XXXXXX",
+                  "name: "Minnesota",
+                  "description": "Lorem ipsum,"
+                  "importance": "XXX",
+                  "geography": {
+                      "precision": "CENTROID",
+                      "geocoded_address": "Minnesota, USA",
+                      "coordinates": {
+                          "lat": 44.9777,
+                          "lng": -93.2644
+                      }
+                  }
+              }
+          ],
+          "regions": [
+              {
+                  "id": "XXXXXX",
+                  "name: "Twin Cities Metro",
+                  ...etc}
+          ],
+          "counties": [
+              {
+                  "id": "XXXXXX",
+                  "name: "Hennepin",
+                  ...etc}
+          ],
+          "cities": [
+              {
+                  "id": "XXXXXX",
+                  "name: "Minneapolis",
+                  ...etc}
+          ],
+          "neighborhoods": [
+              {
+                  "id": "XXXXXX",
+                  "name: "Uptown",
+                  ...etc}
+          ],
+          "places": [
+              {
+                  "id": "XXXXXX",
+                  "name": "123 Fake St.",
+                  ...etc}
+          ]
+      }
+  }
+
