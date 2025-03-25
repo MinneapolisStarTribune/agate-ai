@@ -25,9 +25,8 @@ Classify each location by the type of geography it represents. Valid types are:
 
 Classify each location by its importance, in accordance with the following labels and rules.
 
-* high: Locations at which the news event or news events described in the story took place. Locations that describe buildings, businesses or places that are the subjects of the story, or are relevant to the events of the story. Places that are directly affected by policies, legislation or issues that are central to the story.
-* medium: Locations that a person in the story is from, or is in some way related to. The locations of direct observations, interviews and descriptions used in the story. Places that are cited in studies, reports or other documents that are the subject of the story.
-* low: Locations that are cited for context and are not directly relevant to the events or issues being described in the story.
+* primary: Locations at which the news event or news events described in the story took place. Locations that describe buildings, businesses or places that are the subjects of the story, or are relevant to the events of the story. Places that are directly affected by policies, legislation or issues that are central to the story.
+* secondary: Locations that a person in the story is from, or is in some way related to. The locations of direct observations, interviews and descriptions used in the story. Places that are cited in studies, reports or other documents that are the subject of the story. Locations that are cited for context and are not directly relevant to the events or issues being described in the story.
 
 ## Nature classification
 
@@ -79,7 +78,7 @@ The results should be returned in a JSON that looks like this:
       "original_text": "The car crash occurred on the 100 block of Fake St.",
       "location": "100 Fake St., Minneapolis, MN",
       "type": "address_intersection",
-      "importance": "high",
+      "importance": "primary",
       "nature": "happened_at",
       "description:": "The car crash happened at this location"
     },
@@ -87,7 +86,7 @@ The results should be returned in a JSON that looks like this:
       "original_text": "Joe Smith, a farmer from Austin, said he supported better agriculture policy.",
       "location": "Austin, MN",
       "type": "city",
-      "importance": "medium",
+      "importance": "secondary",
       "nature": "person_associated_with",
       "description:": "Austin is the town Joe Smith is from."
     },
@@ -95,7 +94,7 @@ The results should be returned in a JSON that looks like this:
       "original_text": "It was warmer in Phoenix than in Minneapolis this week.",
       "location": "Phoenix, AZ",
       "type": "city",
-      "importance": "low",
+      "importance": "secondary",
       "nature": "mentioned",
       "description": "Phoenix is cited as a contextual point of comparison to the weather in Minneapolis."
     }

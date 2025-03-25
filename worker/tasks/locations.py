@@ -76,6 +76,7 @@ def consolidate_geographies(locations):
                 
             consolidated['places'][place_id].update({
                 'name': loc['location'],
+                'type': loc['type'],
                 'formatted_address': geography.get('formatted_address'),
                 'lat': geography.get('lat'),
                 'lng': geography.get('lng'),
@@ -87,8 +88,7 @@ def consolidate_geographies(locations):
             consolidated['places'][place_id]['mentions'].append({
                 'context': loc['description'],
                 'nature': loc['nature'],
-                'importance': loc.get('importance'),
-                'type': loc['type']
+                'importance': loc.get('importance')
             })
 
         # Process boundaries
@@ -484,7 +484,9 @@ def _context(self, payload):
 
                 # Exclude neighorhoods if precision isn't ROOFTOP
                 if location.get('type', '').lower() == 'place':
-                    if location.get('geography', {}).get('google_precision') != 'ROOFTOP':
+                    if location.get('geography', {}).get('google_precision') == 'APPROXIMATE':
+                        include = 'region,state,county'
+                    elif location.get('geography', {}).get('google_precision') != 'ROOFTOP':
                         include = 'region,state,county,city'
                         logging.info("Excluding neighborhoods due to non-ROOFTOP precision")
                 
@@ -493,10 +495,12 @@ def _context(self, payload):
                         include = 'region,state,county,city,neighborhood'
                         logging.info("Including neighborhoods due to ROOFTOP or GEOMETRIC_CENTER precision")
 
-                if location.get('type', '').lower() == 'span':
-                    if location.get('geography', {}).get('google_precision') in ['RANGE_INTERPOLATED']:
+                if location.get('type', '').lower() in ['span', 'street_road']:
+                    if location.get('geography', {}).get('google_precision') in ['GEOMETRIC_CENTER']:
+                        include = 'state'
+                    elif location.get('geography', {}).get('google_precision') in ['RANGE_INTERPOLATED']:
                         include = 'region,state,county,city,neighborhood'
-                        logging.info("Including neighborhoods due to ROOFTOP or GEOMETRIC_CENTER precision")
+                        logging.info("Including neighborhoods due to RANGE_INTERPOLATED precision")
 
                 if location.get('type', '').lower() == 'state':
                     include = 'region,state'
@@ -548,7 +552,7 @@ def _context(self, payload):
         raise self.retry(exc=e, countdown=backoff)
 
 
-@celery.task(name="cross_check", bind=True, max_retries=3)
+@celery.task(name="consolidate", bind=True, max_retries=3)
 def _consolidate(self, payload):
     """
     Cross-checks the locations against the article text.
@@ -581,7 +585,7 @@ def _consolidate(self, payload):
             consolidated_results = get_json_openai(consolidate_prompt, user_prompt, force_object=True)
 
             # Update payload with consolidated results
-            payload['locations'] = consolidated_results
+            payload['locations'] = consolidated_results['locations']
             payload['output_filename'] = payload.get('output_filename')
             return payload
         
