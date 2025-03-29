@@ -1,10 +1,12 @@
 import json, logging, os, traceback
+import usaddress
 from collections import defaultdict
 from dateutil.parser import parse as date_parse
 from azure.ai.textanalytics import TextAnalyticsClient
 from azure.core.credentials import AzureKeyCredential
 from azure.storage.blob import BlobServiceClient
-from googlemaps import Client as GoogleMaps
+from geocodio import GeocodioClient
+from geocodio.exceptions import GeocodioDataError
 from celery import Celery
 from celery.exceptions import MaxRetriesExceededError
 from dotenv import load_dotenv
@@ -12,9 +14,10 @@ from utils.llm import get_json_openai
 from utils.slack import post_slack_log_message
 from worker.tasks.base import _classify_story
 from conf.settings import CELERY_BROKER_URL, CELERY_RESULT_BACKEND,\
-    CELERY_QUEUE_NAME, CELERY_BROKER_TRANSPORT_OPTIONS, AZURE_NER_ENDPOINT, AZURE_KEY, GOOGLE_MAPS_API_KEY,\
+    CELERY_QUEUE_NAME, CELERY_BROKER_TRANSPORT_OPTIONS, AZURE_NER_ENDPOINT, AZURE_KEY, GEOCODIO_API_KEY,\
     AZURE_STORAGE_CONTAINER_NAME, AZURE_STORAGE_ACCOUNT_NAME, CONTEXT_API_URL
 import requests
+import hashlib
 
 logging.basicConfig(level=logging.INFO)
 
@@ -35,147 +38,561 @@ AZURE_NER_CLIENT = TextAnalyticsClient(
     credential=AzureKeyCredential(AZURE_KEY)
 )
 
-# Initialize Google Maps client
-GMAPS_CLIENT = GoogleMaps(key=GOOGLE_MAPS_API_KEY)
+# Initialize Geocodio client
+GEOCODIO_CLIENT = GeocodioClient(key=GEOCODIO_API_KEY)
 
 # Initialize Azure Blob Storage client
 AZURE_BLOB_SERVICE_CLIENT = BlobServiceClient.from_connection_string(
     os.getenv('AZURE_STORAGE_CONNECTION_STRING'))
 AZURE_STORAGE_CONTAINER_NAME = os.getenv('AZURE_STORAGE_CONTAINER_NAME')
 
-########## HELPER FUNCTIONS ##########
+########## EXTRACTION HELPER FUNCTIONS ##########
 
-def consolidate_geographies(locations):
+def process_spans(locations):
     """
-    Consolidates redundant geographies from a list of locations into a structured hierarchy.
-    Each unique geography is included only once, with combined metadata.
-    Places are any locations with lat/lng coordinates.
+    Process span locations to extract additional context and details using LLM.
+    A span is a road segment between two points, like "I-35 between Pine City and Hinckley"
+    
+    Args:
+        locations (list): List of location dictionaries
+        
+    Returns:
+        list: Updated list of locations with processed spans
     """
-    # Initialize containers for each geography type
-    consolidated = {
-        "states": defaultdict(lambda: {"mentions": []}),
-        "regions": defaultdict(lambda: {"mentions": []}),
-        "counties": defaultdict(lambda: {"mentions": []}),
-        "cities": defaultdict(lambda: {"mentions": []}),
-        "neighborhoods": defaultdict(lambda: {"mentions": []}),
-        "places": defaultdict(lambda: {"mentions": []})
+    spans = [loc for loc in locations if loc.get('type') == 'span']
+    non_spans = [loc for loc in locations if loc.get('type') != 'span']
+    
+    if not spans:
+        return locations
+        
+    # Load the roads_spans prompt
+    try:
+        with open('utils/prompts/location_extraction/roads_spans.txt', 'r') as f:
+            prompt = f.read()
+    except FileNotFoundError:
+        logging.error("Could not find roads_spans.txt prompt")
+        return locations
+        
+    processed_spans = []
+    for span in spans:
+        try:
+            logging.info(f'Processing span {span["location"]}...')
+            
+            # Get processed data from LLM
+            processed_data = get_json_openai(prompt, span, force_object=False)
+            logging.info(f"LLM processed data for {span}: {processed_data}")
+            
+            # Handle case where LLM returns an array of spans
+            if isinstance(processed_data, list):
+                # Unroll the array and add each span
+                for new_span in processed_data:
+                    new_span_obj = {
+                        'original_text': new_span['original_text'],
+                        'location': new_span['location'],
+                        'type': new_span['type'],
+                        'importance': new_span['importance'],
+                        'nature': new_span['nature'],
+                        'description': new_span.get('description', '')
+                    }
+                    processed_spans.append(new_span_obj)
+            else:
+                # Single span case - just add processed data
+                span['processed_data'] = processed_data
+                processed_spans.append(span)
+            
+        except Exception as e:
+            logging.error(f"Error processing span {span}: {str(e)}")
+            raise
+    
+    # Combine and return processed spans with non-spans
+    return non_spans + processed_spans
+
+########## GEOCODING HELPER FUNCTIONS ##########
+
+def check_geocode(location_str, candidates):
+    """
+    Check if a location is properly geocoded using LLM validation.
+    
+    Args:
+        location_str (str): Original location string
+        candidates (list): List of candidate geocoding results
+        
+    Returns:
+        dict: Validation result containing validated status and selected/suggested location
+    """
+    try:
+        # Load the geocoding validation prompt
+        with open('utils/prompts/geocode.txt', 'r') as f:
+            prompt = f.read()
+
+        user_prompt = f"\n\nHere is the location string: {location_str}\n\nAnd here are the candidates: {candidates}"
+        
+        # Get validation result from LLM
+        result = get_json_openai(prompt, user_prompt, force_object=True)
+        logging.info(f"Geocoding validation result for {location_str}: {result}")
+        return result
+        
+    except Exception as e:
+        logging.error(f"Error validating geocoding for {location_str}: {str(e)}")
+        return {"validated": False}
+
+def create_geography_object(result):
+    """
+    Create a standardized geography object from a geocoding result.
+    
+    Args:
+        result (dict): Geocoding result from Geocodio
+        
+    Returns:
+        dict: Standardized geography object
+    """
+    return {
+        'formatted_address': result.get('formatted_address'),
+        'lat': result['location'].get('lat'),
+        'lng': result['location'].get('lng'),
+        'accuracy': result.get('accuracy'),
+        'accuracy_type': result.get('accuracy_type'),
     }
 
-    # Process each location
+def try_direct_geocoding(client, location_str):
+    """
+    Attempt direct geocoding of a location string.
+    
+    Args:
+        client: Geocodio client instance
+        location_str (str): Location string to geocode
+        
+    Returns:
+        tuple: (geography dict or None, error message or None)
+    """
+    try:
+        result = client.geocode(location_str)
+        if not result or not result.get('results'):
+            return None, "No results found"
+            
+        candidates = result['results']
+        first_result = candidates[0]
+        
+        # If geocoder is certain, use result directly
+        if first_result.get('accuracy') == 1:
+            return create_geography_object(first_result), None
+            
+        # Otherwise validate with LLM
+        validation = check_geocode(location_str, candidates)
+        if validation.get('validated'):
+            return create_geography_object(validation['candidate']), None
+        elif validation.get('suggested_location'):
+            # Try geocoding the suggested location
+            new_result = client.geocode(validation['suggested_location'])
+            if new_result and new_result.get('results'):
+                general_result = new_result['results'][0]
+                if general_result.get('accuracy', 0) >= 0.9:
+                    return create_geography_object(general_result), None
+                else:
+                    return create_geography_object({
+                        'formatted_address': validation['suggested_location'],
+                        'location': {
+                            'lat': None,
+                            'lng': None
+                        },
+                        'accuracy': None,
+                        'accuracy_type': validation['suggested_location_type']
+                    }), None
+                    
+        return None, "Failed validation"
+        
+    except GeocodioDataError as e:
+        return None, str(e)
+    except Exception as e:
+        logging.error(f"Error in direct geocoding for {location_str}: {str(e)}")
+        return None, str(e)
+
+def try_city_state_fallback(client, location_str):
+    """
+    Attempt to geocode by extracting and looking up city/state.
+    
+    Args:
+        client: Geocodio client instance
+        location_str (str): Location string to geocode
+        
+    Returns:
+        dict or None: Geography object if successful, None otherwise
+    """
+    try:
+        # Try parsing with Geocodio first
+        components = client.parse(location_str).get('address_components', {})
+        if components.get('city') and components.get('state'):
+            city_str = f"{components['city']}, {components['state']}"
+        else:
+            # Fallback to usaddress parser
+            components = usaddress.tag(location_str)
+            if 'PlaceName' in components[0] and 'StateName' in components[0]:
+                city_str = f"{components[0]['PlaceName']}, {components[0]['StateName']}"
+                
+        result = client.geocode(city_str)
+        if result and result.get('results'):
+            return create_geography_object(result['results'][0])
+        else:
+            suggestion = check_geocode(location_str, None)
+            if suggestion.get('suggested_location'):
+                # Try geocoding the suggested location
+                new_result = client.geocode(suggestion['suggested_location'])
+                if new_result and new_result.get('results'):
+                    general_result = new_result['results'][0]
+                    if general_result.get('accuracy', 0) >= 0.9:
+                        return create_geography_object(general_result)
+                
+                # If geocoding fails or accuracy is low, return suggested location
+                return create_geography_object({
+                    'formatted_address': suggestion['suggested_location'],
+                    'location': {
+                        'lat': None,
+                        'lng': None
+                    },
+                    'accuracy': None,
+                    'accuracy_type': suggestion.get('suggested_location_type', None)
+                })
+            
+    except (GeocodioDataError, Exception) as e:
+        logging.warning(f"City/state fallback failed for {location_str}: {str(e)}")
+        
+    return None
+
+def set_context_level(location):
+    """
+    Set the context level based on geocoding accuracy type.
+    
+    Args:
+        location (dict): Location object with geography data
+        
+    Returns:
+        str: Determined context level
+    """
+    accuracy_level = location.get('geography', {}).get('accuracy_type', '').lower()
+    
+    if accuracy_level in ['rooftop', 'point', 'intersection', 'range_interpolation', 'nearest_rooftop_match']:
+        return 'boundary'
+    elif accuracy_level in ['street_center', 'place', 'city']:
+        return 'city'
+    elif accuracy_level == 'county':
+        return 'county'
+    else:
+        return 'state'
+
+########## CONTEXT HELPER FUNCTIONS ##########
+
+def lookup_context(location_type, location_name, context_level=''):
+    """
+    Get context data for a location based on its type.
+    
+    Args:
+        location_type (str): Type of location (state, county, city, etc.)
+        location_name (str): Name of the location
+        context_level (str): Context level from geocoding
+        
+    Returns:
+        dict: Context data if successful, None if not
+    """
+    endpoint_map = {
+        'state': 'state',
+        'county': 'county',
+        'city': 'city',
+        'neighborhood': 'neighborhood',
+        'region_state': 'city'  # region_state uses city endpoint
+    }
+    
+    if location_type not in endpoint_map:
+        return None
+        
+    endpoint = endpoint_map[location_type]
+    logging.info(f"Looking up {endpoint} context for: {location_name}")
+    
+    try:
+        response = requests.get(
+            CONTEXT_API_URL + f"locations/{endpoint}",
+            params={'q': location_name}
+        )
+        response.raise_for_status()
+        context_data = response.json()
+        
+        # Special handling for city and region_state types
+        if location_type in ['city', 'region_state']:
+            if not context_data or context_data.get('match_quality', 0) <= 0.6:
+                logging.info(f"Low match quality for {location_type} context: {location_name}")
+                return None
+                
+        return context_data
+        
+    except Exception as e:
+        logging.error(f"Error getting context for {location_type} {location_name}: {str(e)}")
+        return None
+
+def get_boundary_context(lat, lng, context_level):
+    """
+    Get boundary context data for a location with coordinates.
+    
+    Args:
+        lat (float): Latitude
+        lng (float): Longitude
+        context_level (str): Level of context to get
+        
+    Returns:
+        dict: Boundary context data if successful, None if not
+    """
+    # Set include parameter based on context level
+    include_map = {
+        'boundary': 'region,state,county,city,neighborhood',
+        'city': 'region,state,county,city',
+        'county': 'region,state,county',
+        'state': 'region,state'
+    }
+    
+    params = {
+        'lat': lat,
+        'lng': lng,
+        'include': include_map.get(context_level, 'state')
+    }
+    
+    try:
+        response = requests.get(
+            CONTEXT_API_URL + "locations/boundary",
+            params=params
+        )
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        logging.error(f"Error getting boundary context for coordinates ({lat}, {lng}): {str(e)}")
+        return None
+
+def process_location_context(location):
+    """
+    Process context for a single location.
+    
+    Args:
+        location (dict): Location dictionary to process
+        
+    Returns:
+        dict: Updated location with context data
+    """
+    try:
+        location_type = location.get('type', '').lower()
+        context_level = location.get('context_level', '').lower()
+        location_name = location.get('geography', {}).get('formatted_address', '') or location.get('location', '')
+        
+        # Initialize geography dict if it doesn't exist
+        if not location.get('geography'):
+            location['geography'] = {}
+            
+        # Handle locations without coordinates
+        if not location['geography'].get('lat') or not location['geography'].get('lng'):
+            context_data = lookup_context(location_type, location_name)
+            if context_data:
+                location['geography']['boundaries'] = context_data
+        else:
+            # Handle locations with coordinates
+            logging.info(f"Coordinates found for {location_name}, processing with /boundary")
+            boundary_data = get_boundary_context(
+                location['geography']['lat'],
+                location['geography']['lng'],
+                context_level
+            )
+            if boundary_data:
+                location['geography']['boundaries'] = boundary_data
+                
+    except Exception as e:
+        logging.error(f"Error processing context for location {location_name}: {str(e)}")
+        
+    return location
+
+########## CONSOLIDATION HELPER FUNCTIONS ##########
+
+def initialize_boundaries(locations):
+    """
+    Initialize boundary containers and collect all unique boundaries from locations.
+    
+    Args:
+        locations (list): List of location dictionaries
+        
+    Returns:
+        dict: Consolidated boundaries with their metadata
+    """
+    consolidated = {
+        "states": defaultdict(lambda: {"places": set()}),  # Changed to set for uniqueness
+        "regions": defaultdict(lambda: {"places": set()}),
+        "counties": defaultdict(lambda: {"places": set()}),
+        "cities": defaultdict(lambda: {"places": set()}),
+        "neighborhoods": defaultdict(lambda: {"places": set()}),
+        "places": []
+    }
+
     for loc in locations:
         geography = loc.get('geography', {})
         boundaries = geography.get('boundaries', {})
         
-        # If location type indicates a place, process it
-        if loc['type'] in ['place', 'address_intersection', 'street_road', 'span']:
-            place_id = geography.get('google_place_id', '')
-            if not place_id and geography.get('lat') and geography.get('lng'):  # Fallback to lat/lng if available
-                place_id = f"{geography['lat']},{geography['lng']}"
-            elif not place_id:  # If no place_id and no coordinates, use location name
-                place_id = loc['location']
-                
-            consolidated['places'][place_id].update({
-                'name': loc['location'],
-                'type': loc['type'],
-                'formatted_address': geography.get('formatted_address'),
-                'lat': geography.get('lat'),
-                'lng': geography.get('lng'),
-                'google_place_id': geography.get('google_place_id'),
-                'google_precision': geography.get('google_precision'),
-                'google_types': geography.get('google_types'),
-                'id': place_id
-            })
-            consolidated['places'][place_id]['mentions'].append({
-                'context': loc['description'],
-                'nature': loc['nature'],
-                'importance': loc.get('importance')
-            })
-
-        # Process boundaries
-        if state := boundaries.get('state'):
-            state_id = state['id']
-            consolidated['states'][state_id].update({
-                'name': state['name'],
-                'wikidata_url': state.get('wikidata_url'),
-                'id': state_id
-            })
-            consolidated['states'][state_id]['mentions'].append({
-                'context': loc['description'],
-                'nature': loc['nature'],
-                'importance': loc.get('importance')
-            })
-
-        # Process region
-        if region := boundaries.get('regions'):
-            # Handle case where region is a list
-            if isinstance(region, list):
-                for r in region:
-                    region_id = r['id']
-                    consolidated['regions'][region_id].update({
-                        'name': r['name'],
-                        'id': region_id
-                    })
-                    consolidated['regions'][region_id]['mentions'].append({
-                        'context': loc['description'],
-                        'nature': loc['nature'],
-                        'importance': loc.get('importance')
-                    })
-            # Handle case where region is a single object
+        # Process state boundary
+        state = boundaries.get('state')
+        if state:
+            state_id = state['id'] if isinstance(state, dict) else state
+            if state_id not in consolidated['states']:
+                consolidated['states'][state_id] = {
+                    "id": state_id,
+                    "places": set(),  # Initialize as set
+                    "name": state['name'] if isinstance(state, dict) else None,
+                    "centroid": state.get('centroid', {}) if isinstance(state, dict) else {}
+                }
+        
+        # Process county boundary
+        county = boundaries.get('county')
+        if county:
+            county_id = county['id'] if isinstance(county, dict) else county
+            if county_id not in consolidated['counties']:
+                consolidated['counties'][county_id] = {
+                    "id": county_id,
+                    "places": set(),  # Initialize as set
+                    "name": county['name'] if isinstance(county, dict) else None,
+                    "centroid": county.get('centroid', {}) if isinstance(county, dict) else {}
+                }
+        
+        # Process city boundary
+        city = boundaries.get('city')
+        if city:
+            city_id = city['id'] if isinstance(city, dict) else city
+            if city_id not in consolidated['cities']:
+                consolidated['cities'][city_id] = {
+                    "id": city_id,
+                    "places": set(),  # Initialize as set
+                    "name": city['name'] if isinstance(city, dict) else None,
+                    "centroid": city.get('centroid', {}) if isinstance(city, dict) else {}
+                }
+        
+        # Process neighborhood boundary
+        neighborhood = boundaries.get('neighborhood')
+        if neighborhood:
+            neighborhood_id = neighborhood['id'] if isinstance(neighborhood, dict) else neighborhood
+            if neighborhood_id not in consolidated['neighborhoods']:
+                consolidated['neighborhoods'][neighborhood_id] = {
+                    "id": neighborhood_id,
+                    "places": set(),  # Initialize as set
+                    "name": neighborhood['name'] if isinstance(neighborhood, dict) else None,
+                    "centroid": neighborhood.get('centroid', {}) if isinstance(neighborhood, dict) else {}
+                }
+        
+        # Process regions
+        regions = boundaries.get('regions')
+        if regions:
+            if isinstance(regions, list):
+                for region in regions:
+                    region_id = region['id'] if isinstance(region, dict) else region
+                    if region_id not in consolidated['regions']:
+                        consolidated['regions'][region_id] = {
+                            "id": region_id,
+                            "places": set(),  # Initialize as set
+                            "name": region['name'] if isinstance(region, dict) else None
+                        }
             else:
-                region_id = region['id']
-                consolidated['regions'][region_id].update({
-                    'name': region['name'],
-                    'id': region_id
-                })
-                consolidated['regions'][region_id]['mentions'].append({
-                    'context': loc['description'],
-                    'nature': loc['nature'],
-                    'importance': loc.get('importance')
-                })
+                region_id = regions['id'] if isinstance(regions, dict) else regions
+                if region_id not in consolidated['regions']:
+                    consolidated['regions'][region_id] = {
+                        "id": region_id,
+                        "places": set(),  # Initialize as set
+                        "name": regions['name'] if isinstance(regions, dict) else None
+                    }
+    
+    return consolidated
 
-        # Process county
-        if county := boundaries.get('county'):
-            county_id = county['id']
-            consolidated['counties'][county_id].update({
-                'name': county['name'],
-                'wikidata_url': county.get('wikidata_url'),
-                'id': county_id
-            })
-            consolidated['counties'][county_id]['mentions'].append({
-                'context': loc['description'],
-                'nature': loc['nature'],
-                'importance': loc.get('importance')
-            })
+def associate_places(locations, consolidated):
+    """
+    Process all places and associate them with their boundaries.
+    
+    Args:
+        locations (list): List of location dictionaries
+        consolidated (dict): Dictionary containing initialized boundaries
+        
+    Returns:
+        dict: Updated consolidated structure with places associated to boundaries
+    """
+    for loc in locations:
+        # Generate place_id from coordinates if available, otherwise use location name
+        if loc.get('geography', {}).get('lat') and loc.get('geography', {}).get('lng'):
+            coord_str = f"{loc['geography']['lat']}{loc['geography']['lng']}"
+            place_id = hashlib.md5(coord_str.encode()).hexdigest()
+        else:
+            place_id = hashlib.md5(loc['location'].encode()).hexdigest()
+            
+        # Create a new place object with id first
+        place_obj = {
+            "id": place_id,
+            "original_text": loc.get('original_text', ''),
+            "location": loc.get('location', ''),
+            "type": loc.get('type', ''),
+            "importance": loc.get('importance', ''),
+            "nature": loc.get('nature', ''),
+            "description": loc.get('description', ''),
+            "geography": loc.get('geography', {}),
+            "context_level": loc.get('context_level', '')
+        }
+        
+        # Add to places list
+        consolidated['places'].append(place_obj)
+        
+        # Get boundaries from geography
+        boundaries = loc.get('geography', {}).get('boundaries', {})
+        
+        # Associate with boundaries using sets for uniqueness
+        state = boundaries.get('state')
+        if state:
+            state_id = state['id'] if isinstance(state, dict) else state
+            if state_id in consolidated['states']:
+                consolidated['states'][state_id]['places'].add(place_id)
+        
+        county = boundaries.get('county')
+        if county:
+            county_id = county['id'] if isinstance(county, dict) else county
+            if county_id in consolidated['counties']:
+                consolidated['counties'][county_id]['places'].add(place_id)
+        
+        city = boundaries.get('city')
+        if city:
+            city_id = city['id'] if isinstance(city, dict) else city
+            if city_id in consolidated['cities']:
+                consolidated['cities'][city_id]['places'].add(place_id)
+        
+        neighborhood = boundaries.get('neighborhood')
+        if neighborhood:
+            neighborhood_id = neighborhood['id'] if isinstance(neighborhood, dict) else neighborhood
+            if neighborhood_id in consolidated['neighborhoods']:
+                consolidated['neighborhoods'][neighborhood_id]['places'].add(place_id)
+        
+        regions = boundaries.get('regions')
+        if regions:
+            if isinstance(regions, list):
+                for region in regions:
+                    region_id = region['id'] if isinstance(region, dict) else region
+                    if region_id in consolidated['regions']:
+                        consolidated['regions'][region_id]['places'].add(place_id)
+            else:
+                region_id = regions['id'] if isinstance(regions, dict) else regions
+                if region_id in consolidated['regions']:
+                    consolidated['regions'][region_id]['places'].add(place_id)
+    
+    # Convert sets to lists before returning
+    for boundary_type in ['states', 'regions', 'counties', 'cities', 'neighborhoods']:
+        for boundary in consolidated[boundary_type].values():
+            boundary['places'] = list(boundary['places'])
+    
+    return consolidated
 
-        # Process city
-        if city := boundaries.get('city'):
-            city_id = city['id']
-            consolidated['cities'][city_id].update({
-                'name': city['name'],
-                'wikidata_url': city.get('wikidata_url'),
-                'id': city_id
-            })
-            consolidated['cities'][city_id]['mentions'].append({
-                'context': loc['description'],
-                'nature': loc['nature'],
-                'importance': loc.get('importance')
-            })
-
-        # Process neighborhood
-        if neighborhood := boundaries.get('neighborhood'):
-            neighborhood_id = neighborhood['id']
-            consolidated['neighborhoods'][neighborhood_id].update({
-                'name': neighborhood['name'],
-                'wikidata_url': neighborhood.get('wikidata_url'),
-                'id': neighborhood_id
-            })
-            consolidated['neighborhoods'][neighborhood_id]['mentions'].append({
-                'context': loc['description'],
-                'nature': loc['nature'],
-                'importance': loc.get('importance')
-            })
-
-    # Convert defaultdicts to lists and structure final output
+def clean_places(consolidated):
+    """
+    Clean up the consolidated structure and format it for output.
+    Remove boundaries from places and convert defaultdicts to lists.
+    
+    Args:
+        consolidated (dict): Dictionary containing places and boundaries
+        
+    Returns:
+        dict: Final cleaned and formatted result
+    """
     result = {
         "locations": {
             "states": list(consolidated['states'].values()),
@@ -183,10 +600,95 @@ def consolidate_geographies(locations):
             "counties": list(consolidated['counties'].values()),
             "cities": list(consolidated['cities'].values()),
             "neighborhoods": list(consolidated['neighborhoods'].values()),
-            "places": list(consolidated['places'].values())
+            "places": []
         }
     }
 
+    # Process places to remove boundaries before adding to result
+    for place in consolidated['places']:
+        place_copy = place.copy()
+        if 'geography' in place_copy:
+            geography_copy = place_copy['geography'].copy()
+            if 'boundaries' in geography_copy:
+                del geography_copy['boundaries']
+            place_copy['geography'] = geography_copy
+        result['locations']['places'].append(place_copy)
+
+    return result
+
+def consolidate_geographies(locations):
+    """
+    Consolidates redundant geographies from a list of locations into a structured hierarchy.
+    Each unique geography is included once, with combined metadata and associated places.
+    
+    Args:
+        locations (list): List of location dictionaries
+        
+    Returns:
+        dict: Structured hierarchy of consolidated geographies
+    """
+    # Step 1: Initialize and collect boundaries
+    consolidated = initialize_boundaries(locations)
+    
+    # Step 2: Process and associate places with boundaries
+    consolidated = associate_places(locations, consolidated)
+    
+    # Step 3: Clean up and format the final result
+    result = clean_places(consolidated)
+    
+    return result
+
+def process_consolidated_geographies(consolidated):
+    """
+    Processes consolidated geographies to create a structure with:
+    1. boundaries: Dictionary of distinct geographic boundaries organized by type
+    2. places: All specific places mentioned, unmodified from input
+    """
+    result = {
+        "boundaries": {
+            "states": [],
+            "regions": [],
+            "counties": [],
+            "cities": [],
+            "neighborhoods": []
+        },
+        "places": consolidated["locations"]["places"]
+    }
+    
+    # Map plural to singular for type names
+    type_mapping = {
+        "states": "state",
+        "counties": "county",
+        "cities": "city",
+        "neighborhoods": "neighborhood",
+        "regions": "region"
+    }
+    
+    # Process all boundary types
+    for boundary_type in ["states", "counties", "cities", "neighborhoods", "regions"]:
+        boundaries = consolidated["locations"].get(boundary_type, [])
+        if not boundaries:
+            continue
+            
+        for boundary in boundaries:
+            if isinstance(boundary, dict):
+                boundary_id = boundary.get('id')
+                boundary_name = boundary.get('name', '')
+                centroid = boundary.get('geography', {})
+                places = boundary.get('places', [])
+            else:
+                continue
+                
+            if boundary_id:  # Only add if we have an ID
+                boundary_obj = {
+                    "id": boundary_id,
+                    "name": boundary_name,
+                    "type": type_mapping[boundary_type],
+                    "geography": centroid,
+                    "places": places
+                }
+                result["boundaries"][boundary_type].append(boundary_obj)
+    
     return result
 
 ########## PRIVATE TASK FUNCTIONS ##########
@@ -234,9 +736,15 @@ def _extract_locations(self, payload):
             
             # Add locations to payload
             payload['locations'] = locations.get('locations')
+
+            # Check if any spans exist in the locations
+            if payload.get('locations') and any(loc.get('type') == 'span' for loc in payload['locations']):
+                payload['locations'] = process_spans(payload['locations'])
+
             payload['url'] = url
             # Preserve output_filename
             payload['output_filename'] = payload.get('output_filename')
+            logging.info("Extracted locations payload: %s" % json.dumps(payload, indent=2))
             return payload
             
         except Exception as e:
@@ -263,75 +771,10 @@ def _extract_locations(self, payload):
         return payload
 
 
-@celery.task(name="coref_dedupe", bind=True, max_retries=3)
-def _coref_dedupe(self, payload):
-    """
-    Cleans and resolves coreferences in the locations.
-    """
-    try:
-        # Get locations from payload, handling both formats
-        locations = payload.get('locations', [])
-        url = payload.get('url')
-
-        if isinstance(locations, dict):
-            locations = locations.get('locations', [])
-        
-        if not locations:
-            logging.info("No locations provided, skipping coreference resolution")
-            payload['locations'] = []
-            return payload
-            
-        # Get the coref prompt
-        try:
-            with open('utils/prompts/coref.txt', 'r') as f:
-                coref_prompt = f.read()
-        except FileNotFoundError:
-            logging.info("No coreference prompt found")
-            payload['locations'] = locations
-            return payload
-            
-        try:
-            # Format locations for the prompt - wrap in object for consistency
-            formatted_locations = {
-                "locations": locations
-            }
-            
-            user_prompt = f"""Here are the locations found in the article:
-            {json.dumps(formatted_locations, indent=2)}"""
-            
-            # Pass to LLM for coreference resolution
-            cleaned_locations = get_json_openai(coref_prompt, user_prompt, force_object=True)
-            
-            # Extract locations array from response
-            if isinstance(cleaned_locations, dict):
-                cleaned_locations = cleaned_locations.get('locations', locations)
-            
-            # Update payload with cleaned locations
-            payload['locations'] = cleaned_locations
-            # Preserve output_filename
-            payload['output_filename'] = payload.get('output_filename')
-            return payload
-            
-        except Exception as e:
-            backoff = 2 ** self.request.retries
-            logging.error(f"Coreference resolution failed, retrying in {backoff} seconds. Error: {str(e)}")
-            raise self.retry(exc=e, countdown=backoff)
-            
-    except MaxRetriesExceededError as e:
-        logging.error(f"Max retries exceeded for coreference resolution: {str(e)}")
-        post_slack_log_message('Error resolving locations %s (max retries exceeded)' % url, {
-            'error_message':  str(e.args[0]),
-            'traceback':  traceback.format_exc()
-        }, 'create_error')
-        # On max retries, keep original locations
-        payload['locations'] = locations
-        return payload
-
-
 @celery.task(name="geocode", bind=True, max_retries=3)
 def _geocode(self, payload):
     """
-    Geocodes the locations using Google Maps API.
+    Geocodes the locations using Geocodio API.
     """
     try:
         locations = payload.get('locations', [])
@@ -346,43 +789,43 @@ def _geocode(self, payload):
         
         geocoded_locations = []
         for location in locations:
-            location['geography'] = {}
-
-            # Skip locations that don't have a valid type
-            location_type = location.get('type', '').lower()
-            if location_type not in geocodable_types:
-                logging.info(f"Skipping geocoding for location type: {location_type}")
+            if location.get('type') not in geocodable_types:
                 geocoded_locations.append(location)
                 continue
             
             try:
-                # Get geocoding result
-                result = GMAPS_CLIENT.geocode(location['location'])
+                location_str = location['location']
+                logging.info(f"Geocoding location: {location_str}")
                 
-                if result:
-                    # Get the first (most relevant) result
-                    first_result = result[0]
+                # Try direct geocoding first
+                geography, error = try_direct_geocoding(GEOCODIO_CLIENT, location_str)
+
+                # If direct geocoding fails, try city/state fallback
+                if not geography:
+                    logging.info(f"Direct geocoding failed ({error}), trying city/state fallback")
+                    geography = try_city_state_fallback(GEOCODIO_CLIENT, location_str)
+                
+                # Update location with geocoding results
+                if geography:
+                    location['geography'] = geography
+                    location['context_level'] = set_context_level(location)
+                else:
+                    location['geography'] = {}
+                    location['context_level'] = 'state'  # Default to state level if geocoding fails
                     
-                    # Add geocoding data to location object
-                    location['geography'] = {
-                        'formatted_address': first_result['formatted_address'],
-                        'lat': first_result['geometry']['location']['lat'],
-                        'lng': first_result['geometry']['location']['lng'],
-                        'google_place_id': first_result['place_id'],
-                        'google_precision': first_result['geometry']['location_type'],
-                        'google_types': first_result['types']
-                    }
-                
-                geocoded_locations.append(location)
-                
             except Exception as e:
-                logging.error(f"Error geocoding location {location}: {str(e)}")
-                geocoded_locations.append(location)  # Keep original if geocoding fails
+                logging.error(f"Error processing location {location_str}: {str(e)}")
+                location['geography'] = {}
+                location['context_level'] = 'state'
                 
+            geocoded_locations.append(location)
+        
         # Update payload with geocoded locations
         payload['locations'] = geocoded_locations
         # Preserve output_filename
         payload['output_filename'] = payload.get('output_filename')
+        logging.info("Geocoding payload: %s" % json.dumps(payload, indent=2))
+
         return payload
         
     except MaxRetriesExceededError as max_retries_err:
@@ -414,128 +857,21 @@ def _context(self, payload):
             return payload
 
         contextualized_locations = []
+        
         for location in locations:
-            logging.info("Contextualizing location: %s" % location)
             try:
-                # Skip if we don't have coordinates
-                if not location.get('geography', {}).get('lat') or not location.get('geography', {}).get('lng'):
-                    location_type = location.get('type', '').lower()
-                    location_name = location.get('location', '')
-                    
-                    if location_type == 'state':
-                        logging.info(f"Looking up state context for: {location_name}")
-                        response = requests.get(
-                            CONTEXT_API_URL + "locations/state",
-                            params={'q': location_name}
-                        )
-                        response.raise_for_status()
-                        logging.info("Response: %s" % response.json())
-                        
-                        context_data = response.json()
-                        location['geography']['boundaries'] = context_data
-                        contextualized_locations.append(location)
-                        continue
-
-                    elif location_type == 'county':
-                        logging.info(f"Looking up county context for: {location_name}")
-                        response = requests.get(
-                            CONTEXT_API_URL + "locations/county",
-                            params={'q': location_name}
-                        )
-                        response.raise_for_status()
-                        logging.info("Response: %s" % response.json())
-                        
-                        context_data = response.json()
-                        location['geography']['boundaries'] = context_data
-                        contextualized_locations.append(location)
-                        continue
-                        
-                    elif location_type == 'city':
-                        logging.info(f"Looking up city context for: {location_name}")
-                        response = requests.get(
-                            CONTEXT_API_URL + "locations/city",
-                            params={'q': location_name}
-                        )
-                        response.raise_for_status()
-                        logging.info("Response: %s" % response.json())
-                        
-                        context_data = response.json()
-                        location['geography']['boundaries'] = context_data
-                        contextualized_locations.append(location)
-                        continue
-                        
-                    else:
-                        logging.info(f"Skipping context for location without coordinates: {location_name}")
-                        contextualized_locations.append(location)
-                        continue
-
-                # Make request to context API for locations with coordinates
-                logging.info("Requesting context for location ...")
-                params = {
-                    'lat': location['geography']['lat'],
-                    'lng': location['geography']['lng']
-                }
-
-                ########## FILTERING FOR GEOGRAPHIC PRECISION ##########
-                
-                # TODO: maybe factor this out into a function ...
-
-                include = 'region,state,county,city,neighborhood'
-
-                # Exclude neighorhoods if precision isn't ROOFTOP
-                if location.get('type', '').lower() == 'place':
-                    if location.get('geography', {}).get('google_precision') == 'APPROXIMATE':
-                        include = 'region,state,county'
-                    elif location.get('geography', {}).get('google_precision') != 'ROOFTOP':
-                        include = 'region,state,county,city'
-                        logging.info("Excluding neighborhoods due to non-ROOFTOP precision")
-                
-                if location.get('type', '').lower() == 'address_intersection':
-                    if location.get('geography', {}).get('google_precision') in ['ROOFTOP', 'GEOMETRIC_CENTER']:
-                        include = 'region,state,county,city,neighborhood'
-                        logging.info("Including neighborhoods due to ROOFTOP or GEOMETRIC_CENTER precision")
-
-                if location.get('type', '').lower() in ['span', 'street_road']:
-                    if location.get('geography', {}).get('google_precision') in ['GEOMETRIC_CENTER']:
-                        include = 'state'
-                    elif location.get('geography', {}).get('google_precision') in ['RANGE_INTERPOLATED']:
-                        include = 'region,state,county,city,neighborhood'
-                        logging.info("Including neighborhoods due to RANGE_INTERPOLATED precision")
-
-                if location.get('type', '').lower() == 'state':
-                    include = 'region,state'
-                    logging.info("Excluding counties due to state precision")
-
-                if location.get('type', '').lower() == 'county':
-                    include = 'region,state,county'
-                    logging.info("Excluding cities due to county precision")
-
-                if location.get('type', '').lower() == 'city':
-                    include = 'region,state,county,city'
-                    logging.info("Excluding neighborhoods due to city precision")
-                
-                params['include'] = include
-
-                response = requests.get(
-                    CONTEXT_API_URL + "locations/boundary",
-                    params=params
-                )
-                response.raise_for_status()
-                logging.info("Response: %s" % response.json())
-
-                # Add context data to location
-                context_data = response.json()
-                location['geography']['boundaries'] = context_data
-                contextualized_locations.append(location)
-
+                processed_location = process_location_context(location)
+                contextualized_locations.append(processed_location)
             except Exception as e:
-                logging.error(f"Error getting context for location {location}: {str(e)}")
-                contextualized_locations.append(location)  # Keep original if context fails
+                logging.error(f"Error processing location {location.get('location', '')}: {str(e)}")
+                contextualized_locations.append(location)  # Keep original if processing fails
 
         # Update payload with contextualized locations
         payload['locations'] = contextualized_locations
         # Preserve output_filename
         payload['output_filename'] = payload.get('output_filename')
+
+        logging.info("Context payload: %s" % json.dumps(payload, indent=2))
         return payload
 
     except MaxRetriesExceededError as max_retries_err:
@@ -566,26 +902,17 @@ def _consolidate(self, payload):
             logging.info("No locations provided, skipping consolidation")
             return payload
 
-        # Get the consolidation prompt
-        try:
-            with open('utils/prompts/consolidate.txt', 'r') as f:
-                consolidate_prompt = f.read()
-        except FileNotFoundError:
-            logging.info("No consolidation prompt found")
-            return payload
-        
         try:
             # First consolidate the geographies
             consolidated = consolidate_geographies(locations)
-
-            # Now prepare the prompt
-            user_prompt = consolidate_prompt + "\n\nHere is the text of the article:\n\n" + text + "\n\nAnd here is the JSON:\n\n" + json.dumps(consolidated, indent=2)
             
-            # Pass to LLM for consolidation
-            consolidated_results = get_json_openai(consolidate_prompt, user_prompt, force_object=True)
+            # Then process the consolidated geographies
+            result = process_consolidated_geographies(consolidated)
+
+            logging.info("Consolidated result: %s" % json.dumps(result, indent=2))
 
             # Update payload with consolidated results
-            payload['locations'] = consolidated_results['locations']
+            payload['locations'] = result
             payload['output_filename'] = payload.get('output_filename')
             return payload
         
@@ -618,6 +945,8 @@ def _save_to_azure(self, payload):
     try:
         logging.info('Saving to Azure:')
         logging.info(json.dumps(payload, indent=2))
+
+        logging.info(f"Payload: {json.dumps(payload, indent=2)}")
         
         # Get task ID and URL from the request
         task_id = self.request.id

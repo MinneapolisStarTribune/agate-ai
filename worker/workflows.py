@@ -1,7 +1,7 @@
 import logging, sys, os, redis, traceback, hashlib
 from celery import Celery
 from worker.tasks.locations import _classify_story, _extract_locations,\
-      _coref_dedupe, _geocode, _context, _consolidate, _save_to_azure
+    _geocode, _context, _consolidate, _save_to_azure
 from worker.tasks.base import _scrape_article
 from utils.slack import post_slack_log_message
 
@@ -62,7 +62,6 @@ def process_locations(url):
             _scrape_article.si(url, output_filename) | # Pass filename through chain
             _classify_story.s() |
             _extract_locations.s() |
-            _coref_dedupe.s() |
             _geocode.s() |
             _context.s() |
             _consolidate.s() |

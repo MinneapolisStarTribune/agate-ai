@@ -61,6 +61,10 @@ class StarTribuneArticle(Article):
         # Try to find the article body
         for body_tag, body_attrs in body_selectors:
             body_divs = self.soup.find_all(body_tag, attrs=body_attrs)
+
+            for d in body_divs:
+                print(d)
+
             if body_divs:
                 logging.info(f"Found article body using selector {body_tag}, {body_attrs}")
                 
@@ -68,7 +72,7 @@ class StarTribuneArticle(Article):
                 for div in body_divs:
                     # Try different paragraph selectors
                     for p_tag, p_attrs in paragraph_selectors:
-                        paragraphs = div.find_all(p_tag, attrs=p_attrs)
+                        paragraphs = [p for p in div.find_all(p_tag) if p.get('class') == ['rt-Text']]
                         if paragraphs:
                             logging.info(f"Found paragraphs using selector {p_tag}, {p_attrs}")
                             all_paragraphs.extend(p.get_text().strip() for p in paragraphs)

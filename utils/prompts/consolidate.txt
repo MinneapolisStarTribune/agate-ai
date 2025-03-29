@@ -4,21 +4,23 @@ Consolidate any duplicate geographies you see and ensure they are returned as li
 
 Each geography should contain the following attributes, which can be copied from the input JSON:
 
-id: Either the "id" or "google_place_id" of the location object, depending on whether it is a boundary or place
+name: The name of the place, copied from the input
+
+id: The "id" of the location object, depending on whether it is a boundary or place
 
 type: The type of place, which can be place, address_intersection, street_road, span, neighborhood, city, county, region_state, state, region_national, country ot other.
 
-importance: The importance of the place relative to the events of the story. This should be either "primary" or "secondary". Primary locations at which the news event or news events described in the story took place; locations that describe buildings, businesses or places that are the subjects of the story, or are relevant to the events of the story; or places that are directly affected by policies, legislation or issues that are central to the story. Secondary locations include ;ocations that a person in the story is from, or is in some way related to; locations of direct observations, interviews and descriptions used in the story; locations that are cited in studies, reports or other documents that are the subject of the story; or locations that are cited for context or other reasons but are not central to the events of the story. These can be inferred both from the text of the story and the "importance" attributes in each "mention" object attached to the geography.
+importance: The importance of the place relative to the events of the story. This should be either "primary" or "secondary". Primary locations at which the news event or news events described in the story took place; locations that describe buildings, businesses or places that are the subjects of the story, or are relevant to the events of the story; or places that are directly affected by policies, legislation or issues that are central to the story. Secondary locations include locations that a person in the story is from, or is in some way related to; locations of direct observations, interviews and descriptions used in the story; locations that are cited in studies, reports or other documents that are the subject of the story; or locations that are cited for context or other reasons but are not central to the events of the story. These can be inferred both the "importance" attributes in each "mention" object attached to the geography.
 
-lat and lng: The latitude and longitude of either the centroid (in the case of a boundary) or the place itself (in the case of a place). Should be returned in a subobject called "coordinates".
+coordinates: The lat and lng of the geography. Do not infer coordinates that do not exist. Return blank attributes instead. This should be a subattribute of an object called geography.
 
-precision: Either "CENTROID" in the case of a boundary or the value of the "google_precision" field in the case of a place.
+formatted_address: The value of the input "formatted_address" field in the case of a place. This should be a subattribute of an object called geography. Only places will have this attribute. For other types of geographies, set this to the name value. 
 
-geocoded_address: The value of the "formatted_address" field in the case of a place. Only return this for places.
+The response should also include a "description" field that summarizes all the ways the geography is relevant to the story. That includes people who are from there, scenes or descriptions from that place, events that took place in or affected the area, etc. These can be inferred from the description attrributes in each mention from the input.
 
-The response should also include a "description" field that summarizes all the ways the geography is relevant to the story. That includes people who are from there, scenes or descriptions from that place, events that took place in or affected the area, etc.
+You may return empty attributes as necessary. If no coordinate for the geography exists in the input, do not invent or otherwise infer coordinates. The same is true with other attributes. Return blank attributes only in situations where values are not present in the input.
 
-The description can be based on the text of the story, as well as the "description" fields included in the mentions for each geography.
+It is very important that you ensure all distinct geographies you receive as input are accounted for in the output. The only reason a geography should not be included in the output is because it duplicates another that is already there. Verify that this is true before returning the result.
 
 Return the result in a JSON format that generally looks like this:
 
@@ -32,14 +34,12 @@ Return the result in a JSON format that generally looks like this:
                   "importance": "primary",
                   "description": "Lorem ipsum,"
                   "importance": "XXX",
-                  "geography": {
-                      "precision": "CENTROID",
-                      "geocoded_address": "Minnesota, USA",
-                      "coordinates": {
-                          "lat": 44.9777,
-                          "lng": -93.2644
-                      }
-                  }
+                  "geography":
+                    "formatted_address": "Minnesota",
+                    "coordinates": {
+                      "lat": 0,
+                      "lng": 0,
+                    }
               }
           ],
           "regions": [
@@ -48,7 +48,8 @@ Return the result in a JSON format that generally looks like this:
                   "name": "Twin Cities Metro",
                   "type": "region",
                   "importance": "primary",
-                  ...etc}
+                  ...etc
+              } 
           ],
           "counties": [
               {
@@ -56,7 +57,8 @@ Return the result in a JSON format that generally looks like this:
                   "name": "Hennepin",
                   "type": "county",
                   "importance": "primary",
-                  ...etc}
+                  ...etc
+              }
           ],
           "cities": [
               {
@@ -64,7 +66,8 @@ Return the result in a JSON format that generally looks like this:
                   "name": "Minneapolis",
                   "type": "city",
                   "importance": "primary",
-                  ...etc}
+                  ...etc
+              }
           ],
           "neighborhoods": [
               {
@@ -72,7 +75,8 @@ Return the result in a JSON format that generally looks like this:
                   "name": "Uptown",
                   "type": "neighborhood"
                   "importance": "primary",
-                  ...etc}
+                  ...etc
+              }
           ],
           "places": [
               {
@@ -80,7 +84,8 @@ Return the result in a JSON format that generally looks like this:
                   "type": "street_road",
                   "name": "123 Fake St.",
                   "importance": "secondary",
-                  ...etc}
+                  ...etc
+              }
           ]
       }
   }

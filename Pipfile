@@ -23,6 +23,8 @@ autoevals = "*"
 bs4 = "*"
 gunicorn = "*"
 fake-useragent = "*"
+pygeocodio = "*"
+usaddress = "*"
 
 [dev-packages]
 

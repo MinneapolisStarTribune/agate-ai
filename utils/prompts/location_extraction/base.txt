@@ -33,19 +33,12 @@ Classify each location by its importance, in accordance with the following label
 Classify the relationship between the location and the events of the story, using the following labels and rules:
 
 * happened_at: Events featured in the story happened at this place.
-
 * located_at: A building, business or other place featured in the story is located at this location.
-
 * affected_by: Events or issues described in the story affected this place.
-
 * person_associated_with: A person in the story is from, or otherwise associated with, this place
-
 * voice_scene: The location describes a place where a person is interviewed, or is used to provide color and texture through observation and description.
-
 * mentioned: The location is mentioned as context
-
 * dateline: Typically a fully capitalized story at the beginning of an article. It signifies that a reporter went to that location.
-
 * other: The place has a different relationship to the story than those described above
 
 Here are general rules to follow as you extract locations:

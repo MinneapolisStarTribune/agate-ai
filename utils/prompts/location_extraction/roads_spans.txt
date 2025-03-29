@@ -1,0 +1,202 @@
+You will be given an object containing information about a span or segment of road. Your job is to transform it into either an object or an array of objects that contain geocodable strings.
+
+I will provide several examples of input formats you might encounter and the best outputs for those formats:
+
+1. Segments of highway "between" two other roads
+Instruction: Return an array containing two objects representing the terminal points of the span. If cities are listed as well, attempt to factor them into the address based on the context of the statement. Ensure the output of this is always an array.
+
+Examples:
+
+Input:
+
+{
+    "original_text": "The Minnesota Department of Transportation will shut down both directions of I-35W between I-94 and Crosstown Hwy. 62 from Friday night to Monday morning as crews prepare to shift all traffic to new pavement and start work on rebuilding the northbound lanes.",
+    "location": "I-35W between I-94 and Crosstown Hwy. 62, Minneapolis, MN",
+    "type": "span",
+    "importance": "primary",
+    "nature": "happened_at",
+    "description": "I-35W will be shut down for construction work."
+}
+
+Output:
+
+[
+    {
+        "original_text": "The Minnesota Department of Transportation will shut down both directions of I-35W between I-94 and Crosstown Hwy. 62 from Friday night to Monday morning as crews prepare to shift all traffic to new pavement and start work on rebuilding the northbound lanes.",
+        "location": "I-35W and I-94, Minneapolis, MN",
+        "type": "address_intersection",
+        "importance": "primary",
+        "nature": "happened_at",
+        "description": "I-35W will be shut down for construction work."
+      },
+    {
+        "original_text": "The Minnesota Department of Transportation will shut down both directions of I-35W between I-94 and Crosstown Hwy. 62 from Friday night to Monday morning as crews prepare to shift all traffic to new pavement and start work on rebuilding the northbound lanes.",
+        "location": "I-35W and Crosstown Hwy. 62, Minneapolis, MN",
+        "type": "address_intersection",
+        "importance": "primary",
+        "nature": "happened_at",
+        "description": "I-35W will be shut down for construction work."
+      },
+]
+
+Input:
+
+{
+    "original_text": "Nightly closures on westbound I-94 between Hwy. 280 and I-35W will continue through Nov. 9.",
+    "location": "I-94 between Hwy. 280 and I-35W, Minneapolis, MN",
+    "type": "span",
+    "importance": "primary",
+    "nature": "happened_at",
+    "description": "Nightly closures on this span of I-94 will continue."
+}
+
+Output:
+
+[
+    {
+        "original_text": "Nightly closures on westbound I-94 between Hwy. 280 and I-35W will continue through Nov. 9.",
+        "location": "I-94 and Hwy. 280, Minneapolis, MN",
+        "type": "address_intersection",
+        "importance": "primary",
+        "nature": "happened_at",
+        "description": "Nightly closures on this span of I-94 will continue."
+    },
+    {
+        "original_text": "Nightly closures on westbound I-94 between Hwy. 280 and I-35W will continue through Nov. 9.",
+        "location": "I-94 and I-35W, Minneapolis, MN",
+        "type": "address_intersection",
+        "importance": "primary",
+        "nature": "happened_at",
+        "description": "Nightly closures on this span of I-94 will continue."
+    }
+]
+
+Input:
+
+{
+    "original_text": "I-35W from Roseville to Lino Lakes: Lane reductions in both directions between Hwy. 36 in Roseville and Sunset Avenue in Lino Lakes.",
+    "location": "I-35W between Hwy. 36 in Roseville and Sunset Avenue in Lino Lakes, MN",
+    "type": "span",
+    "importance": "primary",
+    "nature": "happened_at",
+    "description": "I-35W has lane reductions for construction work."
+}
+
+Output:
+
+[
+    {
+        "original_text": "I-35W from Roseville to Lino Lakes: Lane reductions in both directions between Hwy. 36 in Roseville and Sunset Avenue in Lino Lakes.",
+        "location": "Hwy. 36, Roseville, MN",
+        "type": "city",
+        "importance": "primary",
+        "nature": "happened_at",
+        "description": "I-35W has lane reductions for construction work."
+    },
+    {
+        "original_text": "I-35W from Roseville to Lino Lakes: Lane reductions in both directions between Hwy. 36 in Roseville and Sunset Avenue in Lino Lakes.",
+        "location": "Sunset Ave., Lino Lakes, MN",
+        "type": "city",
+        "importance": "primary",
+        "nature": "happened_at",
+        "description": "I-35W has lane reductions for construction work."
+    },
+]
+
+
+2. Segments of highway "at," "by" or in the vicinty of other roads, cities or landmarks
+Instruction: Return an object represnting these as intersections, or as the landmark.
+
+Examples:
+
+Input:
+
+{
+    "original_text": "Motorists can expect traffic jams on Hwy. 12 in the vicinity of Hwy. 101/Central Avenue in Wayzata.",
+    "location": "Hwy. 12 & Hwy. 101/Central Avenue, Wayzata, MN",
+    "type": "address_intersection",
+    "importance": "primary",
+    "nature": "happened_at",
+    "description": "Traffic jams expected due to lane reductions."
+}
+
+Output:
+
+{
+    "original_text": "Motorists can expect traffic jams on Hwy. 12 in the vicinity of Hwy. 101/Central Avenue in Wayzata.",
+    "location": "Hwy. 12 & Hwy. 101, Wayzata, MN",
+    "type": "address_intersection",
+    "importance": "primary",
+    "nature": "happened_at",
+    "description": "Traffic jams expected due to lane reductions."
+}
+
+Input:
+
+{
+    "original_text": "The accident happened on Highway 62 near Grand Marais",
+    "location": "Highway 62 near Grand Marais, MN",
+    "type": "road",
+    "importance": "primary",
+    "nature": "happened_at",
+    "description": "The accident occurred here."
+}
+
+Output:
+
+{
+    "original_text": "The accident happened on Highway 62 near Grand Marais",
+    "location": "Grand Marais, MN",
+    "type": "city",
+    "importance": "primary",
+    "nature": "happened_at",
+    "description": "The accident occurred here."
+}
+
+3. Segments of highway between two cities
+Instruction: Return an array containing only the cities mentioned as the terminal points of the span. Ensure the output of this is always an array.
+
+Examples:
+
+Input:
+
+{
+    "original_text": "I-94 between Rogers and Maple Grove: Westbound lane closures from 7 p.m. Friday to noon Saturday and resuming at 7 p.m. Sunday.",
+    "location": "I-94 between Rogers and Maple Grove, MN",
+    "type": "span",
+    "importance": "primary",
+    "nature": "happened_at",
+    "description": "I-94 has westbound lane closures for construction work."
+}
+
+Output:
+
+[
+    {
+        "original_text": "I-94 between Rogers and Maple Grove: Westbound lane closures from 7 p.m. Friday to noon Saturday and resuming at 7 p.m. Sunday.",
+        "location": "Rogers, MN",
+        "type": "city",
+        "importance": "primary",
+        "nature": "happened_at",
+        "description": "I-94 has westbound lane closures for construction work."
+    },
+    {
+        "original_text": "I-94 between Rogers and Maple Grove: Westbound lane closures from 7 p.m. Friday to noon Saturday and resuming at 7 p.m. Sunday.",
+        "location": "Maple Grove, MN",
+        "type": "city",
+        "importance": "primary",
+        "nature": "happened_at",
+        "description": "I-94 has westbound lane closures for construction work."
+    }
+]
+
+
+Finally, adhere to these additional rules:
+
+* If there are multiple names listed for a single road, such as Highway 62/Crosstown or Hwy. 101/Central Avenue, list only the first name provided. In this case, Hwy. 62 and Hwy. 101.
+
+* The operator used to join parts of an intersection should always be &.
+
+* Highways should be abbreviated Hwy. Other street types, such as Avenue, Street, etc., should be abbreviated with standard abbreviations.
+
+Return results as JSON
