@@ -854,7 +854,9 @@ def process_consolidated_geographies(consolidated):
 
 def review_locations(locations, text, headline):
     """
-    Performs a final editorial review of extracted locations to filter out incorrect or out-of-place entries.
+    Performs a final editorial review of extracted locations to:
+    1. Filter out incorrect or out-of-place entries
+    2. Identify new locations that were missed in previous steps
     
     Args:
         locations (list): List of location dictionaries to review
@@ -864,7 +866,7 @@ def review_locations(locations, text, headline):
     Returns:
         tuple: (filtered_locations, review_results)
             - filtered_locations (list): Filtered list of locations with accurate and relevant entries
-            - review_results (dict): Full results of the review with decisions and rationales
+            - review_results (dict): Full results of the review with decisions and newly identified locations
     """
     try:
         # Load the editorial review prompt
@@ -873,21 +875,31 @@ def review_locations(locations, text, headline):
                 prompt = f.read()
         except FileNotFoundError:
             logging.error("Editorial review prompt not found, creating default prompt")
-            prompt = """You are a discerning news editor reviewing locations extracted from a news article. 
-Your job is to identify and remove any locations that:
-1. Are incorrect or don't exist
-2. Are out of place or irrelevant to the story
-3. Would confuse readers or diminish their trust in the product
-4. Are mentioned only in passing and not relevant to the main story
-5. Are ambiguous or could be confused with other places
+            prompt = """You are a discerning news editor reviewing locations extracted from a news article in Minnesota. Your job has two parts:
 
-For each location, determine if it should be KEPT or REMOVED. Return a JSON object with your decisions:
+PART 1: REVIEW EXTRACTED LOCATIONS
+First, review each extracted location and determine if it should be kept or removed based on editorial standards.
+
+PART 2: IDENTIFY MISSED LOCATIONS
+Next, carefully read the article text to identify any significant Minnesota locations that were missed in the extraction process.
+
+Return a JSON object with:
 {
   "decisions": [
     {
       "location": "The location string",
       "decision": "KEEP or REMOVE",
       "reason": "Brief explanation of your decision"
+    }
+  ],
+  "missed_locations": [
+    {
+      "original_text": "Text from the article containing the location",
+      "location": "Properly formatted location string",
+      "type": "city|place|address_intersection|etc",
+      "importance": "primary or secondary",
+      "nature": "happened_at|affected_by|located_at|etc",
+      "description": "Brief explanation of why this location matters to the story"
     }
   ]
 }"""
@@ -901,13 +913,17 @@ For each location, determine if it should be KEPT or REMOVED. Return a JSON obje
         
         # Get decisions from LLM
         results = get_json_openai(prompt, context, force_object=True)
-        logging.info(f"Editorial review decisions: {results}")
+        logging.info(f"Editorial review results: {results}")
         
-        # Filter locations based on decisions
-        if not results or "decisions" not in results:
-            logging.error("Invalid response from editorial review")
-            return locations, {"decisions": []}
+        # Initialize empty results if needed
+        if not results:
+            results = {}
+        if "decisions" not in results:
+            results["decisions"] = []
+        if "missed_locations" not in results:
+            results["missed_locations"] = []
             
+        # Filter locations based on decisions
         filtered_locations = []
         for location in locations:
             location_str = location.get("location", "")
@@ -920,12 +936,11 @@ For each location, determine if it should be KEPT or REMOVED. Return a JSON obje
                 logging.info(f"No editorial decision found for '{location_str}', keeping it")
                 
                 # Add implicit KEEP decision for this location
-                if "decisions" in results:
-                    results["decisions"].append({
-                        "location": location_str,
-                        "decision": "KEEP",
-                        "reason": "No explicit decision was made, so location was kept by default"
-                    })
+                results["decisions"].append({
+                    "location": location_str,
+                    "decision": "KEEP",
+                    "reason": "No explicit decision was made, so location was kept by default"
+                })
                 continue
                 
             if decision.get("decision") == "KEEP":
@@ -933,12 +948,18 @@ For each location, determine if it should be KEPT or REMOVED. Return a JSON obje
                 logging.info(f"Keeping location '{location_str}': {decision.get('reason')}")
             else:
                 logging.info(f"Removing location '{location_str}': {decision.get('reason')}")
+        
+        # Process newly identified locations
+        if results.get("missed_locations"):
+            logging.info(f"Found {len(results['missed_locations'])} missed locations in the article")
+            for missed in results["missed_locations"]:
+                logging.info(f"Identified missed location: {missed.get('location')}")
                 
         return filtered_locations, results
         
     except Exception as e:
         logging.error(f"Error in editorial review: {str(e)}")
-        return locations, {"decisions": []}  # Return original locations if review fails
+        return locations, {"decisions": [], "missed_locations": []}  # Return defaults if review fails
 
 ########## PRIVATE TASK FUNCTIONS ##########
 

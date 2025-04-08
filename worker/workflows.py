@@ -49,13 +49,15 @@ logging.basicConfig(
 @celery.task(name="editorial_review")
 def _editorial_review(payload):
     """
-    Performs editorial review on extracted locations to filter out incorrect or irrelevant entries.
+    Performs editorial review on extracted locations to:
+    1. Filter out incorrect or irrelevant entries
+    2. Identify new locations that were missed in previous steps
     
     Args:
         payload (dict): Contains extracted locations and article data
         
     Returns:
-        dict: Updated payload with filtered locations
+        dict: Updated payload with filtered locations and newly identified locations
     """
     try:
         locations = payload.get('locations', [])
@@ -89,12 +91,35 @@ def _editorial_review(payload):
                     "rationale": removal_info.get("reason", "Failed editorial review")
                 })
         
-        # Add review metadata including removed items
+        # Process newly identified locations - convert them to the same format as existing locations
+        missed_locations = []
+        for missed in review_results.get("missed_locations", []):
+            try:
+                # Format matches our existing location structure
+                missed_loc = {
+                    "original_text": missed.get("original_text", ""),
+                    "location": missed.get("location", ""),
+                    "type": missed.get("type", ""),
+                    "importance": missed.get("importance", ""),
+                    "nature": missed.get("nature", ""),
+                    "description": missed.get("description", ""),
+                    "source": "editorial_review"  # Mark these as coming from the review step
+                }
+                missed_locations.append(missed_loc)
+                
+                # Also add to the main locations list so they'll be processed in later steps
+                payload['locations'].append(missed_loc)
+            except Exception as e:
+                logging.error(f"Error processing missed location: {str(e)}")
+        
+        # Add review metadata including removed and missed items
         payload['review'] = {
             "original_count": len(locations),
             "filtered_count": len(filtered_locations),
             "removed_count": len(locations) - len(filtered_locations),
-            "removed_items": removed_items
+            "removed_items": removed_items,
+            "missed_count": len(missed_locations),
+            "missed_items": missed_locations
         }
         
         return payload
@@ -103,6 +128,67 @@ def _editorial_review(payload):
         logging.error(f"Error in editorial review: {str(e)}")
         logging.error(traceback.format_exc())
         return payload  # Return original payload if review fails
+
+@celery.task(name="geocode_missed")
+def _geocode_missed(payload):
+    """
+    Geocodes any locations that were discovered during the editorial review step.
+    
+    Args:
+        payload (dict): Contains locations data including newly discovered locations
+        
+    Returns:
+        dict: Updated payload with geocoded missed locations
+    """
+    try:
+        # Skip if no review data or no missed locations
+        if not payload.get('review') or not payload.get('review').get('missed_items'):
+            return payload
+            
+        missed_count = payload['review'].get('missed_count', 0)
+        if missed_count <= 0:
+            return payload
+            
+        logging.info(f"Geocoding {missed_count} missed locations discovered in editorial review")
+        
+        # We need to geocode the missed locations we found
+        # But since they've already been added to the main locations list,
+        # and we need to preserve the existing geocoded locations,
+        # we'll create a temporary payload with only the missed locations
+        missed_payload = {
+            "locations": [loc for loc in payload.get('locations', []) if loc.get('source') == 'editorial_review'],
+            "url": payload.get('url'),
+            "text": payload.get('text'),
+            "headline": payload.get('headline'),
+            "output_filename": payload.get('output_filename')
+        }
+        
+        # Pass through the geocoding task
+        if missed_payload["locations"]:
+            result = _geocode(missed_payload)
+            
+            # Get the geocoded missed locations
+            geocoded_missed = result.get('locations', [])
+            
+            # Update the missed locations in the main payload
+            # Remove the old ungeocoded versions
+            payload['locations'] = [loc for loc in payload.get('locations', []) 
+                                   if loc.get('source') != 'editorial_review']
+            
+            # Add the geocoded versions
+            payload['locations'].extend(geocoded_missed)
+            
+            # Update the missed_items in the review with geocoded versions
+            payload['review']['missed_items'] = geocoded_missed
+            
+            logging.info(f"Successfully geocoded {len(geocoded_missed)} missed locations")
+        
+        return payload
+        
+    except Exception as e:
+        logging.error(f"Error geocoding missed locations: {str(e)}")
+        logging.error(traceback.format_exc())
+        return payload  # Return original payload if geocoding fails
 
 @celery.task(name="process_locations")
 def process_locations(url):
@@ -122,7 +208,9 @@ def process_locations(url):
             _extract_locations.s() |
             _geocode.s() |
             _context.s() |
-            _editorial_review.s() |  # Add editorial review step before consolidation
+            _editorial_review.s() |  # Editorial review to filter and find missed locations
+            _geocode_missed.s() |    # Geocode any newly discovered locations
+            _context.s() |           # Add context for newly discovered locations
             _consolidate.s() |
             _save_to_azure.s()
         )
