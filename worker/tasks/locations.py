@@ -18,6 +18,10 @@ from conf.settings import CELERY_BROKER_URL, CELERY_RESULT_BACKEND,\
     AZURE_STORAGE_CONTAINER_NAME, AZURE_STORAGE_ACCOUNT_NAME, CONTEXT_API_URL
 import requests
 import hashlib
+from duckduckgo_search import DDGS
+from langchain_openai import ChatOpenAI
+from langchain.prompts import ChatPromptTemplate
+import time
 
 logging.basicConfig(level=logging.INFO)
 
@@ -154,19 +158,121 @@ def create_geography_object(result):
         'accuracy_type': result.get('accuracy_type'),
     }
 
-def try_direct_geocoding(client, location_str):
+def extract_best_address(query, search_results, max_retries=3):
+    """
+    Extract the best matching address from search results using LLM.
+    Includes retry logic with 3-second delay between attempts.
+    
+    Args:
+        query (str): Original search query
+        search_results (list): List of search result dictionaries
+        max_retries (int): Maximum number of retry attempts
+        
+    Returns:
+        str: Best matching address or "No address found"
+    """
+    llm = ChatOpenAI()
+    
+    template = """Given the following search query and multiple search results, identify and return the single most accurate 
+    physical address that best answers the query. Format the address in a standard US format.
+
+    If no address is available, or you are not fully confident in the address, return "No address found"
+
+    Query: {query}
+    
+    Search Results:
+    {formatted_results}
+    
+    Return only the best matching address with no additional text:"""
+    
+    # Format all results into a numbered list
+    formatted_results = "\n\n".join([
+        f"Result {i+1}:\n"
+        f"Title: {result['title']}\n"
+        f"Content: {result['body']}"
+        for i, result in enumerate(search_results)
+    ])
+    
+    prompt = ChatPromptTemplate.from_template(template)
+    chain = prompt | llm
+    
+    for attempt in range(max_retries):
+        try:
+            logging.info(f"Attempting to extract address (attempt {attempt + 1}/{max_retries})")
+            result = chain.invoke({
+                "query": query,
+                "formatted_results": formatted_results
+            })
+            return result.content
+        except Exception as e:
+            logging.error(f"Error extracting address (attempt {attempt + 1}): {str(e)}")
+            if attempt < max_retries - 1:
+                logging.info("Waiting 3 seconds before retrying...")
+                time.sleep(3)
+            else:
+                logging.error("Max retries exceeded for address extraction")
+                return "No address found"
+
+def search_duckduckgo(query, max_results=5, max_retries=3):
+    """
+    Search DuckDuckGo for location information with retry logic.
+    
+    Args:
+        query (str): Search query
+        max_results (int): Maximum number of results to return
+        max_retries (int): Maximum number of retry attempts
+        
+    Returns:
+        str: Best matching address or "No address found"
+    """
+    logging.info(f"Named place found. Searching DuckDuckGo for {query}")
+    
+    for attempt in range(max_retries):
+        try:
+            with DDGS() as ddgs:
+                results = list(ddgs.text(query, max_results=max_results))
+                
+                if not results:
+                    logging.warning(f"No results found for query: {query}")
+                    return "No address found"
+                
+                # Extract best address with retry logic
+                best_address = extract_best_address(query, results)
+                return best_address
+                
+        except Exception as e:
+            logging.error(f"Error searching DuckDuckGo (attempt {attempt + 1}): {str(e)}")
+            if attempt < max_retries - 1:
+                logging.info("Waiting 3 seconds before retrying...")
+                time.sleep(3)
+            else:
+                logging.error("Max retries exceeded for DuckDuckGo search")
+                return "No address found"
+
+def try_direct_geocoding(client, location_str, location_type):
     """
     Attempt direct geocoding of a location string.
     
     Args:
         client: Geocodio client instance
         location_str (str): Location string to geocode
+        location_type (str): Type of location
         
     Returns:
         tuple: (geography dict or None, error message or None)
     """
     try:
+        if location_type == 'place':
+            query = f'What is the address of {location_str}?'
+            search_result = search_duckduckgo(query)
+            if search_result != "No address found":
+                logging.info(f"Address found: {search_result}")
+                location_str = search_result
+            else:
+                logging.info(f"No address found for {location_str}")
+        
         result = client.geocode(location_str)
+
         if not result or not result.get('results'):
             return None, "No results found"
             
@@ -273,7 +379,10 @@ def set_context_level(location):
     if accuracy_level in ['rooftop', 'point', 'intersection', 'range_interpolation', 'nearest_rooftop_match']:
         return 'boundary'
     elif accuracy_level in ['street_center', 'place', 'city']:
-        return 'city'
+        if location.get('type') == 'neighborhood':
+            return 'neighborhood'
+        else:
+            return 'city'
     elif accuracy_level == 'county':
         return 'county'
     else:
@@ -342,6 +451,7 @@ def get_boundary_context(lat, lng, context_level):
     # Set include parameter based on context level
     include_map = {
         'boundary': 'region,state,county,city,neighborhood',
+        'neighborhood': 'region,state,county,city,neighborhood',
         'city': 'region,state,county,city',
         'county': 'region,state,county',
         'state': 'region,state'
@@ -382,7 +492,12 @@ def process_location_context(location):
         # Initialize geography dict if it doesn't exist
         if not location.get('geography'):
             location['geography'] = {}
-            
+
+        # Dumb hack to deal with named neighborhoods for now
+        if location_type == 'neighborhood':
+            location_name = location.get('location')
+            location['geography'] = {}
+
         # Handle locations without coordinates
         if not location['geography'].get('lat') or not location['geography'].get('lng'):
             context_data = lookup_context(location_type, location_name)
@@ -417,11 +532,11 @@ def initialize_boundaries(locations):
         dict: Consolidated boundaries with their metadata
     """
     consolidated = {
-        "states": defaultdict(lambda: {"places": set()}),  # Changed to set for uniqueness
-        "regions": defaultdict(lambda: {"places": set()}),
-        "counties": defaultdict(lambda: {"places": set()}),
-        "cities": defaultdict(lambda: {"places": set()}),
-        "neighborhoods": defaultdict(lambda: {"places": set()}),
+        "states": defaultdict(lambda: {"places": set()}),  # Changed to set
+        "regions": defaultdict(lambda: {"places": set()}),  # Changed to set
+        "counties": defaultdict(lambda: {"places": set()}),  # Changed to set
+        "cities": defaultdict(lambda: {"places": set()}),  # Changed to set
+        "neighborhoods": defaultdict(lambda: {"places": set()}),  # Changed to set
         "places": []
     }
 
@@ -436,7 +551,7 @@ def initialize_boundaries(locations):
             if state_id not in consolidated['states']:
                 consolidated['states'][state_id] = {
                     "id": state_id,
-                    "places": set(),  # Initialize as set
+                    "places": set(),  # Changed to set
                     "name": state['name'] if isinstance(state, dict) else None,
                     "centroid": state.get('centroid', {}) if isinstance(state, dict) else {}
                 }
@@ -448,7 +563,7 @@ def initialize_boundaries(locations):
             if county_id not in consolidated['counties']:
                 consolidated['counties'][county_id] = {
                     "id": county_id,
-                    "places": set(),  # Initialize as set
+                    "places": set(),  # Changed to set
                     "name": county['name'] if isinstance(county, dict) else None,
                     "centroid": county.get('centroid', {}) if isinstance(county, dict) else {}
                 }
@@ -460,7 +575,7 @@ def initialize_boundaries(locations):
             if city_id not in consolidated['cities']:
                 consolidated['cities'][city_id] = {
                     "id": city_id,
-                    "places": set(),  # Initialize as set
+                    "places": set(),  # Changed to set
                     "name": city['name'] if isinstance(city, dict) else None,
                     "centroid": city.get('centroid', {}) if isinstance(city, dict) else {}
                 }
@@ -472,7 +587,7 @@ def initialize_boundaries(locations):
             if neighborhood_id not in consolidated['neighborhoods']:
                 consolidated['neighborhoods'][neighborhood_id] = {
                     "id": neighborhood_id,
-                    "places": set(),  # Initialize as set
+                    "places": set(),  # Changed to set
                     "name": neighborhood['name'] if isinstance(neighborhood, dict) else None,
                     "centroid": neighborhood.get('centroid', {}) if isinstance(neighborhood, dict) else {}
                 }
@@ -486,16 +601,18 @@ def initialize_boundaries(locations):
                     if region_id not in consolidated['regions']:
                         consolidated['regions'][region_id] = {
                             "id": region_id,
-                            "places": set(),  # Initialize as set
-                            "name": region['name'] if isinstance(region, dict) else None
+                            "places": set(),  # Changed to set
+                            "name": region['name'] if isinstance(region, dict) else None,
+                            "centroid": region.get('centroid', {}) if isinstance(region, dict) else {}
                         }
             else:
                 region_id = regions['id'] if isinstance(regions, dict) else regions
                 if region_id not in consolidated['regions']:
                     consolidated['regions'][region_id] = {
                         "id": region_id,
-                        "places": set(),  # Initialize as set
-                        "name": regions['name'] if isinstance(regions, dict) else None
+                        "places": set(),  # Changed to set
+                        "name": regions['name'] if isinstance(regions, dict) else None,
+                        "centroid": regions.get('centroid', {}) if isinstance(regions, dict) else {}
                     }
     
     return consolidated
@@ -503,6 +620,10 @@ def initialize_boundaries(locations):
 def associate_places(locations, consolidated):
     """
     Process all places and associate them with their boundaries.
+    Handles deduplication of places with the same ID by:
+    1. Combining descriptions into a single string
+    2. Preserving primary importance/nature over secondary
+    3. Using first primary if multiple primaries exist
     
     Args:
         locations (list): List of location dictionaries
@@ -511,6 +632,9 @@ def associate_places(locations, consolidated):
     Returns:
         dict: Updated consolidated structure with places associated to boundaries
     """
+    # Dictionary to track unique places by ID
+    unique_places = {}
+    
     for loc in locations:
         # Generate place_id from coordinates if available, otherwise use location name
         if loc.get('geography', {}).get('lat') and loc.get('geography', {}).get('lng'):
@@ -519,21 +643,43 @@ def associate_places(locations, consolidated):
         else:
             place_id = hashlib.md5(loc['location'].encode()).hexdigest()
             
-        # Create a new place object with id first
-        place_obj = {
-            "id": place_id,
-            "original_text": loc.get('original_text', ''),
-            "location": loc.get('location', ''),
-            "type": loc.get('type', ''),
-            "importance": loc.get('importance', ''),
-            "nature": loc.get('nature', ''),
-            "description": loc.get('description', ''),
-            "geography": loc.get('geography', {}),
-            "context_level": loc.get('context_level', '')
-        }
-        
-        # Add to places list
-        consolidated['places'].append(place_obj)
+        # Create or update place object
+        if place_id in unique_places:
+            existing_place = unique_places[place_id]
+            
+            # Combine descriptions if they exist and are different
+            existing_desc = existing_place.get('description', '')
+            new_desc = loc.get('description', '')
+            if new_desc and new_desc != existing_desc:
+                if existing_desc:
+                    existing_place['description'] = f"{existing_desc}; {new_desc}"
+                else:
+                    existing_place['description'] = new_desc
+            
+            # Handle importance and nature
+            existing_importance = existing_place.get('importance', '')
+            new_importance = loc.get('importance', '')
+            
+            # If new item is primary and existing is not, use new importance/nature
+            if new_importance == 'primary' and existing_importance != 'primary':
+                existing_place['importance'] = new_importance
+                existing_place['nature'] = loc.get('nature', '')
+            # If both are primary, keep the first one (already stored)
+            # If neither is primary or existing is primary, keep existing
+            
+        else:
+            # Create new place object
+            unique_places[place_id] = {
+                "id": place_id,
+                "original_text": loc.get('original_text', ''),
+                "location": loc.get('location', ''),
+                "type": loc.get('type', ''),
+                "importance": loc.get('importance', ''),
+                "nature": loc.get('nature', ''),
+                "description": loc.get('description', ''),
+                "geography": loc.get('geography', {}),
+                "context_level": loc.get('context_level', '')
+            }
         
         # Get boundaries from geography
         boundaries = loc.get('geography', {}).get('boundaries', {})
@@ -574,6 +720,9 @@ def associate_places(locations, consolidated):
                 region_id = regions['id'] if isinstance(regions, dict) else regions
                 if region_id in consolidated['regions']:
                     consolidated['regions'][region_id]['places'].add(place_id)
+    
+    # Update consolidated places with deduplicated list
+    consolidated['places'] = list(unique_places.values())
     
     # Convert sets to lists before returning
     for boundary_type in ['states', 'regions', 'counties', 'cities', 'neighborhoods']:
@@ -668,28 +817,128 @@ def process_consolidated_geographies(consolidated):
     for boundary_type in ["states", "counties", "cities", "neighborhoods", "regions"]:
         boundaries = consolidated["locations"].get(boundary_type, [])
         if not boundaries:
+            logging.info(f"No {boundary_type} found in consolidated data")
             continue
             
         for boundary in boundaries:
             if isinstance(boundary, dict):
                 boundary_id = boundary.get('id')
                 boundary_name = boundary.get('name', '')
-                centroid = boundary.get('geography', {})
+                centroid = boundary.get('centroid', {})
                 places = boundary.get('places', [])
+                
+                if boundary_id:  # Only add if we have an ID
+                    boundary_obj = {
+                        "id": boundary_id,
+                        "name": boundary_name,
+                        "type": type_mapping[boundary_type],
+                        "geography": {
+                            "lat": centroid.get("lat"),
+                            "lng": centroid.get("lon", centroid.get("lng"))  # Try both lon and lng
+                        },
+                        "places": places
+                    }
+                    result["boundaries"][boundary_type].append(boundary_obj)
+                    logging.info(f"Added {boundary_type} boundary: {boundary_id}")
             else:
+                logging.warning(f"Skipping non-dict boundary in {boundary_type}")
+    
+    # Ensure all boundary arrays exist even if empty
+    for boundary_type in result["boundaries"]:
+        if result["boundaries"][boundary_type] is None:
+            result["boundaries"][boundary_type] = []
+            
+    return result
+
+########## EDITORIAL REVIEW HELPER FUNCTIONS ##########
+
+def review_locations(locations, text, headline):
+    """
+    Performs a final editorial review of extracted locations to filter out incorrect or out-of-place entries.
+    
+    Args:
+        locations (list): List of location dictionaries to review
+        text (str): The article text for context
+        headline (str): The article headline for context
+        
+    Returns:
+        tuple: (filtered_locations, review_results)
+            - filtered_locations (list): Filtered list of locations with accurate and relevant entries
+            - review_results (dict): Full results of the review with decisions and rationales
+    """
+    try:
+        # Load the editorial review prompt
+        try:
+            with open('utils/prompts/editorial_review.txt', 'r') as f:
+                prompt = f.read()
+        except FileNotFoundError:
+            logging.error("Editorial review prompt not found, creating default prompt")
+            prompt = """You are a discerning news editor reviewing locations extracted from a news article. 
+Your job is to identify and remove any locations that:
+1. Are incorrect or don't exist
+2. Are out of place or irrelevant to the story
+3. Would confuse readers or diminish their trust in the product
+4. Are mentioned only in passing and not relevant to the main story
+5. Are ambiguous or could be confused with other places
+
+For each location, determine if it should be KEPT or REMOVED. Return a JSON object with your decisions:
+{
+  "decisions": [
+    {
+      "location": "The location string",
+      "decision": "KEEP or REMOVE",
+      "reason": "Brief explanation of your decision"
+    }
+  ]
+}"""
+        
+        # Prepare context for LLM
+        context = {
+            "headline": headline,
+            "text": text,
+            "locations": locations
+        }
+        
+        # Get decisions from LLM
+        results = get_json_openai(prompt, context, force_object=True)
+        logging.info(f"Editorial review decisions: {results}")
+        
+        # Filter locations based on decisions
+        if not results or "decisions" not in results:
+            logging.error("Invalid response from editorial review")
+            return locations, {"decisions": []}
+            
+        filtered_locations = []
+        for location in locations:
+            location_str = location.get("location", "")
+            # Find the corresponding decision
+            decision = next((d for d in results["decisions"] if d.get("location") == location_str), None)
+            
+            if not decision:
+                # If no decision found, keep the location
+                filtered_locations.append(location)
+                logging.info(f"No editorial decision found for '{location_str}', keeping it")
+                
+                # Add implicit KEEP decision for this location
+                if "decisions" in results:
+                    results["decisions"].append({
+                        "location": location_str,
+                        "decision": "KEEP",
+                        "reason": "No explicit decision was made, so location was kept by default"
+                    })
                 continue
                 
-            if boundary_id:  # Only add if we have an ID
-                boundary_obj = {
-                    "id": boundary_id,
-                    "name": boundary_name,
-                    "type": type_mapping[boundary_type],
-                    "geography": centroid,
-                    "places": places
-                }
-                result["boundaries"][boundary_type].append(boundary_obj)
-    
-    return result
+            if decision.get("decision") == "KEEP":
+                filtered_locations.append(location)
+                logging.info(f"Keeping location '{location_str}': {decision.get('reason')}")
+            else:
+                logging.info(f"Removing location '{location_str}': {decision.get('reason')}")
+                
+        return filtered_locations, results
+        
+    except Exception as e:
+        logging.error(f"Error in editorial review: {str(e)}")
+        return locations, {"decisions": []}  # Return original locations if review fails
 
 ########## PRIVATE TASK FUNCTIONS ##########
 
@@ -798,7 +1047,7 @@ def _geocode(self, payload):
                 logging.info(f"Geocoding location: {location_str}")
                 
                 # Try direct geocoding first
-                geography, error = try_direct_geocoding(GEOCODIO_CLIENT, location_str)
+                geography, error = try_direct_geocoding(GEOCODIO_CLIENT, location_str, location.get('type'))
 
                 # If direct geocoding fails, try city/state fallback
                 if not geography:
@@ -982,12 +1231,12 @@ def _save_to_azure(self, payload):
             blob_url = f"https://{storage_account}.blob.core.windows.net/{container_name}/{blob_name}"
             
             logging.info(f"Successfully saved payload to blob: {blob_name}")
-            post_slack_log_message(f"Successfully processed locations!", {
-                'agate_update_msg': "View the payload below:",
-                'storage_url': blob_url,
-                'headline': payload.get('headline', ''),
-                'article_url': payload.get('url', '')
-            }, 'create_success')
+            # post_slack_log_message(f"Successfully processed locations!", {
+            #     'agate_update_msg': "View the payload below:",
+            #     'storage_url': blob_url,
+            #     'headline': payload.get('headline', ''),
+            #     'article_url': payload.get('url', '')
+            # }, 'create_success')
 
             return payload
             

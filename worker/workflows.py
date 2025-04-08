@@ -1,7 +1,7 @@
 import logging, sys, os, redis, traceback, hashlib
 from celery import Celery
 from worker.tasks.locations import _classify_story, _extract_locations,\
-    _geocode, _context, _consolidate, _save_to_azure
+    _geocode, _context, _consolidate, _save_to_azure, review_locations
 from worker.tasks.base import _scrape_article
 from utils.slack import post_slack_log_message
 
@@ -46,6 +46,64 @@ logging.basicConfig(
 
 ########## WORKFLOWS ##########
 
+@celery.task(name="editorial_review")
+def _editorial_review(payload):
+    """
+    Performs editorial review on extracted locations to filter out incorrect or irrelevant entries.
+    
+    Args:
+        payload (dict): Contains extracted locations and article data
+        
+    Returns:
+        dict: Updated payload with filtered locations
+    """
+    try:
+        locations = payload.get('locations', [])
+        text = payload.get('text', '')
+        headline = payload.get('headline', '')
+        
+        if not locations:
+            return payload
+            
+        # Apply editorial review and capture full results
+        filtered_locations, review_results = review_locations(locations, text, headline)
+        
+        # Update payload with filtered locations
+        payload['locations'] = filtered_locations
+        
+        # Build removed items array with location info and removal rationale
+        removed_items = []
+        for location in locations:
+            location_str = location.get("location", "")
+            # Find if this location was removed
+            removal_info = next((d for d in review_results.get("decisions", []) 
+                               if d.get("location") == location_str and d.get("decision") == "REMOVE"), None)
+            
+            if removal_info:
+                removed_items.append({
+                    "location": location_str,
+                    "original_text": location.get("original_text", ""),
+                    "type": location.get("type", ""),
+                    "importance": location.get("importance", ""),
+                    "nature": location.get("nature", ""),
+                    "rationale": removal_info.get("reason", "Failed editorial review")
+                })
+        
+        # Add review metadata including removed items
+        payload['review'] = {
+            "original_count": len(locations),
+            "filtered_count": len(filtered_locations),
+            "removed_count": len(locations) - len(filtered_locations),
+            "removed_items": removed_items
+        }
+        
+        return payload
+        
+    except Exception as e:
+        logging.error(f"Error in editorial review: {str(e)}")
+        logging.error(traceback.format_exc())
+        return payload  # Return original payload if review fails
+
 @celery.task(name="process_locations")
 def process_locations(url):
     """
@@ -64,6 +122,7 @@ def process_locations(url):
             _extract_locations.s() |
             _geocode.s() |
             _context.s() |
+            _editorial_review.s() |  # Add editorial review step before consolidation
             _consolidate.s() |
             _save_to_azure.s()
         )
