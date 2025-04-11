@@ -6,41 +6,30 @@ from utils.llm import get_json_openai
 
 logging.basicConfig(level=logging.ERROR)
 
-def get_extraction_prompt(story_type):
-    """Load the appropriate extraction prompt based on story type"""
-    prompt_map = {
-        'crime_public_safety': '../utils/prompts/location_extraction/crime_public_safety.txt',
-        'weather': '../utils/prompts/location_extraction/weather.txt',
-        'elections': '../utils/prompts/location_extraction/elections.txt',
-        # Add other story types and their corresponding prompts here
-    }
-    
-    prompt_path = prompt_map.get(story_type)
-    if not prompt_path:
-        raise ValueError(f"No prompt found for story type: {story_type}")
-        
-    with open(prompt_path, 'r') as f:
-        return f.read()
-
-def evaluate_locations(output, eval_criteria):
-    """Use LLM to evaluate if locations meet criteria"""
-    if not output or not isinstance(output, list):
+def evaluate_locations(predicted, expected):
+    """
+    Use LLM to evaluate if all locations are properly extracted.
+    """
+    if not predicted or not isinstance(predicted, list):
         return {"result": "false", "rationale": "No locations were extracted"}
     
-    prompt = f"""You are evaluating a location extraction system.
+    prompt = f"""You are evaluating a location extraction system. You will be provided a list of locations an LLM extracted from a news article. You will also be provided a list of locations that should have been extracted.
 
-Extracted locations:
-{json.dumps(output, indent=2)}
+    Here are the locations that should have been extracted:
+    {json.dumps(expected, indent=2)}
 
-Evaluation criteria:
-{eval_criteria}
+    Here are the locations that were extracted:
+    {json.dumps(predicted, indent=2)}
 
-Do the extracted locations meet ALL of the criteria specified above? Do not apply any additional critiera. If the criteria tell you to return true or false, do not assess and simply return it.
-Briefly explain your reasoning, then return a JSON object with this structure:
-{{
-    "result": boolean,
-    "rationale": "detailed explanation of decision"
-}}"""
+    If all of the locations are present in the list of locations that should have been extracted, return true in the "result" field of the output object below. Otherwise, return false.
+
+    Minor variations in spelling and formatting of the locations are acceptable and can be ignored. If additional locations are present in the extracted list, that is acceptable and can be ignored.
+
+    Briefly explain your reasoning, then return a JSON object with this structure:
+    {{
+        "result": boolean,
+        "rationale": "detailed explanation of decision"
+    }}"""
 
     try:
         result = get_json_openai(prompt, "")
@@ -53,19 +42,39 @@ Briefly explain your reasoning, then return a JSON object with this structure:
         return {"result": "false", "rationale": str(e)}
 
 def process_for_eval(text, hooks):
-    """Process a single case for evaluation"""
-    # Get story type from metadata
-    story_type = hooks.metadata.get('story_type')
-    if not story_type:
-        logging.error("No story type provided")
-        return "false"
-    
+    """
+    Process a single case for evaluation
+    """    
     try:
-        # Get the appropriate extraction prompt
-        prompt = get_extraction_prompt(story_type)
+        # Create the appropriate extraction prompt
+
+        # Get the base prompt
+        try:
+            with open('../worker/tasks/locations/extract/prompts/extract.txt', 'r') as f:
+                base_prompt = f.read()
+        except FileNotFoundError:
+            raise Exception("Base location prompt not found")
         
+        # Get the format prompt
+        try:
+            with open('../worker/tasks/locations/extract/prompts/_formatting.txt', 'r') as f:
+                format_prompt = f.read()
+        except FileNotFoundError:
+            raise Exception("Format location prompt not found")
+        
+        # Get the output prompt
+        try:
+            with open('../worker/tasks/locations/extract/prompts/_output.txt', 'r') as f:
+                output_prompt = f.read()
+        except FileNotFoundError:
+            raise Exception("Output location prompt not found")
+        
+        # Combine the prompts
+        prompt = f"{base_prompt}\n\n{format_prompt}\n\n{output_prompt}"
+        print(prompt)
+
         # Get model's prediction
-        result = get_json_openai(prompt, f"\nHere is the text:\n{text}")
+        result = get_json_openai(prompt, f"\nHere is the article text:\n{text}")
         
         # Extract locations from result
         predicted = result.get('locations', [])
@@ -75,14 +84,11 @@ def process_for_eval(text, hooks):
         for loc in predicted:
             if isinstance(loc, dict):
                 cleaned_locations.append({
-                    'location': loc.get('location', ''),
-                    'type': loc.get('type', ''),
-                    'nature': loc.get('nature', ''),
-                    'description': loc.get('description', '')
+                    'location': loc.get('location', '')
                 })
                 
         # Evaluate the locations against criteria
-        eval_result = evaluate_locations(cleaned_locations, hooks.metadata.get('eval_criteria', ''))
+        eval_result = evaluate_locations(cleaned_locations, hooks.metadata.get('eval_locations', ''))
         
         hooks.meta(
             description=result.get('rationale'),
@@ -106,16 +112,15 @@ def main():
     for case in data.get('cases', []):
         eval_data.append({
             'input': case['input'],
-            'expected': "true",  # We expect all criteria to be met
+            'expected': "true",  # We expect all locations to be extracted
             'metadata': {
-                'eval_criteria': case.get('eval_criteria', ''),
-                'story_type': case.get('type', '')
+                'eval_locations': case.get('eval_locations', ''),
             }
         })
     
     # Run evaluation
     Eval(
-        "Agate location extraction test",
+        "Agate location extraction eval",
         is_public=True,
         data=lambda: eval_data,
         task=process_for_eval,

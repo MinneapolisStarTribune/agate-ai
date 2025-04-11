@@ -8,7 +8,7 @@ logging.basicConfig(level=logging.ERROR)
 
 def get_classification_prompt():
     """Load the classification prompt"""
-    with open('../utils/prompts/type.txt', 'r') as f:
+    with open('../worker/tasks/base/prompts/classify.txt', 'r') as f:
         return f.read()
 
 def process_for_eval(text, hooks):
@@ -46,7 +46,7 @@ def main():
     
     # Run evaluation
     Eval(
-        "Agate classification test",
+        "Agate classification eval",
         is_public=True,
         data=lambda: eval_data,
         task=process_for_eval,
@@ -54,4 +54,4 @@ def main():
     )
 
 if __name__ == "__main__":
-    main() 
+    main()

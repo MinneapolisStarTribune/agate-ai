@@ -26,6 +26,7 @@ REDIS_URL = os.getenv('REDIS_URL') or ''
 # External API settings
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY') or ''
 GEOCODIO_API_KEY = os.getenv('GEOCODIO_API_KEY') or ''
+GEOCODE_EARTH_API_KEY = os.getenv('GEOCODE_EARTH_API_KEY') or ''
 BRAINTRUST_API_KEY = os.getenv('BRAINTRUST_API_KEY') or ''
 SCRAPER_API_KEY = os.getenv('SCRAPER_API_KEY') or ''
 JINA_API_KEY = os.getenv('JINA_API_KEY') or ''

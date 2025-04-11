@@ -1,0 +1,27 @@
+The results should be returned in a JSON that looks like this:
+
+ {
+    "locations": [
+    {
+      "original_text": "The car crash occurred on the 100 block of Fake St.",
+      "location": "100 Fake St., Minneapolis, MN",
+      "type": "address_intersection",
+      "importance": "primary",
+      "description:": "The car crash happened at this location"
+    },
+    {
+      "original_text": "Joe Smith, a farmer from Austin, said he supported better agriculture policy.",
+      "location": "Austin, MN",
+      "type": "city",
+      "importance": "secondary",
+      "description:": "Austin is the town Joe Smith is from."
+    },
+    {
+      "original_text": "It was warmer in Phoenix than in Minneapolis this week.",
+      "location": "Phoenix, AZ",
+      "type": "city",
+      "importance": "secondary",
+      "description": "Phoenix is cited as a contextual point of comparison to the weather in Minneapolis."
+    }
+  ]
+}

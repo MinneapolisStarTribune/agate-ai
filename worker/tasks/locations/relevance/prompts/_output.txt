@@ -1,0 +1,35 @@
+IMPORTANT: It is CRITICAL that all locations are returned EXACTLY as they were provided in the input, with no modifications except for adding an attribute for relevance. This includes all attributes, such as original_text, location, type, importance, description and notes. Every single item from the input should be returned in the output, and all text from the input should be returned exactly as it was provided. Failing to do this will render your output unusable.
+
+The results should be returned in a JSON that looks like this.
+
+ {
+    "locations": [
+    {
+      "original_text": "The car crash occurred on the 100 block of Fake St.",
+      "location": "100 Fake St., Minneapolis, MN",
+      "type": "address_intersection",
+      "importance": "primary",
+      "description:": "The car crash happened at this location",
+      "notes": "",
+      "relevant": true
+    },
+    {
+      "original_text": "Joe Smith, a farmer from Austin, said he supported better agriculture policy.",
+      "location": "Austin, MN",
+      "type": "city",
+      "importance": "secondary",
+      "description:": "Austin is the town Joe Smith is from.",
+      "notes": ""
+      "relevant": true
+    },
+    {
+      "original_text": "It was warmer in Phoenix than in Minneapolis this week.",
+      "location": "Phoenix, AZ",
+      "type": "city",
+      "importance": "secondary",
+      "description": "Phoenix is cited as a contextual point of comparison to the weather in Minneapolis.",
+      "notes": "",
+      "relevant": false
+    }
+  ]
+}

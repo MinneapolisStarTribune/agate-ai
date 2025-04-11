@@ -1,0 +1,7 @@
+Acting as a state-of-the-art entity extraction service, identify and extract all locations mentioned in this news article. Be maximalist in your approach. Any location mentioned in the story, for any reason, should be extracted here.
+
+In addition to geographic boundaries, streets and roads, regions and neighborhoods, and other common location types, locations you extract should also include the names of businesses, landmarks and other named places.
+
+If more than one location cited in a paragraph, extract them all.
+
+As you extract the locations, classify and format them according to the following rules:

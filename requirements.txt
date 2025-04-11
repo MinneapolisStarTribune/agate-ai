@@ -123,3 +123,5 @@ zstandard==0.23.0; python_version >= '3.8'
 fake-useragent
 pygeocodio
 usaddress
+duckduckgo-search
+langchain-openai

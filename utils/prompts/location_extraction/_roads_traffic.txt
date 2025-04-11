@@ -1,9 +1,0 @@
-Additional rules:
-
-This story is specifically about road conditions, traffic incidents, or road construction.
-
-* For highways and roads, include the most specific location information available. If a specific segment is mentioned (e.g., "I-35W between Downtown Minneapolis and 46th Street"), include that detail in the location string.
-
-* Intersections should be formatted as "Street1 & Street2, City, State" when possible.
-
-Here is the text of the article: 

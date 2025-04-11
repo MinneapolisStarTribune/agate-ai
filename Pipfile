@@ -25,6 +25,8 @@ gunicorn = "*"
 fake-useragent = "*"
 pygeocodio = "*"
 usaddress = "*"
+duckduckgo-search = "*"
+langchain-openai = "*"
 
 [dev-packages]
 

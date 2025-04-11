@@ -1,0 +1,149 @@
+You will be given a string containing information about a span or segment of road. Your job is to transform it into either an object or an array of objects that contain geocodable strings.
+
+I will provide several examples of input formats you might encounter and the best outputs for those formats:
+
+1. Segments of highway or streets "between" two other roads
+
+Instruction: Return an array containing two objects representing the terminal points of the span. If cities are listed as well, attempt to factor them into the address based on the context of the statement. Ensure the output of this is always an array, and ensure all parts of each intersection are included, joined with an ampersand.
+
+When intersections are returned, classify them as one of two types:
+
+* intersection_road: An intersection of two non-highway roads, such as Main St. and 2nd St. Even if the story does not describe an intersection in a single string, you may infer it using other information in the article.
+* intersection_highway: An intersection where one or both components is an interstate or highway, such as "I-94 and Selby Ave." or "Hwy. 20 and Hwy. 36"
+
+If a single street is returned, assign it this type:
+
+* street_road: A street, road or highway without other geographic information or context. For example: "Hennepin Ave." or "I-35"
+
+
+Examples:
+
+Input:
+
+I-35W between I-94 and Crosstown Hwy. 62, Minneapolis, MN
+
+Output:
+
+[
+    {
+        "parsed_string": "I-35W & I-94, Minneapolis, MN",
+        "type": "intersection_highway"
+    },
+    {
+        "parsed_string": "I-35W & Crosstown Hwy. 62, Minneapolis, MN",
+        "type": "intersection_highway"
+    }
+]
+
+Input:
+
+I-94 between Hwy. 280 and I-35W, Minneapolis, MN
+
+Output:
+
+[
+    {
+        "parsed_string": "I-94 & Hwy. 280, Minneapolis, MN",
+        "type": "intersection_highway"
+    },
+    {
+        "parsed_string": "I-94 & I-35W, Minneapolis, MN",
+        "type": "intersection_highway"
+    }
+]
+
+Input:
+
+I-35W between Hwy. 36 in Roseville and Sunset Avenue in Lino Lakes, MN
+
+Output:
+
+[
+    {
+        "parsed_string": "I-35 & Hwy. 36, Roseville, MN",
+        "type": "intersection_highway"
+    },
+    {
+        "parsed_string": "I-35 & Sunset Ave., Lino Lakes, MN",
+        "type": "intersection_highway"
+    }
+]
+
+2. Segments of highway or road "from" one point to another point:
+
+Input:
+
+42nd Street from Cedar to Nicollet avenues, Minneapolis, MN
+
+[
+    {
+        "parsed_string": "42nd St. & Cedar Ave., Minneapolis, MN",
+        "type": "intersection_road"
+    },
+    {
+        "parsed_string": "42nd St. & Nicollet Ave., Minneapolis, MN",
+        "type": "intersection_road"
+    }
+]
+
+3. Segments of highway or streets "at," "by" or in the vicinty of other roads, cities or landmarks
+
+Instruction: Return an object representing these as intersections, or as the landmark.
+
+Examples:
+
+Input:
+
+Hwy. 12 & Hwy. 101/Central Avenue, Wayzata, MN
+
+Output:
+
+{
+    "parsed_string": "Hwy. 12 & Hwy. 101, Wayzata, MN",
+    "type": "intersection_highway"
+}
+
+Input:
+
+Highway 62 near Grand Marais, MN
+
+Output:
+
+{
+    "parsed_string": "Grand Marais, MN",
+    "type": "city"
+}
+
+4. Segments of highway or road between two cities
+
+Instruction: Return an array containing only the cities mentioned as the terminal points of the span. Ensure the output of this is always an array.
+
+Examples:
+
+Input:
+
+I-94 between Rogers and Maple Grove, MN
+
+Output:
+
+[
+    {
+        "parsed_string": "Rogers, MN",
+        "type": "city"
+    },
+    {
+        "parsed_string": "Maple Grove, MN",
+        "type": "city"
+    }
+]
+
+
+Finally, adhere to these additional rules:
+
+* If there are multiple names listed for a single road, such as Highway 62/Crosstown or Hwy. 101/Central Avenue, list only the first name provided. In this case, Hwy. 62 and Hwy. 101.
+
+* The operator used to join parts of an intersection should always be &.
+
+* Highways should be abbreviated Hwy. Other street types, such as Avenue, Street, etc., should be abbreviated with standard abbreviations.
+
+Return results as JSON.
