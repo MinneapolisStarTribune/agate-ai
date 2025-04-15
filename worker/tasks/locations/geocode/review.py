@@ -7,6 +7,7 @@ from celery import Celery
 from celery.exceptions import MaxRetriesExceededError
 from utils.slack import post_slack_log_message
 import time
+import os
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -34,25 +35,27 @@ def _validate_geocoding(original_text, original_context, geocoded_result, max_re
             "rationale": "No geocoding result to validate"
         }
         
-    llm = ChatOpenAI(model="gpt-4o")
-    
-    template = """Given an original location string and its geocoded result, determine if the geocoding is accurate.
-    Consider:
-    1. Does the geocoded location match the intended location from the text?
-    2. Is the level of precision appropriate?
-    3. Are there any obvious errors in city, state, or other components?
+    # Get the validation prompt
+    try:
+        with open(os.path.join(os.path.dirname(__file__), 'prompts/review.txt'), 'r') as f:
+            base_prompt = f.read()
+            
+        # Append the template for the specific location being validated
+        template = f"""{base_prompt}
 
-    Return a JSON object with two fields:
-    - validated: boolean indicating if the geocoding is valid
-    - rationale: brief explanation of your decision
+        Original text: {{original_text}}
+        Original context: {{original_context}}
 
-    Original text: {original_text}
-    Original context: {original_context}
-    
-    Geocoded result:
-    {formatted_result}
+        Geocoded result:
+        {{formatted_result}}
 
-    Return only the JSON with no additional text:"""
+        Return only the JSON with no additional text:"""
+            
+    except FileNotFoundError:
+        logging.error("Geocoding validation prompt not found")
+        raise
+        
+    llm = ChatOpenAI(model="gpt-4.1")
     
     # Format the geocoded result
     formatted_result = (
@@ -147,7 +150,7 @@ def _validate_locations(payload):
 ########## TASKS ##########
 
 @celery.task(name="validate_locations", bind=True, max_retries=3)
-def validate_locations_task(self, payload):
+def _validate_locations_task(self, payload):
     """
     Celery task wrapper for location validation.
     Handles retries and error reporting.

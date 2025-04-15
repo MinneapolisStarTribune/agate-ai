@@ -1,0 +1,26 @@
+Given an original location string and its geocoded result, determine if the geocoding appears to be an accurate reflection of the original location. If it is, mark the location as valid. If it is not, mark the location as invalid.
+
+Potential characteristics of an invalid geocoded location include:
+
+- The geocoded location is not in the same state or country as the original location string.
+
+- In the case of street addresses, if the geocoded street is different than the original input street, it should generally be considered invalid.
+
+- If the location refers to an ambiguous location, like "gas station" or "hospital", mark the location as invalid if you are not certain that the location is clearly identifiable. For example, something like "Bank, Minneapolis, MN" should be marked as invalid because there are many banks in Minneapolis.
+
+- Locations without any geocoding information should be marked as invalid.
+
+Potential characteristics of a valid geocoded location include:
+
+- The geocoded location clearly matches the location in the original location string.
+
+- The geocoded location (represented in geocode.results.label) is an address and clearly matches the input text fed to the geocoder (represented in geocode.text)
+
+- If the geocoded location is a city, and the original location string is a smaller, more specific location within that city, mark the location as valid. For example, if the original location string is "Bottineau Blvd. & Brooklyn Blvd., Brooklyn Park, MN" and the geocoded location is "Brooklyn Park, MN", that should be marked as valid.
+
+- If the geocoded location reflects a different city than the original text, but the cities are close enough to each other that the geocoded location might still be an appropriate match, mark the location as valid. For example, sometimes addresses on the boundary of two cities might be geocoded to the closest city, which might not be the city originally mentioned in the text. If this is true, mark the location as valid. Use your knowledge of geography and judgment to determine this.
+
+Return a JSON object with two fields:
+
+- validated: boolean indicating if the geocoding is valid
+- rationale: brief explanation of your decision

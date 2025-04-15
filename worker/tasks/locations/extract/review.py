@@ -163,13 +163,13 @@ def _extract_locations_review(payload):
     except FileNotFoundError:
         logging.error("Output location prompt not found")
         raise Exception("Output location prompt not found")
-    
+
     # The list of locations from the LLM
     llm_locations = payload.get('locations', [])
-    
+
     # The list of locations from the NER
     ner_locations = process_text_ner(text)
-    
+
     # Combine the prompts
     prompt = f"""{base_prompt}
 

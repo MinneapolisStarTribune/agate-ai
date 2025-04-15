@@ -6,9 +6,9 @@ Whereas traditional entity extraction techniques are effective at identifying st
 
 The resulting information can be used both to create products that might be useful to readers and journalists (think: mapping restaurant reviews, or crafting hyperlocal newsletters and alerts). And, when placed into a knowledge graph, the extracted entities enable more comprehensive and accurate searching and summarization than traditional retrieval-augmented generation, reducing the risk of hallucination and returning more useful results.
 
-This tool is in VERY early development. It's mostly just a fancy prototype at this point. But it works well enough to be promising ...
+This tool is in early development, but it works well enough to be promising ...
 
-## Why call it Agate?
+## Why "Agate?"
 
 [Agate](https://en.wikipedia.org/wiki/Agate_(typography)) is a typographical term that is often used as shorthand to refer to the pages of a newspaper that contain structured and tabular data, such as sports box scores, stock tables and legal notices.
 
@@ -33,6 +33,8 @@ Endpoints coming soon will include `/people`, `/organizations`, `/events`, `/quo
 `/evals`: Some early [Braintrust](https://www.braintrust.dev/) evals. They work, but don't trust them yet.
 
 `/terraform`: Infrastructure definitions
+
+`/tests`: Eventually these will be real tests. For now they are mostly scripts that execute different parts of the pipeline.
 
 `/utils`: Various utilities relied on by the API and worker to perform critical tasks. This includes LLM prompts.
 
@@ -62,408 +64,1409 @@ Given an article like [this](https://www.startribune.com/weather-today-winter-st
 ```
 {
   "story_type": {
-    "headline": "Winter storm wallops metro, southern Minnesota with rain, snow and wind",
+    "headline": "Winter storm wallops metro, southern Minnesota with rain, wind and largest snowfall of the season",
     "category": "weather",
-    "rationale": "The headline describes a weather event, specifically a winter storm affecting a region with rain, snow, and wind.",
+    "rationale": "The headline describes a weather event, specifically a winter storm affecting a region with rain, wind, and snowfall.",
     "confidence": 1.0
   },
-  "text": "Schools are closed or delayed, snow emergencies are in effect and travel is downright difficult after a winter storm battered the metro area and much of southern Minnesota overnight.\n\nIn the Twin Cities, Metro Transit and Maple Grove Transit have suspended bus service until further notice, the agencies said. Light-rail trains continued to operate.\n\nA few more inches of heavy wet snow will fall Wednesday in the metro area morning before a winter storm warning ends at 3 p.m., the National Weather Service said.\n\nBlizzard warnings remained in effect across southern Minnesota as winds gusting to 45 mph was blowing snow around reducing visibility and creating whiteout conditions, the weather service said.\n\nA number of major roads remained closed Wednesday morning, including Interstate 90 between Luverne and Blue Earth. A no-travel advisory was in effect for Freeborn, Faribault, Blue Earth, Brown, Waseca, Nicollet, Le Sueur, Rock and Sibley counties, the Minnesota Department of Transportation said.\n\nAt 6:30 a.m., metro area roads remained snow covered and littered with crashes and spin outs, according to MnDOT.\n\n\u201cEvery incident slows things down,\u201d said MnDOT spokeswoman Anne Meyer, reiterating the need to drive slow and leave plenty of room between vehicles.\n\nPlows hit the roads Tuesday night and will be on the job all day Wednesday, Meyer said. Wet slushy snow and wind blowing it around will hamper efforts until weather conditions improve, she said.\n\n\u201cIt will be a long day,\u201d Meyer said. \u201cIt was quite a storm.\u201d\n\nTreacherous conditions led St. Paul Public Schools to call an e-learning day. In Minneapolis, students in kindergarten through grade 5 get the day off due to a \u201cSevere Weather Day.\u201d Students in grades six to 12 will have an e-learning day, the district said.\n\nCentennial, Bloomington, Lakeville, Wayzata, Osseo and Mounds View are among suburban districts switching to a flexible or at home learning day while others such Robbinsdale and Anoka-Hennepin closed for the day.\n\nNeither Minneapolis nor St. Paul had called a snow emergency as of 5:30 a.m., but other cities such as Robbinsdale, Eden Prairie, Crystal, Golden Valley have.\n\nMetro Mobility warned riders that trips could be delayed Wednesday and asked customers who could reschedule their trips to do so.\n\nMinnesota Valley Transit Authority said its on-demand ride service, Connect, would not operate until 8 a.m. due to ice and snow.\n\nAbout 8,000 Xcel Energy customers were without power Wednesday morning, the utility said.\n\nSnow totals were still coming, but the leader appeared to be Woodbury, where 10 inches of snow had fallen as of early Wednesday.\n\nOther totals included:",
-  "headline": "Winter storm wallops metro, southern Minnesota with rain, snow and wind",
-  "locations": [
+  "text": "Residents in the metro area and much of southern Minnesota put their snow blowers and shovels to work Wednesday as they dug out from the season\u2019s largest storm that dropped up to a foot of snow in places and took down power lines, closed schools and crippled the morning commute.\n\nGov. Tim Walz declared a peacetime emergency Wednesday and authorized the Minnesota National Guard to provide support for emergency storm operations.\n\nThe storm dropped 13 inches of snow in Dennison, about an hour southeast of the Twin Cities, with 11 inches or more reported in Northfield, Elko New Market, Apple Valley, Stillwater and Owatonna, the National Weather Service said.\n\nThe official yardstick for the metro area at the Minneapolis-St. Paul International Airport measured 9.5 inches as of midday Wednesday, the Weather Service said. That was the most of the season in the Twin Cities, which previously had been 5.5 inches on Dec. 19.\n\nSome in the Twin Cities were glad to see the snow.\n\n\u201cI love this,\u201d said Nam Bang O, as he plowed out of his driveway in Burnsville on Wednesday morning.\n\n\u201cI even went for a walk in this last night,\u201d he said.\n\nBut for anybody who tried to get around via car, the freshly fallen snow was anything but lovely. Even plows encountered difficulty. Snowdrifts with reduced visibility and whiteout conditions caused by 45-mph winds led to three plows landing in the ditch in southern Minnesota.\n\n\u201cIt was quite a storm,\u201d said Anne Meyer, a MnDOT spokeswoman.\n\nMotorists didn\u2019t fare much better. From 5 a.m. to 11:30 a.m., the State Patrol responded to 158 crashes and 236 vehicles that went off the road.\n\nSeveral hundred Metro Transit buses had begun their morning trips Wednesday, but the agency soon called them back to their garages with roads impassable in some places.\n\n\u201cBuses were running into trouble right away,\u201d said spokesman Drew Kerr. \u201cThis was an extremely rare occurrence.\u201d\n\nMetro Transit suspended bus service for the first time since 2023 and suburban agencies followed suit. But many routes were rolling again by midmorning.\n\nSnow tapered off by early afternoon across the area and many blizzard warnings and winter storm warnings were downgraded to winter weather advisories.\n\nTreacherous conditions led St. Paul Public Schools to call an e-learning day. In Minneapolis, students in kindergarten through fifth grade got the day off for a \u201csevere weather day.\u201d Students in grades six through 12 had an e-learning day, the district said.\n\nMinneapolis and St. Paul declared snow emergencies putting into place parking rules that go into effect at 9 p.m. Wednesday. Several other cities including Robbinsdale, Richfield, Osseo, Plymouth, Coon Rapids, Eden Prairie, Crystal, Golden Valley and West St. Paul also called snow emergencies.\n\nAbout 7,500 Xcel Energy customers lost power at some point during the storm as heavy snow, icing and strong winds took down power lines. Most who lost electricity were in the metro area.\n\nIn a bit of irony, even with the all the snow, Welch Village ski area was closed on Wednesday due to a power outage.\n\nFor spring lovers, the ground will likely be bare again by early next week. Temperatures in the 30s through Friday will warm into the 40s over the weekend and into the mid 50s early next week, the Weather Service said.",
+  "headline": "Winter storm wallops metro, southern Minnesota with rain, wind and largest snowfall of the season",
+  "url": "https://www.startribune.com/weather-today-winter-storm-minnesota/601231214",
+  "author": "Tim Harlow",
+  "pub_date": "2025-03-06T00:44:14.473Z",
+  "output_filename": "1d6392b1648edac28191.json",
+  "boundaries": {
+    "states": [
+      {
+        "id": "whosonfirst:region:85688727",
+        "name": "Minnesota",
+        "coordinates": {
+          "lat": 46.63636,
+          "lng": -94.579641
+        },
+        "places": [
+          "Minnesota",
+          "Dennison, MN",
+          "Northfield, MN",
+          "Elko New Market, MN",
+          "Apple Valley, MN",
+          "Stillwater, MN",
+          "Owatonna, MN",
+          "Minneapolis-St. Paul International Airport, MN",
+          "Twin Cities, MN",
+          "Burnsville, MN",
+          "St. Paul, MN",
+          "Minneapolis, MN",
+          "Robbinsdale, MN",
+          "Richfield, MN",
+          "Osseo, MN",
+          "Plymouth, MN",
+          "Coon Rapids, MN",
+          "Eden Prairie, MN",
+          "Crystal, MN",
+          "Golden Valley, MN",
+          "West St. Paul, MN",
+          "Welch Village, MN"
+        ]
+      }
+    ],
+    "counties": [
+      {
+        "id": "whosonfirst:county:102087843",
+        "name": "Goodhue County",
+        "coordinates": {
+          "lat": 44.408795,
+          "lng": -93.030311
+        },
+        "places": [
+          "Dennison, MN",
+          "Welch Village, MN"
+        ]
+      },
+      {
+        "id": "whosonfirst:county:102087623",
+        "name": "Rice County",
+        "coordinates": {
+          "lat": 44.452922,
+          "lng": -93.166592
+        },
+        "places": [
+          "Northfield, MN"
+        ]
+      },
+      {
+        "id": "whosonfirst:county:102087041",
+        "name": "Scott County",
+        "coordinates": {
+          "lat": 44.564061,
+          "lng": -93.330615
+        },
+        "places": [
+          "Elko New Market, MN"
+        ]
+      },
+      {
+        "id": "whosonfirst:county:102087895",
+        "name": "Dakota County",
+        "coordinates": {
+          "lat": 44.746699,
+          "lng": -93.20062
+        },
+        "places": [
+          "Apple Valley, MN",
+          "Burnsville, MN",
+          "West St. Paul, MN"
+        ]
+      },
+      {
+        "id": "whosonfirst:county:102087659",
+        "name": "Washington County",
+        "coordinates": {
+          "lat": 45.101759,
+          "lng": -92.810322
+        },
+        "places": [
+          "Stillwater, MN"
+        ]
+      },
+      {
+        "id": "whosonfirst:county:102087661",
+        "name": "Steele County",
+        "coordinates": {
+          "lat": 44.084041,
+          "lng": -93.221816
+        },
+        "places": [
+          "Owatonna, MN"
+        ]
+      },
+      {
+        "id": "whosonfirst:county:102087709",
+        "name": "Hennepin County",
+        "coordinates": {
+          "lat": 44.88351,
+          "lng": -93.211374
+        },
+        "places": [
+          "Minneapolis-St. Paul International Airport, MN",
+          "Twin Cities, MN",
+          "Minneapolis, MN",
+          "Robbinsdale, MN",
+          "Richfield, MN",
+          "Osseo, MN",
+          "Plymouth, MN",
+          "Eden Prairie, MN",
+          "Crystal, MN",
+          "Golden Valley, MN"
+        ]
+      },
+      {
+        "id": "whosonfirst:county:102087007",
+        "name": "Ramsey County",
+        "coordinates": {
+          "lat": 44.95304,
+          "lng": -93.09013
+        },
+        "places": [
+          "St. Paul, MN"
+        ]
+      },
+      {
+        "id": "whosonfirst:county:102087861",
+        "name": "Anoka County",
+        "coordinates": {
+          "lat": 45.178209,
+          "lng": -93.308426
+        },
+        "places": [
+          "Coon Rapids, MN"
+        ]
+      }
+    ],
+    "cities": [
+      {
+        "id": "whosonfirst:locality:85952887",
+        "name": "Dennison",
+        "coordinates": {
+          "lat": 44.408795,
+          "lng": -93.030311
+        },
+        "places": [
+          "Dennison, MN"
+        ]
+      },
+      {
+        "id": "whosonfirst:locality:85968737",
+        "name": "Northfield",
+        "coordinates": {
+          "lat": 44.452922,
+          "lng": -93.166592
+        },
+        "places": [
+          "Northfield, MN"
+        ]
+      },
+      {
+        "id": "whosonfirst:locality:85952527",
+        "name": "Elko New Market",
+        "coordinates": {
+          "lat": 44.564061,
+          "lng": -93.330615
+        },
+        "places": [
+          "Elko New Market, MN"
+        ]
+      },
+      {
+        "id": "whosonfirst:locality:85968509",
+        "name": "Apple Valley",
+        "coordinates": {
+          "lat": 44.746699,
+          "lng": -93.20062
+        },
+        "places": [
+          "Apple Valley, MN"
+        ]
+      },
+      {
+        "id": "whosonfirst:locality:1729454989",
+        "name": "Stillwater",
+        "coordinates": {
+          "lat": 45.101759,
+          "lng": -92.810322
+        },
+        "places": [
+          "Stillwater, MN"
+        ]
+      },
+      {
+        "id": "whosonfirst:locality:85968951",
+        "name": "Owatonna",
+        "coordinates": {
+          "lat": 44.084041,
+          "lng": -93.221816
+        },
+        "places": [
+          "Owatonna, MN"
+        ]
+      },
+      {
+        "id": "whosonfirst:locality:85953191",
+        "name": "St. Paul",
+        "coordinates": {
+          "lat": 44.88351,
+          "lng": -93.211374
+        },
+        "places": [
+          "Minneapolis-St. Paul International Airport, MN",
+          "St. Paul, MN"
+        ]
+      },
+      {
+        "id": "whosonfirst:locality:85969169",
+        "name": "Minneapolis",
+        "coordinates": {
+          "lat": 44.96313,
+          "lng": -93.266563
+        },
+        "places": [
+          "Twin Cities, MN",
+          "Minneapolis, MN"
+        ]
+      },
+      {
+        "id": "whosonfirst:locality:85968497",
+        "name": "Burnsville",
+        "coordinates": {
+          "lat": 44.759561,
+          "lng": -93.285912
+        },
+        "places": [
+          "Burnsville, MN"
+        ]
+      },
+      {
+        "id": "whosonfirst:locality:85969129",
+        "name": "Robbinsdale",
+        "coordinates": {
+          "lat": 45.030386,
+          "lng": -93.331266
+        },
+        "places": [
+          "Robbinsdale, MN"
+        ]
+      },
+      {
+        "id": "whosonfirst:locality:85969131",
+        "name": "Richfield",
+        "coordinates": {
+          "lat": 44.876033,
+          "lng": -93.283292
+        },
+        "places": [
+          "Richfield, MN"
+        ]
+      },
+      {
+        "id": "whosonfirst:locality:85969141",
+        "name": "Osseo",
+        "coordinates": {
+          "lat": 45.117196,
+          "lng": -93.396961
+        },
+        "places": [
+          "Osseo, MN"
+        ]
+      },
+      {
+        "id": "whosonfirst:locality:85969137",
+        "name": "Plymouth",
+        "coordinates": {
+          "lat": 45.022139,
+          "lng": -93.467323
+        },
+        "places": [
+          "Plymouth, MN"
+        ]
+      },
+      {
+        "id": "whosonfirst:locality:85953401",
+        "name": "Coon Rapids",
+        "coordinates": {
+          "lat": 45.178209,
+          "lng": -93.308426
+        },
+        "places": [
+          "Coon Rapids, MN"
+        ]
+      },
+      {
+        "id": "whosonfirst:locality:85969211",
+        "name": "Eden Prairie",
+        "coordinates": {
+          "lat": 44.849122,
+          "lng": -93.462802
+        },
+        "places": [
+          "Eden Prairie, MN"
+        ]
+      },
+      {
+        "id": "whosonfirst:locality:85969217",
+        "name": "Crystal",
+        "coordinates": {
+          "lat": 45.051768,
+          "lng": -93.355352
+        },
+        "places": [
+          "Crystal, MN"
+        ]
+      },
+      {
+        "id": "whosonfirst:locality:85969205",
+        "name": "Golden Valley",
+        "coordinates": {
+          "lat": 44.989143,
+          "lng": -93.359894
+        },
+        "places": [
+          "Golden Valley, MN"
+        ]
+      },
+      {
+        "id": "whosonfirst:locality:85968433",
+        "name": "West St. Paul",
+        "coordinates": {
+          "lat": 44.901642,
+          "lng": -93.085767
+        },
+        "places": [
+          "West St. Paul, MN"
+        ]
+      },
+      {
+        "id": "whosonfirst:locality:1729461181",
+        "name": "Welch",
+        "coordinates": {
+          "lat": 44.60028,
+          "lng": -92.709105
+        },
+        "places": [
+          "Welch Village, MN"
+        ]
+      }
+    ],
+    "neighborhoods": [],
+    "regions": [
+      {
+        "id": "5",
+        "name": "Southeast Minnesota",
+        "coordinates": {
+          "lat": 44.408795,
+          "lng": -93.030311
+        },
+        "places": [
+          "Dennison, MN",
+          "Welch Village, MN"
+        ]
+      },
+      {
+        "id": "7",
+        "name": "Greater Minnesota",
+        "coordinates": {
+          "lat": 44.408795,
+          "lng": -93.030311
+        },
+        "places": [
+          "Dennison, MN",
+          "Welch Village, MN"
+        ]
+      },
+      {
+        "id": "1",
+        "name": "Twin Cities Metro",
+        "coordinates": {
+          "lat": 44.564061,
+          "lng": -93.330615
+        },
+        "places": [
+          "Elko New Market, MN"
+        ]
+      }
+    ]
+  },
+  "places": [
     {
-      "original_text": "metro area",
+      "original_text": "Gov. Tim Walz declared a peacetime emergency Wednesday and authorized the Minnesota National Guard to provide support for emergency storm operations.",
+      "location": "Minnesota",
+      "type": "state",
+      "importance": "primary",
+      "description": "The state where the peacetime emergency was declared due to the storm.",
+      "geocode": {
+        "geocode": "structured",
+        "region": "Minnesota",
+        "results": {
+          "id": "85688727",
+          "label": "Minnesota, USA",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -94.579641,
+              46.63636
+            ]
+          },
+          "confidence": {
+            "score": 1,
+            "match_type": "exact",
+            "accuracy": "centroid"
+          },
+          "boundaries": {
+            "neighborhood": {
+              "id": null,
+              "name": null
+            },
+            "city": {
+              "id": null,
+              "name": null
+            },
+            "county": {
+              "id": null,
+              "name": null
+            },
+            "state": {
+              "id": "whosonfirst:region:85688727",
+              "name": "Minnesota"
+            }
+          }
+        }
+      }
+    },
+    {
+      "original_text": "The storm dropped 13 inches of snow in Dennison, about an hour southeast of the Twin Cities, with 11 inches or more reported in Northfield, Elko New Market, Apple Valley, Stillwater and Owatonna, the National Weather Service said.",
+      "location": "Dennison, MN",
+      "type": "city",
+      "importance": "primary",
+      "description": "Dennison received 13 inches of snow, one of the highest amounts reported.",
+      "geocode": {
+        "geocode": "search",
+        "text": "Dennison, MN",
+        "results": {
+          "id": "85952887",
+          "label": "Dennison, MN, USA",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -93.030311,
+              44.408795
+            ]
+          },
+          "confidence": {
+            "score": 1,
+            "match_type": "exact",
+            "accuracy": "centroid"
+          },
+          "boundaries": {
+            "neighborhood": {
+              "id": null,
+              "name": null
+            },
+            "city": {
+              "id": "whosonfirst:locality:85952887",
+              "name": "Dennison"
+            },
+            "county": {
+              "id": "whosonfirst:county:102087843",
+              "name": "Goodhue County"
+            },
+            "state": {
+              "id": "whosonfirst:region:85688727",
+              "name": "Minnesota"
+            }
+          }
+        }
+      }
+    },
+    {
+      "original_text": "The storm dropped 13 inches of snow in Dennison, about an hour southeast of the Twin Cities, with 11 inches or more reported in Northfield, Elko New Market, Apple Valley, Stillwater and Owatonna, the National Weather Service said.",
+      "location": "Northfield, MN",
+      "type": "city",
+      "importance": "primary",
+      "description": "Northfield reported 11 inches or more of snow from the storm.",
+      "geocode": {
+        "geocode": "search",
+        "text": "Northfield, MN",
+        "results": {
+          "id": "85968737",
+          "label": "Northfield, MN, USA",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -93.166592,
+              44.452922
+            ]
+          },
+          "confidence": {
+            "score": 1,
+            "match_type": "exact",
+            "accuracy": "centroid"
+          },
+          "boundaries": {
+            "neighborhood": {
+              "id": null,
+              "name": null
+            },
+            "city": {
+              "id": "whosonfirst:locality:85968737",
+              "name": "Northfield"
+            },
+            "county": {
+              "id": "whosonfirst:county:102087623",
+              "name": "Rice County"
+            },
+            "state": {
+              "id": "whosonfirst:region:85688727",
+              "name": "Minnesota"
+            }
+          }
+        }
+      }
+    },
+    {
+      "original_text": "The storm dropped 13 inches of snow in Dennison, about an hour southeast of the Twin Cities, with 11 inches or more reported in Northfield, Elko New Market, Apple Valley, Stillwater and Owatonna, the National Weather Service said.",
+      "location": "Elko New Market, MN",
+      "type": "city",
+      "importance": "primary",
+      "description": "Elko New Market reported 11 inches or more of snow from the storm.",
+      "geocode": {
+        "geocode": "search",
+        "text": "Elko New Market, MN",
+        "results": {
+          "id": "85952527",
+          "label": "Elko New Market, MN, USA",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -93.330615,
+              44.564061
+            ]
+          },
+          "confidence": {
+            "score": 1,
+            "match_type": "exact",
+            "accuracy": "centroid"
+          },
+          "boundaries": {
+            "neighborhood": {
+              "id": null,
+              "name": null
+            },
+            "city": {
+              "id": "whosonfirst:locality:85952527",
+              "name": "Elko New Market"
+            },
+            "county": {
+              "id": "whosonfirst:county:102087041",
+              "name": "Scott County"
+            },
+            "state": {
+              "id": "whosonfirst:region:85688727",
+              "name": "Minnesota"
+            }
+          }
+        }
+      }
+    },
+    {
+      "original_text": "The storm dropped 13 inches of snow in Dennison, about an hour southeast of the Twin Cities, with 11 inches or more reported in Northfield, Elko New Market, Apple Valley, Stillwater and Owatonna, the National Weather Service said.",
+      "location": "Apple Valley, MN",
+      "type": "city",
+      "importance": "primary",
+      "description": "Apple Valley reported 11 inches or more of snow from the storm.",
+      "geocode": {
+        "geocode": "search",
+        "text": "Apple Valley, MN",
+        "results": {
+          "id": "85968509",
+          "label": "Apple Valley, MN, USA",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -93.20062,
+              44.746699
+            ]
+          },
+          "confidence": {
+            "score": 1,
+            "match_type": "exact",
+            "accuracy": "centroid"
+          },
+          "boundaries": {
+            "neighborhood": {
+              "id": null,
+              "name": null
+            },
+            "city": {
+              "id": "whosonfirst:locality:85968509",
+              "name": "Apple Valley"
+            },
+            "county": {
+              "id": "whosonfirst:county:102087895",
+              "name": "Dakota County"
+            },
+            "state": {
+              "id": "whosonfirst:region:85688727",
+              "name": "Minnesota"
+            }
+          }
+        }
+      }
+    },
+    {
+      "original_text": "The storm dropped 13 inches of snow in Dennison, about an hour southeast of the Twin Cities, with 11 inches or more reported in Northfield, Elko New Market, Apple Valley, Stillwater and Owatonna, the National Weather Service said.",
+      "location": "Stillwater, MN",
+      "type": "city",
+      "importance": "primary",
+      "description": "Stillwater reported 11 inches or more of snow from the storm.",
+      "geocode": {
+        "geocode": "search",
+        "text": "Stillwater, MN",
+        "results": {
+          "id": "1729454989",
+          "label": "Stillwater, MN, USA",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -92.810322,
+              45.101759
+            ]
+          },
+          "confidence": {
+            "score": 1,
+            "match_type": "exact",
+            "accuracy": "centroid"
+          },
+          "boundaries": {
+            "neighborhood": {
+              "id": null,
+              "name": null
+            },
+            "city": {
+              "id": "whosonfirst:locality:1729454989",
+              "name": "Stillwater"
+            },
+            "county": {
+              "id": "whosonfirst:county:102087659",
+              "name": "Washington County"
+            },
+            "state": {
+              "id": "whosonfirst:region:85688727",
+              "name": "Minnesota"
+            }
+          }
+        }
+      }
+    },
+    {
+      "original_text": "The storm dropped 13 inches of snow in Dennison, about an hour southeast of the Twin Cities, with 11 inches or more reported in Northfield, Elko New Market, Apple Valley, Stillwater and Owatonna, the National Weather Service said.",
+      "location": "Owatonna, MN",
+      "type": "city",
+      "importance": "primary",
+      "description": "Owatonna reported 11 inches or more of snow from the storm.",
+      "geocode": {
+        "geocode": "search",
+        "text": "Owatonna, MN",
+        "results": {
+          "id": "85968951",
+          "label": "Owatonna, MN, USA",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -93.221816,
+              44.084041
+            ]
+          },
+          "confidence": {
+            "score": 1,
+            "match_type": "exact",
+            "accuracy": "centroid"
+          },
+          "boundaries": {
+            "neighborhood": {
+              "id": null,
+              "name": null
+            },
+            "city": {
+              "id": "whosonfirst:locality:85968951",
+              "name": "Owatonna"
+            },
+            "county": {
+              "id": "whosonfirst:county:102087661",
+              "name": "Steele County"
+            },
+            "state": {
+              "id": "whosonfirst:region:85688727",
+              "name": "Minnesota"
+            }
+          }
+        }
+      }
+    },
+    {
+      "original_text": "The official yardstick for the metro area at the Minneapolis-St. Paul International Airport measured 9.5 inches as of midday Wednesday, the Weather Service said.",
+      "location": "Minneapolis-St. Paul International Airport, MN",
+      "type": "place",
+      "importance": "primary",
+      "description": "The airport is the official measurement site for the metro area, recording 9.5 inches of snow.",
+      "geocode": {
+        "geocode": "search",
+        "text": "4300 Glumack Dr, St Paul, MN 55111, United States",
+        "results": {
+          "id": "us/mn/hennepin-addresses-county:6eab9859d8a8e8d2",
+          "label": "4300 Glumack Drive, St. Paul, MN, USA",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -93.211374,
+              44.88351
+            ]
+          },
+          "confidence": {
+            "score": 1,
+            "match_type": "exact",
+            "accuracy": "point"
+          },
+          "boundaries": {
+            "neighborhood": {
+              "id": null,
+              "name": null
+            },
+            "city": {
+              "id": "whosonfirst:locality:85953191",
+              "name": "St. Paul"
+            },
+            "county": {
+              "id": "whosonfirst:county:102087709",
+              "name": "Hennepin County"
+            },
+            "state": {
+              "id": "whosonfirst:region:85688727",
+              "name": "Minnesota"
+            }
+          }
+        }
+      }
+    },
+    {
+      "original_text": "That was the most of the season in the Twin Cities, which previously had been 5.5 inches on Dec. 19.",
       "location": "Twin Cities, MN",
-      "type": "primary",
-      "nature": "affected_by",
-      "description": "The winter storm battered this area",
-      "formatted_address": "Twin Cities, MN, USA",
-      "lat": 44.9374831,
-      "lng": -93.20099979999999,
-      "place_id": "ChIJj1O3W_0p9ocRIKSuqIbBcNA",
-      "types": [
-        "colloquial_area",
-        "political"
-      ]
+      "type": "region_city",
+      "importance": "primary",
+      "description": "The Twin Cities experienced the season's largest snowfall, impacting daily life.",
+      "geocode": {
+        "geocode": "none",
+        "text": "Twin Cities, MN",
+        "results": {
+          "id": "85969169",
+          "label": "Minneapolis, MN, USA",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -93.266563,
+              44.96313
+            ]
+          },
+          "confidence": {
+            "score": 1,
+            "match_type": "exact",
+            "accuracy": "centroid"
+          },
+          "boundaries": {
+            "neighborhood": {
+              "id": null,
+              "name": null
+            },
+            "city": {
+              "id": "whosonfirst:locality:85969169",
+              "name": "Minneapolis"
+            },
+            "county": {
+              "id": "whosonfirst:county:102087709",
+              "name": "Hennepin County"
+            },
+            "state": {
+              "id": "whosonfirst:region:85688727",
+              "name": "Minnesota"
+            }
+          }
+        }
+      }
     },
     {
-      "original_text": "Interstate 90 between Luverne and Blue Earth",
-      "location": "Luverne, MN",
-      "type": "primary",
-      "nature": "affected_by",
-      "description": "Major road closed due to the storm",
-      "formatted_address": "Luverne, MN 56156, USA",
-      "lat": 43.6555249,
-      "lng": -96.2025289,
-      "place_id": "ChIJE2SnO6P3i4cR1I5-WctBoPc",
-      "types": [
-        "locality",
-        "political"
-      ]
+      "original_text": "\u201cI love this,\u201d said Nam Bang O, as he plowed out of his driveway in Burnsville on Wednesday morning.",
+      "location": "Burnsville, MN",
+      "type": "city",
+      "importance": "secondary",
+      "description": "Burnsville is where a resident expressed enjoyment of the snow.",
+      "geocode": {
+        "geocode": "search",
+        "text": "Burnsville, MN",
+        "results": {
+          "id": "85968497",
+          "label": "Burnsville, MN, USA",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -93.285912,
+              44.759561
+            ]
+          },
+          "confidence": {
+            "score": 1,
+            "match_type": "exact",
+            "accuracy": "centroid"
+          },
+          "boundaries": {
+            "neighborhood": {
+              "id": null,
+              "name": null
+            },
+            "city": {
+              "id": "whosonfirst:locality:85968497",
+              "name": "Burnsville"
+            },
+            "county": {
+              "id": "whosonfirst:county:102087895",
+              "name": "Dakota County"
+            },
+            "state": {
+              "id": "whosonfirst:region:85688727",
+              "name": "Minnesota"
+            }
+          }
+        }
+      }
     },
     {
-      "original_text": "Interstate 90 between Luverne and Blue Earth",
-      "location": "Blue Earth, MN",
-      "type": "primary",
-      "nature": "affected_by",
-      "description": "Major road closed due to the storm",
-      "formatted_address": "Blue Earth, MN 56013, USA",
-      "lat": 43.6375818,
-      "lng": -94.10239059999999,
-      "place_id": "ChIJdZgTTZ8S9IcRHm_YMSIdTy0",
-      "types": [
-        "locality",
-        "political"
-      ]
-    },
-    {
-      "original_text": "Freeborn, Faribault, Blue Earth, Brown, Waseca, Nicollet, Le Sueur, Rock and Sibley counties",
-      "location": "Freeborn County, MN",
-      "type": "primary",
-      "nature": "affected_by",
-      "description": "No-travel advisory in effect",
-      "formatted_address": "Freeborn County, MN, USA",
-      "lat": 43.6656285,
-      "lng": -93.33889169999999,
-      "place_id": "ChIJJauksfcz8YcRuQQWHlxvv1Q",
-      "types": [
-        "administrative_area_level_2",
-        "political"
-      ]
-    },
-    {
-      "original_text": "Freeborn, Faribault, Blue Earth, Brown, Waseca, Nicollet, Le Sueur, Rock and Sibley counties",
-      "location": "Faribault County, MN",
-      "type": "primary",
-      "nature": "affected_by",
-      "description": "No-travel advisory in effect",
-      "formatted_address": "Faribault County, MN, USA",
-      "lat": 43.6448766,
-      "lng": -93.9878427,
-      "place_id": "ChIJyRfkC9kI9IcRx9r4iRqX61o",
-      "types": [
-        "administrative_area_level_2",
-        "political"
-      ]
-    },
-    {
-      "original_text": "Freeborn, Faribault, Blue Earth, Brown, Waseca, Nicollet, Le Sueur, Rock and Sibley counties",
-      "location": "Blue Earth County, MN",
-      "type": "primary",
-      "nature": "affected_by",
-      "description": "No-travel advisory in effect",
-      "formatted_address": "Blue Earth County, MN, USA",
-      "lat": 43.9505132,
-      "lng": -93.9878427,
-      "place_id": "ChIJZ0INuV4V9IcRqEVB10xeEqw",
-      "types": [
-        "administrative_area_level_2",
-        "political"
-      ]
-    },
-    {
-      "original_text": "Freeborn, Faribault, Blue Earth, Brown, Waseca, Nicollet, Le Sueur, Rock and Sibley counties",
-      "location": "Brown County, MN",
-      "type": "primary",
-      "nature": "affected_by",
-      "description": "No-travel advisory in effect",
-      "formatted_address": "Brown County, MN, USA",
-      "lat": 44.2294379,
-      "lng": -94.645035,
-      "place_id": "ChIJ5b9XZBw-9YcRL5bVrsrmvmQ",
-      "types": [
-        "administrative_area_level_2",
-        "political"
-      ]
-    },
-    {
-      "original_text": "Freeborn, Faribault, Blue Earth, Brown, Waseca, Nicollet, Le Sueur, Rock and Sibley counties",
-      "location": "Waseca County, MN",
-      "type": "primary",
-      "nature": "affected_by",
-      "description": "No-travel advisory in effect",
-      "formatted_address": "Waseca County, MN, USA",
-      "lat": 43.961388,
-      "lng": -93.66232389999999,
-      "place_id": "ChIJmzdsy_yi9ocRkG1GfEdBpjo",
-      "types": [
-        "administrative_area_level_2",
-        "political"
-      ]
-    },
-    {
-      "original_text": "Freeborn, Faribault, Blue Earth, Brown, Waseca, Nicollet, Le Sueur, Rock and Sibley counties",
-      "location": "Nicollet County, MN",
-      "type": "primary",
-      "nature": "affected_by",
-      "description": "No-travel advisory in effect",
-      "formatted_address": "Nicollet County, MN, USA",
-      "lat": 44.3572855,
-      "lng": -94.27436279999999,
-      "place_id": "ChIJH7Caf-NT9IcRPniHkZM03VM",
-      "types": [
-        "administrative_area_level_2",
-        "political"
-      ]
-    },
-    {
-      "original_text": "Freeborn, Faribault, Blue Earth, Brown, Waseca, Nicollet, Le Sueur, Rock and Sibley counties",
-      "location": "Le Sueur County, MN",
-      "type": "primary",
-      "nature": "affected_by",
-      "description": "No-travel advisory in effect",
-      "formatted_address": "Le Sueur County, MN, USA",
-      "lat": 44.4162493,
-      "lng": -93.66232389999999,
-      "place_id": "ChIJpSIy1CyH9ocRckAuQtqlMGk",
-      "types": [
-        "administrative_area_level_2",
-        "political"
-      ]
-    },
-    {
-      "original_text": "Freeborn, Faribault, Blue Earth, Brown, Waseca, Nicollet, Le Sueur, Rock and Sibley counties",
-      "location": "Rock County, MN",
-      "type": "primary",
-      "nature": "affected_by",
-      "description": "No-travel advisory in effect",
-      "formatted_address": "Rock County, MN, USA",
-      "lat": 43.6927003,
-      "lng": -96.3226072,
-      "place_id": "ChIJDx4MTFH3i4cRFxtQqT6sBnU",
-      "types": [
-        "administrative_area_level_2",
-        "political"
-      ]
-    },
-    {
-      "original_text": "Freeborn, Faribault, Blue Earth, Brown, Waseca, Nicollet, Le Sueur, Rock and Sibley counties",
-      "location": "Sibley County, MN",
-      "type": "primary",
-      "nature": "affected_by",
-      "description": "No-travel advisory in effect",
-      "formatted_address": "Sibley County, MN, USA",
-      "lat": 44.5502089,
-      "lng": -94.15137639999999,
-      "place_id": "ChIJ5ygCaLm89YcRAXiG_kWmPkI",
-      "types": [
-        "administrative_area_level_2",
-        "political"
-      ]
-    },
-    {
-      "original_text": "St. Paul",
+      "original_text": "Treacherous conditions led St. Paul Public Schools to call an e-learning day.",
       "location": "St. Paul, MN",
-      "type": "primary",
-      "nature": "affected_by",
-      "description": "Public schools called an e-learning day due to the storm",
-      "formatted_address": "St Paul, MN, USA",
-      "lat": 44.9537029,
-      "lng": -93.0899578,
-      "place_id": "ChIJnzfp5M7UslIRKS7aP9KRcsg",
-      "types": [
-        "locality",
-        "political"
-      ]
+      "type": "city",
+      "importance": "primary",
+      "description": "St. Paul Public Schools switched to e-learning due to the storm.",
+      "geocode": {
+        "geocode": "search",
+        "text": "St. Paul, MN",
+        "results": {
+          "id": "85953191",
+          "label": "St. Paul, MN, USA",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -93.09013,
+              44.95304
+            ]
+          },
+          "confidence": {
+            "score": 1,
+            "match_type": "exact",
+            "accuracy": "centroid"
+          },
+          "boundaries": {
+            "neighborhood": {
+              "id": null,
+              "name": null
+            },
+            "city": {
+              "id": "whosonfirst:locality:85953191",
+              "name": "St. Paul"
+            },
+            "county": {
+              "id": "whosonfirst:county:102087007",
+              "name": "Ramsey County"
+            },
+            "state": {
+              "id": "whosonfirst:region:85688727",
+              "name": "Minnesota"
+            }
+          }
+        }
+      }
     },
     {
-      "original_text": "Minneapolis",
+      "original_text": "In Minneapolis, students in kindergarten through fifth grade got the day off for a \u201csevere weather day.\u201d",
       "location": "Minneapolis, MN",
-      "type": "primary",
-      "nature": "affected_by",
-      "description": "Severe Weather Day for students due to the storm",
-      "formatted_address": "Minneapolis, MN, USA",
-      "lat": 44.977753,
-      "lng": -93.2650108,
-      "place_id": "ChIJvbt3k5Azs1IRB-56L4TJn5M",
-      "types": [
-        "locality",
-        "political"
-      ]
+      "type": "city",
+      "importance": "primary",
+      "description": "Minneapolis schools closed for younger students due to severe weather.",
+      "geocode": {
+        "geocode": "search",
+        "text": "Minneapolis, MN",
+        "results": {
+          "id": "85969169",
+          "label": "Minneapolis, MN, USA",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -93.266563,
+              44.96313
+            ]
+          },
+          "confidence": {
+            "score": 1,
+            "match_type": "exact",
+            "accuracy": "centroid"
+          },
+          "boundaries": {
+            "neighborhood": {
+              "id": null,
+              "name": null
+            },
+            "city": {
+              "id": "whosonfirst:locality:85969169",
+              "name": "Minneapolis"
+            },
+            "county": {
+              "id": "whosonfirst:county:102087709",
+              "name": "Hennepin County"
+            },
+            "state": {
+              "id": "whosonfirst:region:85688727",
+              "name": "Minnesota"
+            }
+          }
+        }
+      }
     },
     {
-      "original_text": "Centennial, Bloomington, Lakeville, Wayzata, Osseo and Mounds View",
-      "location": "Centennial, MN",
-      "type": "primary",
-      "nature": "affected_by",
-      "description": "Schools switching to a flexible or at home learning day",
-      "formatted_address": "Circle Pines, MN 55014, USA",
-      "lat": 45.1485771,
-      "lng": -93.15161239999999,
-      "place_id": "ChIJAelaqa4ns1IRlZhS5kqhQio",
-      "types": [
-        "locality",
-        "political"
-      ]
-    },
-    {
-      "original_text": "Centennial, Bloomington, Lakeville, Wayzata, Osseo and Mounds View",
-      "location": "Bloomington, MN",
-      "type": "primary",
-      "nature": "affected_by",
-      "description": "Schools switching to a flexible or at home learning day",
-      "formatted_address": "Bloomington, MN, USA",
-      "lat": 44.840798,
-      "lng": -93.2982799,
-      "place_id": "ChIJh5n0Cfok9ocRvAU53EyXcjo",
-      "types": [
-        "locality",
-        "political"
-      ]
-    },
-    {
-      "original_text": "Centennial, Bloomington, Lakeville, Wayzata, Osseo and Mounds View",
-      "location": "Lakeville, MN",
-      "type": "primary",
-      "nature": "affected_by",
-      "description": "Schools switching to a flexible or at home learning day",
-      "formatted_address": "Lakeville, MN, USA",
-      "lat": 44.6496868,
-      "lng": -93.24271999999999,
-      "place_id": "ChIJRwFh8L839ocR9EvbS0JUfqI",
-      "types": [
-        "locality",
-        "political"
-      ]
-    },
-    {
-      "original_text": "Centennial, Bloomington, Lakeville, Wayzata, Osseo and Mounds View",
-      "location": "Wayzata, MN",
-      "type": "primary",
-      "nature": "affected_by",
-      "description": "Schools switching to a flexible or at home learning day",
-      "formatted_address": "Wayzata, MN, USA",
-      "lat": 44.97413,
-      "lng": -93.5066217,
-      "place_id": "ChIJgaCLo5BMs1IRfPaaRQyuZZ8",
-      "types": [
-        "locality",
-        "political"
-      ]
-    },
-    {
-      "original_text": "Centennial, Bloomington, Lakeville, Wayzata, Osseo and Mounds View",
-      "location": "Osseo, MN",
-      "type": "primary",
-      "nature": "affected_by",
-      "description": "Schools switching to a flexible or at home learning day",
-      "formatted_address": "Osseo, MN 55369, USA",
-      "lat": 45.1194091,
-      "lng": -93.4024532,
-      "place_id": "ChIJye9wFjY4s1IRTzBC9mTrBss",
-      "types": [
-        "locality",
-        "political"
-      ]
-    },
-    {
-      "original_text": "Centennial, Bloomington, Lakeville, Wayzata, Osseo and Mounds View",
-      "location": "Mounds View, MN",
-      "type": "primary",
-      "nature": "affected_by",
-      "description": "Schools switching to a flexible or at home learning day",
-      "formatted_address": "Mounds View, MN 55112, USA",
-      "lat": 45.1049656,
-      "lng": -93.2085582,
-      "place_id": "ChIJPbqoNfYls1IRY9bKyPkPt74",
-      "types": [
-        "locality",
-        "political"
-      ]
-    },
-    {
-      "original_text": "Robbinsdale and Anoka-Hennepin",
+      "original_text": "Several other cities including Robbinsdale, Richfield, Osseo, Plymouth, Coon Rapids, Eden Prairie, Crystal, Golden Valley and West St. Paul also called snow emergencies.",
       "location": "Robbinsdale, MN",
-      "type": "primary",
-      "nature": "affected_by",
-      "description": "Schools closed for the day due to the storm",
-      "formatted_address": "Robbinsdale, MN, USA",
-      "lat": 45.032187,
-      "lng": -93.3385614,
-      "place_id": "ChIJOalFpVgxs1IRcvbt_RCa9zU",
-      "types": [
-        "locality",
-        "political"
-      ]
+      "type": "city",
+      "importance": "primary",
+      "description": "Robbinsdale declared a snow emergency due to the storm.",
+      "geocode": {
+        "geocode": "search",
+        "text": "Robbinsdale, MN",
+        "results": {
+          "id": "85969129",
+          "label": "Robbinsdale, MN, USA",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -93.331266,
+              45.030386
+            ]
+          },
+          "confidence": {
+            "score": 1,
+            "match_type": "exact",
+            "accuracy": "centroid"
+          },
+          "boundaries": {
+            "neighborhood": {
+              "id": null,
+              "name": null
+            },
+            "city": {
+              "id": "whosonfirst:locality:85969129",
+              "name": "Robbinsdale"
+            },
+            "county": {
+              "id": "whosonfirst:county:102087709",
+              "name": "Hennepin County"
+            },
+            "state": {
+              "id": "whosonfirst:region:85688727",
+              "name": "Minnesota"
+            }
+          }
+        }
+      }
     },
     {
-      "original_text": "Robbinsdale and Anoka-Hennepin",
-      "location": "Anoka, MN",
-      "type": "primary",
-      "nature": "affected_by",
-      "description": "Schools closed for the day due to the storm",
-      "formatted_address": "Anoka, MN, USA",
-      "lat": 45.1977428,
-      "lng": -93.3871758,
-      "place_id": "ChIJUYZ7YbwXs1IR5vO6i66MjGs",
-      "types": [
-        "locality",
-        "political"
-      ]
+      "original_text": "Several other cities including Robbinsdale, Richfield, Osseo, Plymouth, Coon Rapids, Eden Prairie, Crystal, Golden Valley and West St. Paul also called snow emergencies.",
+      "location": "Richfield, MN",
+      "type": "city",
+      "importance": "primary",
+      "description": "Richfield declared a snow emergency due to the storm.",
+      "geocode": {
+        "geocode": "search",
+        "text": "Richfield, MN",
+        "results": {
+          "id": "85969131",
+          "label": "Richfield, MN, USA",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -93.283292,
+              44.876033
+            ]
+          },
+          "confidence": {
+            "score": 1,
+            "match_type": "exact",
+            "accuracy": "centroid"
+          },
+          "boundaries": {
+            "neighborhood": {
+              "id": null,
+              "name": null
+            },
+            "city": {
+              "id": "whosonfirst:locality:85969131",
+              "name": "Richfield"
+            },
+            "county": {
+              "id": "whosonfirst:county:102087709",
+              "name": "Hennepin County"
+            },
+            "state": {
+              "id": "whosonfirst:region:85688727",
+              "name": "Minnesota"
+            }
+          }
+        }
+      }
     },
     {
-      "original_text": "Robbinsdale, Eden Prairie, Crystal, Golden Valley",
+      "original_text": "Several other cities including Robbinsdale, Richfield, Osseo, Plymouth, Coon Rapids, Eden Prairie, Crystal, Golden Valley and West St. Paul also called snow emergencies.",
+      "location": "Osseo, MN",
+      "type": "city",
+      "importance": "primary",
+      "description": "Osseo declared a snow emergency due to the storm.",
+      "geocode": {
+        "geocode": "search",
+        "text": "Osseo, MN",
+        "results": {
+          "id": "85969141",
+          "label": "Osseo, MN, USA",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -93.396961,
+              45.117196
+            ]
+          },
+          "confidence": {
+            "score": 1,
+            "match_type": "exact",
+            "accuracy": "centroid"
+          },
+          "boundaries": {
+            "neighborhood": {
+              "id": null,
+              "name": null
+            },
+            "city": {
+              "id": "whosonfirst:locality:85969141",
+              "name": "Osseo"
+            },
+            "county": {
+              "id": "whosonfirst:county:102087709",
+              "name": "Hennepin County"
+            },
+            "state": {
+              "id": "whosonfirst:region:85688727",
+              "name": "Minnesota"
+            }
+          }
+        }
+      }
+    },
+    {
+      "original_text": "Several other cities including Robbinsdale, Richfield, Osseo, Plymouth, Coon Rapids, Eden Prairie, Crystal, Golden Valley and West St. Paul also called snow emergencies.",
+      "location": "Plymouth, MN",
+      "type": "city",
+      "importance": "primary",
+      "description": "Plymouth declared a snow emergency due to the storm.",
+      "geocode": {
+        "geocode": "search",
+        "text": "Plymouth, MN",
+        "results": {
+          "id": "85969137",
+          "label": "Plymouth, MN, USA",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -93.467323,
+              45.022139
+            ]
+          },
+          "confidence": {
+            "score": 1,
+            "match_type": "exact",
+            "accuracy": "centroid"
+          },
+          "boundaries": {
+            "neighborhood": {
+              "id": null,
+              "name": null
+            },
+            "city": {
+              "id": "whosonfirst:locality:85969137",
+              "name": "Plymouth"
+            },
+            "county": {
+              "id": "whosonfirst:county:102087709",
+              "name": "Hennepin County"
+            },
+            "state": {
+              "id": "whosonfirst:region:85688727",
+              "name": "Minnesota"
+            }
+          }
+        }
+      }
+    },
+    {
+      "original_text": "Several other cities including Robbinsdale, Richfield, Osseo, Plymouth, Coon Rapids, Eden Prairie, Crystal, Golden Valley and West St. Paul also called snow emergencies.",
+      "location": "Coon Rapids, MN",
+      "type": "city",
+      "importance": "primary",
+      "description": "Coon Rapids declared a snow emergency due to the storm.",
+      "geocode": {
+        "geocode": "search",
+        "text": "Coon Rapids, MN",
+        "results": {
+          "id": "85953401",
+          "label": "Coon Rapids, MN, USA",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -93.308426,
+              45.178209
+            ]
+          },
+          "confidence": {
+            "score": 1,
+            "match_type": "exact",
+            "accuracy": "centroid"
+          },
+          "boundaries": {
+            "neighborhood": {
+              "id": null,
+              "name": null
+            },
+            "city": {
+              "id": "whosonfirst:locality:85953401",
+              "name": "Coon Rapids"
+            },
+            "county": {
+              "id": "whosonfirst:county:102087861",
+              "name": "Anoka County"
+            },
+            "state": {
+              "id": "whosonfirst:region:85688727",
+              "name": "Minnesota"
+            }
+          }
+        }
+      }
+    },
+    {
+      "original_text": "Several other cities including Robbinsdale, Richfield, Osseo, Plymouth, Coon Rapids, Eden Prairie, Crystal, Golden Valley and West St. Paul also called snow emergencies.",
       "location": "Eden Prairie, MN",
-      "type": "primary",
-      "nature": "affected_by",
-      "description": "Cities called a snow emergency",
-      "formatted_address": "Eden Prairie, MN, USA",
-      "lat": 44.8546856,
-      "lng": -93.47078599999999,
-      "place_id": "ChIJhXY-JeIY9ocRr3JuVT5OgVo",
-      "types": [
-        "locality",
-        "political"
-      ]
+      "type": "city",
+      "importance": "primary",
+      "description": "Eden Prairie declared a snow emergency due to the storm.",
+      "geocode": {
+        "geocode": "search",
+        "text": "Eden Prairie, MN",
+        "results": {
+          "id": "85969211",
+          "label": "Eden Prairie, MN, USA",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -93.462802,
+              44.849122
+            ]
+          },
+          "confidence": {
+            "score": 1,
+            "match_type": "exact",
+            "accuracy": "centroid"
+          },
+          "boundaries": {
+            "neighborhood": {
+              "id": null,
+              "name": null
+            },
+            "city": {
+              "id": "whosonfirst:locality:85969211",
+              "name": "Eden Prairie"
+            },
+            "county": {
+              "id": "whosonfirst:county:102087709",
+              "name": "Hennepin County"
+            },
+            "state": {
+              "id": "whosonfirst:region:85688727",
+              "name": "Minnesota"
+            }
+          }
+        }
+      }
     },
     {
-      "original_text": "Robbinsdale, Eden Prairie, Crystal, Golden Valley",
+      "original_text": "Several other cities including Robbinsdale, Richfield, Osseo, Plymouth, Coon Rapids, Eden Prairie, Crystal, Golden Valley and West St. Paul also called snow emergencies.",
       "location": "Crystal, MN",
-      "type": "primary",
-      "nature": "affected_by",
-      "description": "Cities called a snow emergency",
-      "formatted_address": "Crystal, MN, USA",
-      "lat": 45.0327425,
-      "lng": -93.3602286,
-      "place_id": "ChIJ8zA-ZZg2s1IR3TuDP5bpxfA",
-      "types": [
-        "locality",
-        "political"
-      ]
+      "type": "city",
+      "importance": "primary",
+      "description": "Crystal declared a snow emergency due to the storm.",
+      "geocode": {
+        "geocode": "search",
+        "text": "Crystal, MN",
+        "results": {
+          "id": "85969217",
+          "label": "Crystal, MN, USA",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -93.355352,
+              45.051768
+            ]
+          },
+          "confidence": {
+            "score": 1,
+            "match_type": "exact",
+            "accuracy": "centroid"
+          },
+          "boundaries": {
+            "neighborhood": {
+              "id": null,
+              "name": null
+            },
+            "city": {
+              "id": "whosonfirst:locality:85969217",
+              "name": "Crystal"
+            },
+            "county": {
+              "id": "whosonfirst:county:102087709",
+              "name": "Hennepin County"
+            },
+            "state": {
+              "id": "whosonfirst:region:85688727",
+              "name": "Minnesota"
+            }
+          }
+        }
+      }
     },
     {
-      "original_text": "Robbinsdale, Eden Prairie, Crystal, Golden Valley",
+      "original_text": "Several other cities including Robbinsdale, Richfield, Osseo, Plymouth, Coon Rapids, Eden Prairie, Crystal, Golden Valley and West St. Paul also called snow emergencies.",
       "location": "Golden Valley, MN",
-      "type": "primary",
-      "nature": "affected_by",
-      "description": "Cities called a snow emergency",
-      "formatted_address": "Golden Valley, MN, USA",
-      "lat": 44.9917149,
-      "lng": -93.3600034,
-      "place_id": "ChIJacxbQmE0s1IROzf646j7wSU",
-      "types": [
-        "locality",
-        "political"
-      ]
+      "type": "city",
+      "importance": "primary",
+      "description": "Golden Valley declared a snow emergency due to the storm.",
+      "geocode": {
+        "geocode": "search",
+        "text": "Golden Valley, MN",
+        "results": {
+          "id": "85969205",
+          "label": "Golden Valley, MN, USA",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -93.359894,
+              44.989143
+            ]
+          },
+          "confidence": {
+            "score": 1,
+            "match_type": "exact",
+            "accuracy": "centroid"
+          },
+          "boundaries": {
+            "neighborhood": {
+              "id": null,
+              "name": null
+            },
+            "city": {
+              "id": "whosonfirst:locality:85969205",
+              "name": "Golden Valley"
+            },
+            "county": {
+              "id": "whosonfirst:county:102087709",
+              "name": "Hennepin County"
+            },
+            "state": {
+              "id": "whosonfirst:region:85688727",
+              "name": "Minnesota"
+            }
+          }
+        }
+      }
     },
     {
-      "original_text": "Woodbury",
-      "location": "Woodbury, MN",
-      "type": "primary",
-      "nature": "affected_by",
-      "description": "Received 10 inches of snow",
-      "formatted_address": "Woodbury, MN, USA",
-      "lat": 44.9238552,
-      "lng": -92.9593797,
-      "place_id": "ChIJq5WdlOnZ94cREIwdp_0Er4s",
-      "types": [
-        "locality",
-        "political"
-      ]
+      "original_text": "Several other cities including Robbinsdale, Richfield, Osseo, Plymouth, Coon Rapids, Eden Prairie, Crystal, Golden Valley and West St. Paul also called snow emergencies.",
+      "location": "West St. Paul, MN",
+      "type": "city",
+      "importance": "primary",
+      "description": "West St. Paul declared a snow emergency due to the storm.",
+      "geocode": {
+        "geocode": "search",
+        "text": "West St. Paul, MN",
+        "results": {
+          "id": "85968433",
+          "label": "West St. Paul, MN, USA",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -93.085767,
+              44.901642
+            ]
+          },
+          "confidence": {
+            "score": 1,
+            "match_type": "exact",
+            "accuracy": "centroid"
+          },
+          "boundaries": {
+            "neighborhood": {
+              "id": null,
+              "name": null
+            },
+            "city": {
+              "id": "whosonfirst:locality:85968433",
+              "name": "West St. Paul"
+            },
+            "county": {
+              "id": "whosonfirst:county:102087895",
+              "name": "Dakota County"
+            },
+            "state": {
+              "id": "whosonfirst:region:85688727",
+              "name": "Minnesota"
+            }
+          }
+        }
+      }
+    },
+    {
+      "original_text": "In a bit of irony, even with the all the snow, Welch Village ski area was closed on Wednesday due to a power outage.",
+      "location": "Welch Village, MN",
+      "type": "place",
+      "importance": "primary",
+      "description": "Welch Village ski area was closed due to a power outage caused by the storm.",
+      "geocode": {
+        "geocode": "search",
+        "text": "26685 County Road 7 Blvd, Welch, MN 55089",
+        "results": {
+          "id": "1729461181",
+          "label": "Welch, MN, USA",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -92.709105,
+              44.60028
+            ]
+          },
+          "confidence": {
+            "score": 0.6,
+            "match_type": "fallback",
+            "accuracy": "centroid"
+          },
+          "boundaries": {
+            "neighborhood": {
+              "id": null,
+              "name": null
+            },
+            "city": {
+              "id": "whosonfirst:locality:1729461181",
+              "name": "Welch"
+            },
+            "county": {
+              "id": "whosonfirst:county:102087843",
+              "name": "Goodhue County"
+            },
+            "state": {
+              "id": "whosonfirst:region:85688727",
+              "name": "Minnesota"
+            }
+          }
+        }
+      }
     }
-  ],
-  "cross_check": {
-    "check": "ok"
-  }
+  ]
 }
 ```
 

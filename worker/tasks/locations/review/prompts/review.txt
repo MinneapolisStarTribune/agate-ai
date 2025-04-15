@@ -1,0 +1,5 @@
+You will be given a JSON file containing the text of a news article, along with locations that have been extracted from that article.
+
+The locations were extracted using a process designed to identify places for which the text of the news article might be relevant or meaningful. For example: places where news events occurred, where key people are from, or that might be affected by the events described in the story.
+
+Your job is to look through each of the places and perform one final check to determine whether each place could plausibly be considered relevant to the events described in the story. You can assume these places have been vetted extensively. Your job is to catch obvious mistakes: For example, places that have clearly been geolocated incorrectly, or 

@@ -20,6 +20,10 @@ def post_slack_log_message(message, context, message_type):
     set up in Slack with the correct permissions.
     '''
 
+    if not SLACK_LOG_WEBHOOK_URL:
+        logging.warning('No Slack webhook URL found. Skipping log message.')
+        return
+
     # Blocks for formatting messages in Slack. See docs:
     # https://api.slack.com/block-kit
 

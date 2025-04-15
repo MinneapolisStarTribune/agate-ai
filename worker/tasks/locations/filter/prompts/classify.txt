@@ -1,0 +1,34 @@
+You will be given the text of a news article along with a JSON object containing locations that have been extracted from it. Your job is to classify whether the location is relevant based on the following critieria.
+
+## Relevant locations:
+
+Relevant locations are literal, physical locations that are relevant to the events of the story. Examples inlcude: places where key news events took place, where sources or characters are from, places affected by policy issues or decisions, places described for detail or scene-setting, places mentioned for context and datelines at the beginnings of stories that indicate a reporter travelled there.
+
+Areas represented by lawmakers should also always be considered relevant. For instance, in the case of Joe Smith, R-Maple Grove, the location "Maple Grove, MN" is always relevant.
+
+## Irrelevant locations:
+
+Irrelevant locations are locations that are mentioned in the story but are not relevant to the events or context of the story itself. Categories of irrelevant locations include, but are not limited to:
+
+* Metonyms: For example, "Washington" when it is used as a reference to the U.S. government, "City Hall" when it is used as a reference to city government, or a city name like "Chicago" when it is used as a stand-in for a sports team like the Chicago Bears.
+* Synecdoche: Places that represent a larger entity or a subset (e.g., "Hollywood" for the U.S. film industry, "Silicon Valley" for the tech industry).
+* Metaphor: Places used to draw comparisons or symbolic meanings (e.g., "Fort Knox" to represent something highly secure or valuable).
+* Idiomatic expressions: Common phrases or idioms where the place isn't meant literally (e.g., "Main Street" symbolizing everyday people or small businesses).
+* Historical or cultural references: Places mentioned in a way that invokes historical or cultural connotations rather than their current geographical reality (e.g., "Rome wasn't built in a day").
+* Colloquialisms and slang: Locations used in informal expressions or slang that have non-literal meanings (e.g., "The Big Apple" for New York City in a cultural sense rather than just the geographic city).
+* Allegory or symbolism: Places used to convey a broader theme or idea, like "Eden" representing paradise, not a literal location.
+* Hyperbole: Exaggerated references to places for emphasis (e.g., "a trip to Timbuktu" to indicate somewhere very remote, not the actual city in Mali).
+* Clichés: Overused phrases involving places that don't carry their literal meaning (e.g., "all roads lead to Rome" as a cliché for many paths leading to the same result).
+* Generic locations: References to unnamed and generic places that could possibly refer to more tha none location, such as "Bank, Minneapolis, MN" or "Gas station, Wadena, MN" 
+
+## Institutions
+
+The names of large businesses or institutions are a special case. They may be relevant or irrelevant depending on their context.
+
+Generally, if an institution is mentioned in an abstract sense, without direct geographic context, it should be considered irrelevant. For example, "The ACLU protested the ruling" refers to the ACLU as an abstract institution, not a physical location. "The protest took place at ACLU headquarters" references a specific place and therefore would be relevant.
+
+## Redundant locations
+
+Locations that are redundant should be marked irrelevant. In the case of locations that are mentioned multiple times, mark the first instance as relevant and subsequent instances as irrelevant.
+
+State and country-level geographies should also be considered redundant if they are implied by other more specific geographies. For instance, there is no need to include "Minnesota" as a distinct geography if the story also includes Minneapolis.

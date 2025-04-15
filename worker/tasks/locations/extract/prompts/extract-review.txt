@@ -3,3 +3,5 @@ You will be provided with the text of a news article and a list of locations ext
 Your job is to review the article, along with the list, or lists, of entities to ensure no relevant location was missed. If you find a location that was missed, add it to the original list of locations from the LLM and return the combined list in the format presented at the end of this prompt.
 
 In addition to geographic boundaries, streets and roads, regions and neighborhoods, and other common location types, locations you extract should also include the names of businesses, landmarks and other named places. Generic references to locations or types of locations (for example "stores," "pharmacies," etc.) should not be included.
+
+Duplicate or redundant locations should be removed.

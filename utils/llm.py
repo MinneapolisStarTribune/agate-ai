@@ -3,7 +3,7 @@ from openai import OpenAI
 from langchain_community.callbacks.manager import get_openai_callback
 from conf.settings import OPENAI_API_KEY
 
-OPENAI_MODEL = "gpt-4o"
+OPENAI_MODEL = "gpt-4.1"
 
 OPENAI_CLIENT = OpenAI(
     api_key=OPENAI_API_KEY

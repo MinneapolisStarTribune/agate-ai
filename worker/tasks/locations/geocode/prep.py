@@ -1,15 +1,12 @@
-import json
-import os
+import json, os, usaddress, logging, time, traceback
 import usaddress
-import logging
-import time
-import traceback
 from celery import Celery
 from celery.exceptions import MaxRetriesExceededError
 from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
-from duckduckgo_search import DDGS
 from utils.slack import post_slack_log_message
+from utils.geocode import get_city_state
+from utils.search import search_duckduckgo
 
 # Configure logging
 logging.basicConfig(
@@ -34,7 +31,7 @@ def _extract_best_address(query, search_results, max_retries=3):
     Returns:
         str: Best matching address or "No address found"
     """
-    llm = ChatOpenAI()
+    llm = ChatOpenAI(model="gpt-4.1")
     
     template = """Given the following search query and multiple search results, identify and return the single most accurate 
     physical address that best answers the query. Format the address in a standard US format.
@@ -76,40 +73,6 @@ def _extract_best_address(query, search_results, max_retries=3):
                 logging.error("Max retries exceeded for address extraction")
                 return "No address found"
 
-def _search_duckduckgo(query, max_results=5, max_retries=3):
-    """
-    Search DuckDuckGo for location information with retry logic.
-    
-    Args:
-        query (str): Search query
-        max_results (int): Maximum number of results to return
-        max_retries (int): Maximum number of retry attempts
-        
-    Returns:
-        list: Search results or empty list if search fails
-    """
-    logging.info(f"Searching DuckDuckGo for: {query}")
-    
-    for attempt in range(max_retries):
-        try:
-            with DDGS() as ddgs:
-                results = list(ddgs.text(query, max_results=max_results))
-                
-                if not results:
-                    logging.warning(f"No results found for query: {query}")
-                    return []
-                    
-                return results
-                
-        except Exception as e:
-            logging.error(f"Error searching DuckDuckGo (attempt {attempt + 1}): {str(e)}")
-            if attempt < max_retries - 1:
-                logging.info("Waiting 3 seconds before retrying...")
-                time.sleep(3)
-            else:
-                logging.error("Max retries exceeded for DuckDuckGo search")
-                return []
-
 def _check_if_addressable(location_str):
     """
     Use LLM to determine if a location is likely to have a physical address.
@@ -120,7 +83,7 @@ def _check_if_addressable(location_str):
     Returns:
         bool: True if location is likely addressable, False otherwise
     """
-    llm = ChatOpenAI()
+    llm = ChatOpenAI(model="gpt-4o")
     
     template = """Determine if the following location is likely a building or landmark with a physical street address. 
     This might include:
@@ -150,7 +113,7 @@ def _check_if_addressable(location_str):
     except Exception as e:
         logging.error(f"Error checking if location is addressable: {str(e)}")
         return False
-
+    
 ########## COMPONENT FUNCTIONS ##########
 
 ## Places and addresses
@@ -164,7 +127,12 @@ def prep_place(location):
         # Get the location string
         loc_str = location.get('location', '')
         if not loc_str:
-            return None
+            return {
+                'geocode': {
+                    'geocode': "search",
+                    'text': ""
+                }
+            }
             
         # First check if location is likely to have an address
         is_addressable = _check_if_addressable(loc_str)
@@ -175,7 +143,7 @@ def prep_place(location):
             
             # Search for the location
             query = f"What is the address of {loc_str}?"
-            search_results = _search_duckduckgo(query)
+            search_results = search_duckduckgo(query)
             
             if search_results:
                 # Extract the best address from search results
@@ -184,26 +152,37 @@ def prep_place(location):
                 
                 if best_address and best_address != "No address found":
                     return {
-                        'geocode': "search",
-                        'text': best_address
+                        'geocode': {
+                            'geocode': "search",
+                            'text': best_address
+                        }
                     }
             
             # If we couldn't find a specific address, fall back to search
             logging.info(f"No specific address found for '{loc_str}', falling back to original text")
             return {
-                'geocode': "search",
-                'text': location['location']
+                'geocode': {
+                    'geocode': "search",
+                    'text': location['location']
+                }
             }
         else:
             logging.info(f"Location '{loc_str}' is not likely to have an address")
             return {
-                'geocode': "search",
-                'text': location['location']
+                'geocode': {
+                    'geocode': "search",
+                    'text': location['location']
+                }
             }
             
     except Exception as e:
         logging.error(f"Error in prep_place: {str(e)}")
-        return None
+        return {
+            'geocode': {
+                'geocode': "search",
+                'text': location['location']
+            }
+        }
 
 def prep_street_road(location):
     """
@@ -213,7 +192,12 @@ def prep_street_road(location):
     try:
         loc_str = location.get('location', '')
         if not loc_str:
-            return None
+            return {
+                'geocode': {
+                    'geocode': "search",
+                    'text': ""
+                }
+            }
             
         # Try parsing with usaddress
         try:
@@ -238,29 +222,40 @@ def prep_street_road(location):
                 address_part = address_part.strip(' ,')
                 
                 return {
-                    'geocode': "structured",
-                    'text': location['location'],
-                    'address': address_part,
-                    'locality': city,
-                    'region': state
+                    'geocode': {
+                        'geocode': "structured",
+                        'text': location['location'],
+                        'address': address_part,
+                        'locality': city,
+                        'region': state
+                    }
                 }
             else:
                 logging.info("Missing required components (city or state)")
                 return {
-                    'geocode': "search",
-                    'text': location['location']
+                    'geocode': {
+                        'geocode': "search",
+                        'text': location['location']
+                    }
                 }
                 
         except (usaddress.RepeatedLabelError, ValueError) as e:
             logging.error(f"Could not parse address '{loc_str}': {str(e)}")
             return {
-                'geocode': "search",
-                'text': location['location']
+                'geocode': {
+                    'geocode': "search",
+                    'text': location['location']
+                }
             }
             
     except Exception as e:
         logging.error(f"Error in prep_street_road: {str(e)}")
-        return None
+        return {
+            'geocode': {
+                'geocode': "search",
+                'text': location['location']
+            }
+        }
 
 def prep_span(location):
     """
@@ -270,7 +265,12 @@ def prep_span(location):
     try:
         loc_str = location.get('location', '')
         if not loc_str:
-            return None
+            return {
+                'geocode': {
+                    'geocode': "none",
+                    'text': ""
+                }
+            }
             
         # Load the roads_spans prompt from local directory
         try:
@@ -282,14 +282,16 @@ def prep_span(location):
         except FileNotFoundError:
             logging.error("Could not find roads-spans.txt prompt")
             return {
-                'geocode': "none",
-                'text': location['location']
+                'geocode': {
+                    'geocode': "none",
+                    'text': location['location']
+                }
             }
             
         logging.info(f'Processing span: {loc_str}')
         
         # Set up LLM chain
-        llm = ChatOpenAI()
+        llm = ChatOpenAI(model="gpt-4o")
         # Use single braces for our actual template variable
         template = system_prompt + "\n\nHere is the string:\n\n{input}"
         prompt = ChatPromptTemplate.from_template(template)
@@ -300,12 +302,19 @@ def prep_span(location):
             result = chain.invoke({
                 "input": loc_str
             })
-            processed_data = json.loads(result.content)
+            
+            # Clean the response content by removing markdown code blocks
+            content = result.content.strip()
+            if content.startswith('```') and content.endswith('```'):
+                content = content[3:-3].strip()
+            if content.startswith('json'):
+                content = content[4:].strip()
+                
+            processed_data = json.loads(content)
             logging.info(f"LLM processed data: {processed_data}")
             
             # Handle case where LLM returns an array of spans
             if isinstance(processed_data, list):
-
                 # Create objects for each part of the span, based on the input object
                 spans = []
                 for span_data in processed_data:
@@ -330,24 +339,52 @@ def prep_span(location):
         except json.JSONDecodeError as e:
             logging.error(f"Error decoding LLM response: {str(e)}")
             return {
-                'geocode': "none",
-                'text': location['location']
+                'geocode': {
+                    'geocode': "none",
+                    'text': location['location']
+                }
             }
             
     except Exception as e:
         logging.error(f"Error processing span {loc_str}: {str(e)}")
         return {
-            'geocode': "none",
-            'text': location['location']
+            'geocode': {
+                'geocode': "none",
+                'text': location['location']
+            }
         }
 
-def prep_address_intersection(location):
+def prep_intersection_highway(location):
     """
     Prep an address_intersection location for geocoding by returning the original text.
     """
+    city_state = get_city_state(location['location'])
+
+    if city_state:   
+        return {
+            'geocode': {
+                'geocode': "structured",
+                'text': location['location'],
+                'locality': city_state['city'],
+                'region': city_state['state']
+            }
+        }
     return {
-        'geocode': "search",
-        'text': location['location']
+        'geocode': {
+            'geocode': "search",
+            'text': location['location']
+        }
+    }
+
+def prep_intersection_road(location):
+    """
+    Prep a road_intersection location for geocoding by returning the original text.
+    """
+    return {
+        'geocode': {
+            'geocode': "geocodio",
+            'text': location['location']
+        }
     }
 
 ## Administrative divisions
@@ -357,8 +394,10 @@ def prep_neighborhood(location):
     Prep a neighborhood location for geocoding by returning the original text.
     """
     return {
-        'geocode': "search",
-        'text': location['location']
+        'geocode': {
+            'geocode': "search",
+            'text': location['location']
+        }
     }
 
 def prep_city(location):
@@ -366,8 +405,10 @@ def prep_city(location):
     Prep a city location for geocoding by returning the original text.
     """
     return {
-        'geocode': "search",
-        'text': location['location']
+        'geocode': {
+            'geocode': "search",
+            'text': location['location']
+        }
     }
 
 def prep_county(location):
@@ -375,8 +416,10 @@ def prep_county(location):
     Prep a county location for geocoding by returning the original text.
     """
     return {
-        'geocode': "search",
-        'text': location['location']
+        'geocode': {
+            'geocode': "search",
+            'text': location['location']
+        }
     }
 
 def prep_state(location):
@@ -384,8 +427,10 @@ def prep_state(location):
     Prep a state location for geocoding by returning the original text.
     """
     return {
-        'geocode': "structured",
-        'region': location['location']
+        'geocode': {
+            'geocode': "structured",
+            'region': location['location']
+        }
     }
 
 ## Regions
@@ -395,8 +440,10 @@ def prep_region_city(location):
     Prep a region_city location for geocoding by returning the original text.
     """
     return {
-        'geocode': "none",
-        'text': location['location']
+        'geocode': {
+            'geocode': "none",
+            'text': location['location']
+        }
     }
 
 def prep_region_state(location):
@@ -404,8 +451,10 @@ def prep_region_state(location):
     Prep a region_state location for geocoding by returning the original text.
     """
     return {
-        'geocode': "none",
-        'text': location['location']
+        'geocode': {
+            'geocode': "none",
+            'text': location['location']
+        }
     }
 
 def prep_region_national(location):
@@ -413,8 +462,10 @@ def prep_region_national(location):
     Prep a region_national location for geocoding by returning the original text.
     """
     return {
-        'geocode': "none",
-        'text': location['location']
+        'geocode': {
+            'geocode': "none",
+            'text': location['location']
+        }
     }
 
 ########## CORE FUNCTION ##########
@@ -461,30 +512,50 @@ def _prep_locations(payload):
 
     # Process all locations through appropriate prep functions
     for location in processed_data:
-        # Skip if location already has geocode set (like from span processing)
-        if location.get('geocode'):
-            continue
-            
         if location.get('type') == 'region_state':
-            location['geocode'] = prep_region_state(location)
+            result = prep_region_state(location)
+            if result and 'geocode' in result:
+                location['geocode'] = result['geocode']
         elif location.get('type') == 'region_city':
-            location['geocode'] = prep_region_city(location)
+            result = prep_region_city(location)
+            if result and 'geocode' in result:
+                location['geocode'] = result['geocode']
         elif location.get('type') == 'region_national':
-            location['geocode'] = prep_region_national(location)
+            result = prep_region_national(location)
+            if result and 'geocode' in result:
+                location['geocode'] = result['geocode']
         elif location.get('type') == 'place':
-            location['geocode'] = prep_place(location)
+            result = prep_place(location)
+            if result and 'geocode' in result:
+                location['geocode'] = result['geocode']
         elif location.get('type') == 'street_road':
-            location['geocode'] = prep_street_road(location)
-        elif location.get('type') == 'address_intersection':
-            location['geocode'] = prep_address_intersection(location)
+            result = prep_street_road(location)
+            if result and 'geocode' in result:
+                location['geocode'] = result['geocode']
+        elif location.get('type') == 'intersection_highway':
+            result = prep_intersection_highway(location)
+            if result and 'geocode' in result:
+                location['geocode'] = result['geocode']
+        elif location.get('type') == 'intersection_road':
+            result = prep_intersection_road(location)
+            if result and 'geocode' in result:
+                location['geocode'] = result['geocode']
         elif location.get('type') == 'neighborhood':
-            location['geocode'] = prep_neighborhood(location)
+            result = prep_neighborhood(location)
+            if result and 'geocode' in result:
+                location['geocode'] = result['geocode']
         elif location.get('type') == 'city':
-            location['geocode'] = prep_city(location)
+            result = prep_city(location)
+            if result and 'geocode' in result:
+                location['geocode'] = result['geocode']
         elif location.get('type') == 'county':
-            location['geocode'] = prep_county(location)
+            result = prep_county(location)
+            if result and 'geocode' in result:
+                location['geocode'] = result['geocode']
         elif location.get('type') == 'state':
-            location['geocode'] = prep_state(location)
+            result = prep_state(location)
+            if result and 'geocode' in result:
+                location['geocode'] = result['geocode']
 
     # Update payload with processed locations
     payload['locations'] = processed_data

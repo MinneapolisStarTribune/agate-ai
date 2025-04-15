@@ -1,0 +1,3636 @@
+[
+  {
+    "story_type": {
+      "headline": "Free egg hunts for adults, concerts and other no-cost Twin Cities events to check out",
+      "category": "community_event",
+      "rationale": "The headline describes events such as egg hunts and concerts, which are community gatherings and public entertainment.",
+      "confidence": 0.9
+    },
+    "text": "The annual celebration of all things cannabis shares the same date as Easter Sunday this year \u2014 April 20. Take part in an adult Easter egg hunt, Stoner Bingo and video gaming. Entertainment includes a fashion and comedy show, live painting and performance by Dosh & the Mortiholics. (4:20-10 p.m. Sun. The Hook & Ladder, 3010 Minnehaha Av. S., Mpls. thehookmpls.com)\n\nWhy should the kiddos have all the fun? Bring out your inner child and hunt for eggs hidden throughout the Hewing Hotel\u2019s rooftop. Eggs are filled with prizes ranging from craft cocktails to hotel perks. (11 a.m. Sat. Hewing Hotel, 300 Washington Av. N., Mpls. hewinghotel.com)\n\nThe 10-member New Orleans-style brass band blends Dixie, jazz and blues for an early week music gig. (7 p.m. Tue. 449 Payne Av., St. Paul. facebook.com)\n\nA daylong event of hourly sessions with Normandale instructors and published authors. Course topics include discussions on publishing, poetry and more. Author Peter Geye gives a keynote address. (10 a.m.-3 p.m. Wed., keynote address at noon. Normandale Community College, 9700 France Av. S., Bloomington. normandale.edu)\n\nThe band plays songs that dominated the airwaves and made artists popular. (6-10 p.m. Fri. Black Stack Brewing, 755 N. Prior Av., St. Paul. blackstackbrewing.com)\n\nAn inaugural art and music festival features performances by Porch Light, Mati, Gora Ireke, DJ Caiked Up and DJ Angel Beloved. See glass-blowing demonstrations, eat from food trucks and shop from local vendors. (2-10 p.m. Sat. Minnesota Legit, 314 NE. Buchanan St., Mpls. mnlegit.com)\n\nIf you can\u2019t afford tickets to the Kendrick Lamar and Sza show at U.S. Bank Stadium, here\u2019s another option. Head for this preconcert party near the venue where you can still catch the vibe. Themed food and drinks will be available. (4-7 p.m. Sat. Umbra, 708 S. 3rd St., Mpls. umbrampls.com)\n\nThe opening reception features an artist talk and book release with Christine Armbruster for her exhibition \u201cYou Belong Where You Feel Free.\u201d (Opening reception 6-8 p.m. Sat. Exhibit through May 10. 2601 27th Av. S., Mpls. praxisgallery.com)\n\nLearn about the craft from a member of the American Association of Woodturners. Also, stop by the current sculpture exhibit and auction, \u201cOpen/Closed.\u201d (1-4 p.m. Sun. Landmark Center, 75 W. 5th St., St. Paul. landmarkcenter.org)\n\nFree tickets! Sign up for the Star Tribune Going Out newsletter to enter a drawing to win free tickets to Twin Cities events at startribune.com/goingout.\n\nHave a free event? Email events@startribune.com three weeks in advance of publication for consideration.",
+    "headline": "Free egg hunts for adults, concerts and other no-cost Twin Cities events to check out",
+    "author": "Melissa Walker",
+    "pub_date": "2025-04-15T16:00:00.000Z",
+    "url": "https://www.startribune.com/free-egg-hunts-for-adults-concerts-and-other-no-cost-events-to-check-out/601331556",
+    "output_filename": "test0.json",
+    "locations": [
+      {
+        "original_text": "The Hook & Ladder, 3010 Minnehaha Av. S., Mpls. thehookmpls.com",
+        "location": "The Hook & Ladder, 3010 Minnehaha Ave. S., Minneapolis, MN",
+        "type": "place",
+        "importance": "primary",
+        "description": "The Hook & Ladder is the venue for the cannabis celebration event.",
+        "geocode": {
+          "geocode": "search",
+          "text": "3010 Minnehaha Ave, Minneapolis, MN 55406",
+          "results": {
+            "id": "us/mn/hennepin-addresses-county:b9b1dcd696ec0a78",
+            "label": "3010 Minnehaha Avenue, Minneapolis, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.234497,
+                44.947896
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "point"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": "whosonfirst:neighbourhood:1108799993",
+                "name": "Longfellow"
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969169",
+                "name": "Minneapolis"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded location matches the original address, including street, city, and state. All details align, and the match type is exact with high confidence."
+        }
+      },
+      {
+        "original_text": "Hewing Hotel, 300 Washington Av. N., Mpls. hewinghotel.com",
+        "location": "Hewing Hotel, 300 Washington Ave. N., Minneapolis, MN",
+        "type": "place",
+        "importance": "primary",
+        "description": "Hewing Hotel is hosting an adult Easter egg hunt on its rooftop.",
+        "geocode": {
+          "geocode": "search",
+          "text": "300 N Washington Ave, Minneapolis, MN 55401",
+          "results": {
+            "id": "us/mn/hennepin-addresses-county:0e37a0396236bfa8",
+            "label": "300 Washington Avenue North, Minneapolis, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.272568,
+                44.984956
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "point"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": "whosonfirst:neighbourhood:85872657",
+                "name": "North Loop"
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969169",
+                "name": "Minneapolis"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded result matches the original location string, including the street address, city, and state. The label is a clear and exact reflection of the input text."
+        }
+      },
+      {
+        "original_text": "449 Payne Av., St. Paul. facebook.com",
+        "location": "449 Payne Ave., St. Paul, MN",
+        "type": "address",
+        "importance": "primary",
+        "description": "The location for the New Orleans-style brass band performance.",
+        "geocode": {
+          "results": {},
+          "validated": false,
+          "rationale": "No geocoding results to validate"
+        }
+      },
+      {
+        "original_text": "Normandale Community College, 9700 France Av. S., Bloomington. normandale.edu",
+        "location": "Normandale Community College, 9700 France Ave. S., Bloomington, MN",
+        "type": "place",
+        "importance": "primary",
+        "description": "Normandale Community College is hosting a daylong event with authors and instructors.",
+        "geocode": {
+          "geocode": "search",
+          "text": "9700 France Ave S, Bloomington, MN 55431-4399, United States",
+          "results": {
+            "id": "us/mn/hennepin-addresses-county:c4e6edfd4ca0f8e3",
+            "label": "9700 France Avenue South, Bloomington, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.33053,
+                44.83034
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "point"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969239",
+                "name": "Bloomington"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded location exactly matches the original location string, including the address, city, and state. All details align, and the confidence score is high."
+        }
+      },
+      {
+        "original_text": "Black Stack Brewing, 755 N. Prior Av., St. Paul. blackstackbrewing.com",
+        "location": "Black Stack Brewing, 755 N. Prior Ave., St. Paul, MN",
+        "type": "place",
+        "importance": "primary",
+        "description": "Black Stack Brewing is the venue for a music event featuring popular songs.",
+        "geocode": {
+          "geocode": "search",
+          "text": "755 Prior Ave N, Saint Paul, MN 55104",
+          "results": {
+            "id": "node/7195928869",
+            "label": "755 North Prior Avenue, St. Paul, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.183,
+                44.965883
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "point"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": "whosonfirst:neighbourhood:85873297",
+                "name": "Hamline-Midway"
+              },
+              "city": {
+                "id": "whosonfirst:locality:85953191",
+                "name": "St. Paul"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087007",
+                "name": "Ramsey County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded address matches the original location in both street address and city. Both specify 755 N. Prior Ave., St. Paul, MN, confirming an accurate geocode."
+        }
+      },
+      {
+        "original_text": "Minnesota Legit, 314 NE. Buchanan St., Mpls. mnlegit.com",
+        "location": "Minnesota Legit, 314 NE. Buchanan St., Minneapolis, MN",
+        "type": "place",
+        "importance": "primary",
+        "description": "Minnesota Legit is hosting an inaugural art and music festival.",
+        "geocode": {
+          "geocode": "search",
+          "text": "314 Buchanan St NE, Minneapolis, MN 55413",
+          "results": {
+            "id": "us/mn/hennepin-addresses-county:edcf9d7a519dba2e",
+            "label": "314 Buchanan Street NE, Minneapolis, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.240335,
+                44.992026
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "point"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": "whosonfirst:neighbourhood:85872669",
+                "name": "Beltrami"
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969169",
+                "name": "Minneapolis"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded location '314 Buchanan Street NE, Minneapolis, MN, USA' exactly matches the original location '314 NE. Buchanan St., Minneapolis, MN'. The street address, city, and state are identical, and the match type is 'exact'."
+        }
+      },
+      {
+        "original_text": "U.S. Bank Stadium",
+        "location": "U.S. Bank Stadium, Minneapolis, MN",
+        "type": "place",
+        "importance": "secondary",
+        "description": "U.S. Bank Stadium is mentioned as the venue for the Kendrick Lamar and Sza show.",
+        "geocode": {
+          "geocode": "search",
+          "text": "401 Chicago Avenue, Minneapolis, MN 55415",
+          "results": {
+            "id": "way/743461508",
+            "label": "401 Chicago Avenue South, Minneapolis, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.257851,
+                44.97258
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "point"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": "whosonfirst:neighbourhood:85872659",
+                "name": "Downtown East"
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969169",
+                "name": "Minneapolis"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded location (401 Chicago Avenue South, Minneapolis, MN) is the official address for U.S. Bank Stadium in Minneapolis and accurately reflects the original location string."
+        }
+      },
+      {
+        "original_text": "Umbra, 708 S. 3rd St., Mpls. umbrampls.com",
+        "location": "Umbra, 708 S. 3rd St., Minneapolis, MN",
+        "type": "place",
+        "importance": "primary",
+        "description": "Umbra is hosting a preconcert party near U.S. Bank Stadium.",
+        "geocode": {
+          "geocode": "search",
+          "text": "708 S 3rd St, Minneapolis, MN 55415, USA",
+          "results": {
+            "id": "us/mn/hennepin-addresses-county:5965f5a3dec391c1",
+            "label": "708 3rd Street South, Minneapolis, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.25869,
+                44.976582
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "point"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": "whosonfirst:neighbourhood:85872659",
+                "name": "Downtown East"
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969169",
+                "name": "Minneapolis"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded address '708 3rd Street South, Minneapolis, MN, USA' closely matches the original input address '708 S. 3rd St., Mpls.', where 'Mpls.' is a common abbreviation for Minneapolis. The city, street address, and state all match accurately."
+        }
+      },
+      {
+        "original_text": "2601 27th Av. S., Mpls. praxisgallery.com",
+        "location": "2601 27th Ave. S., Minneapolis, MN",
+        "type": "address",
+        "importance": "primary",
+        "description": "The location for the opening reception and exhibition by Christine Armbruster.",
+        "geocode": {
+          "results": {},
+          "validated": false,
+          "rationale": "No geocoding results to validate"
+        }
+      },
+      {
+        "original_text": "Landmark Center, 75 W. 5th St., St. Paul. landmarkcenter.org",
+        "location": "Landmark Center, 75 W. 5th St., St. Paul, MN",
+        "type": "place",
+        "importance": "primary",
+        "description": "Landmark Center is hosting a woodturning craft event and sculpture exhibit.",
+        "geocode": {
+          "geocode": "search",
+          "text": "75 5th St W, Saint Paul, MN 55102",
+          "results": {
+            "id": "way/43386059",
+            "label": "75 West 5th Street, St. Paul, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.097131,
+                44.945626
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "point"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": "whosonfirst:neighbourhood:85873317",
+                "name": "Downtown"
+              },
+              "city": {
+                "id": "whosonfirst:locality:85953191",
+                "name": "St. Paul"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087007",
+                "name": "Ramsey County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded location matches the original street address, city, and state exactly. The confidence score is high and the match type is exact."
+        }
+      }
+    ]
+  },
+  {
+    "story_type": {
+      "headline": "Driver likely on phone when he fatally struck woman in crosswalk, charges say",
+      "category": "crime_public_safety",
+      "rationale": "The story involves a fatal incident where a driver struck a pedestrian, which is a discrete public safety event involving law enforcement and legal charges.",
+      "confidence": 1.0
+    },
+    "text": "A driver was on his phone when he hit and killed a woman walking across a street in Wright County, according to a criminal complaint.\n\nJonathan William Edwards, 46, was charged Monday in Wright County District Court with criminal vehicular homicide in connection with the crash that occurred on Sept. 4 in Howard Lake on Hwy. 12 near 11th Avenue. Barbara Jean Hoppe, 85, of Howard Lake, Minn., was killed.\n\nEdwards, also of Howard Lake, was charged by summons and is due in court on May 9. Court records do not list an attorney for him. Messages were left Thursday seeking his response to the allegations.\n\nAccording to the complaint, Police Chief David Thompson was the first in law enforcement to respond to the scene about 2:48 p.m., where he saw an unresponsive Hoppe down in the road with head and arm injuries. Emergency responders took Hoppe to HCMC, where she was declared dead that afternoon.\n\nEdwards\u2019 van was stopped nearby in the eastbound lane of Hwy. 12. Edwards told police that Hoppe was in the middle of the street and not in the crosswalk. He said he locked up his brakes just before he struck her.\n\nA State Patrol sergeant watched video from a nearby gas station that showed Hoppe leave her home, then \u201cstanding at the crosswalk waiting for traffic on Hwy. 12 to clear,\u201d the complaint read. \u201cMs. Hoppe is seen on the video footage walking across Hwy. 12 within the marked and painted crosswalk.\u201d\n\nThe video captured Edwards\u2019 van nearing the crosswalk and \u201cnot slowing until the last moment when the brakes were abruptly applied,\u201d the complaint continued. The van hit Hoppe and sent her airborne.\n\nA second patrol sergeant checked Edwards\u2019 phone, and it showed an outgoing call to a bank at 2:46 p.m., \u201cvery near when the crash was reported to law enforcement,\u201d the complaint noted.\n\nEdwards claimed the phone was connected to a Bluetooth device, which would have allowed for hands-free calling. However, Edwards\u2019 van did not have any Bluetooth devices connected to it.",
+    "headline": "Driver likely on phone when he fatally struck woman in crosswalk, charges say",
+    "author": "Paul Walsh",
+    "pub_date": "2025-04-10T15:14:52.575Z",
+    "url": "https://www.startribune.com/driver-likely-on-phone-when-he-fatally-struck-woman-in-crosswalk-charges-say/601327509",
+    "output_filename": "test1.json",
+    "locations": [
+      {
+        "original_text": "A driver was on his phone when he hit and killed a woman walking across a street in Wright County, according to a criminal complaint.",
+        "location": "Wright County, MN",
+        "type": "county",
+        "importance": "primary",
+        "description": "The county where the fatal accident occurred.",
+        "geocode": {
+          "geocode": "search",
+          "text": "Wright County, MN",
+          "results": {
+            "id": "102087815",
+            "label": "Wright County, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.970115,
+                45.182465
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": null,
+                "name": null
+              },
+              "county": {
+                "id": "whosonfirst:county:102087815",
+                "name": "Wright County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded location 'Wright County, MN, USA' exactly matches the original context 'Wright County, MN.' The county and state are correct, and there is no conflicting information. This is a valid match."
+        }
+      },
+      {
+        "original_text": "Jonathan William Edwards, 46, was charged Monday in Wright County District Court with criminal vehicular homicide in connection with the crash that occurred on Sept. 4 in Howard Lake on Hwy. 12 near 11th Avenue.",
+        "location": "Howard Lake, MN",
+        "type": "city",
+        "importance": "primary",
+        "description": "The city where the crash occurred.",
+        "geocode": {
+          "geocode": "search",
+          "text": "Howard Lake, MN",
+          "results": {
+            "id": "85968913",
+            "label": "Howard Lake, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -94.067506,
+                45.056347
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": "whosonfirst:locality:85968913",
+                "name": "Howard Lake"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087815",
+                "name": "Wright County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded result clearly matches the original location string. Both specify Howard Lake, MN, and the county and state are correct. The match type is 'exact' with high confidence."
+        }
+      },
+      {
+        "original_text": "Jonathan William Edwards, 46, was charged Monday in Wright County District Court with criminal vehicular homicide in connection with the crash that occurred on Sept. 4 in Howard Lake on Hwy. 12 near 11th Avenue.",
+        "location": "Hwy. 12 near 11th Avenue, Howard Lake, MN",
+        "type": "intersection_highway",
+        "importance": "primary",
+        "description": "The specific location of the crash.",
+        "geocode": {
+          "geocode": "structured",
+          "text": "Hwy. 12 near 11th Avenue, Howard Lake, MN",
+          "locality": "Howard Lake",
+          "region": "MN",
+          "results": {
+            "id": "85968913",
+            "label": "Howard Lake, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -94.067506,
+                45.056347
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": "whosonfirst:locality:85968913",
+                "name": "Howard Lake"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087815",
+                "name": "Wright County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded location 'Howard Lake, MN, USA' matches the city mentioned in the original location string, which specifies 'Hwy. 12 near 11th Avenue, Howard Lake, MN.' Although the geocoded result is less specific than the original, it still accurately reflects the location within the correct city and state, making it a valid match."
+        }
+      },
+      {
+        "original_text": "Emergency responders took Hoppe to HCMC, where she was declared dead that afternoon.",
+        "location": "HCMC, Minneapolis, MN",
+        "type": "place",
+        "importance": "primary",
+        "description": "The hospital where Barbara Jean Hoppe was declared dead.",
+        "geocode": {
+          "geocode": "search",
+          "text": "701 Park Avenue, Minneapolis, MN 55415",
+          "results": {
+            "id": "way/143056841",
+            "label": "701 Park Avenue South, Minneapolis, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.262056,
+                44.971477
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "point"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": "whosonfirst:neighbourhood:420525017",
+                "name": "Elliot Park"
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969169",
+                "name": "Minneapolis"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The original location 'HCMC, Minneapolis, MN' is accurately reflected by the geocoded address '701 Park Avenue South, Minneapolis, MN, USA,' which is the official address of HCMC. The city and address match perfectly, making this a valid geocoding."
+        }
+      },
+      {
+        "original_text": "A State Patrol sergeant watched video from a nearby gas station that showed Hoppe leave her home, then \u201cstanding at the crosswalk waiting for traffic on Hwy. 12 to clear,\u201d the complaint read.",
+        "location": "Gas station, Howard Lake, MN",
+        "type": "place",
+        "importance": "secondary",
+        "description": "The gas station where video footage of the incident was captured.",
+        "geocode": {
+          "geocode": "search",
+          "text": "1025 6th St, Howard Lake, MN 55349",
+          "results": {
+            "id": "polyline:32269068",
+            "label": "1025 6th Street, Howard Lake, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -94.0741579,
+                45.0607403
+              ]
+            },
+            "confidence": {
+              "score": 0.8,
+              "match_type": "interpolated",
+              "accuracy": "point"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": "whosonfirst:locality:85968913",
+                "name": "Howard Lake"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087815",
+                "name": "Wright County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": false,
+          "rationale": "The original location is an unspecified gas station in Howard Lake, MN. The geocoded result returns a specific address (1025 6th Street, Howard Lake, MN) but there is no indication that this address corresponds to a gas station or the location in question. Without evidence tying the address to a gas station or the described location, the match is not sufficiently precise."
+        }
+      }
+    ]
+  },
+  {
+    "story_type": {
+      "headline": "Weekend traffic Nov. 1-3: Closures planned on I-35W, I-94 in Minneapolis",
+      "category": "roads_traffic",
+      "rationale": "The story is about road closures, which directly impact traffic and commuting.",
+      "confidence": 1.0
+    },
+    "text": "Closures of Interstates 94 and 35W in Minneapolis and lane reductions on Hwy. 12 in Wayzata could put a crimp on travel in the metro area this weekend.\n\nThe Minnesota Department of Transportation will shut down both directions of I-35W between I-94 and Crosstown Hwy. 62 from Friday night to Monday morning as crews prepare to shift all traffic to new pavement and start work on rebuilding the northbound lanes. Nightly closures on westbound I-94 between Hwy. 280 and I-35W will continue through Nov. 9.\n\nMotorists can expect traffic jams on Hwy. 12 in the vicinity of Hwy. 101/Central Avenue in Wayzata. The highway will be closed and drivers detoured up and down the ramps from Friday night to Monday morning.\n\nWeather permitting, a number of roads that have been closed for construction are expected to open on Friday, including on Hwy. 3 at 60th Street in Inver Grove Heights, Century Avenue/Hwy. 120 at 27th Street in Maplewood and Hwy. 13 between Fairlawn Avenue and Franklin Trail in Prior Lake.\n\nHere a few places motorists will encounter road work this weekend:\n\n1. I-35W: Both directions closed from 10 p.m. Friday to 5 a.m. Monday between I-94 and Crosstown Hwy. 62.\n\n2. Hennepin Avenue and 8th Street: Hennepin Avenue is a single lane in each direction between 7th and 12th streets; 8th Street closed from LaSalle Avenue to S. 2nd Avenue and Portland to Park avenues.\n\n3. I-94: Westbound closed from nightly from 10 p.m. to 6 a.m. between Hwy. 280 and I-35W through Nov. 9.\n\n4. Lake Street: Both directions closed from 10 p.m. Friday to 5 a.m. Monday between 2nd and Stevens avenues S.\n\n5. White Bear Avenue: Lane closures between Upper Afton Road and I-94 through early November.\n\n6. I-35W from Roseville to Lino Lakes: Lane reductions in both directions between Hwy. 36 in Roseville and Sunset Avenue in Lino Lakes.\n\n7. I-35W, 35E and 35 in Columbus and Forest Lake: Lane closures in both directions on I-35 between the split and Hwy. 8. Southbound I-35 reduced to two lanes from Hwy. 97 to the I-35W/35E split, and I-35W and I-35E each reduced to a single lane south of the split. Northbound I-35W reduced to a single lane approaching the I-35W/I-35E split.\n\n8. Bottineau Boulevard/County Road 81 in Brooklyn Park: Closed between N. 71st Avenue and Brooklyn Boulevard.\n\n9. I-94 in Rogers and Maple Grove: Westbound lane closures between I-494 and Hwy. 241 from 7 p.m. Friday to noon Saturday and resuming at 7 p.m. Sunday. Eastbound lane closures between Hwy. 241 and I-494 will be in place from 7 p.m. Friday to 5 a.m. Monday.\n\n10. I-35W in Bloomington: Ramp from southbound I-35W to westbound I-494 closed until Nov. 7. Lane restrictions in both directions between 106th Street and Cliff Road.\n\n11. Hwy. 12 in Wayzata: Closed in both directions at Hwy. 101/Central Avenue from 8 p.m. Friday to 5 a.m. Monday. Drivers will be diverted to the off- and on-ramps during the closure.\n\nTim Harlow \u2022 612-673-7768",
+    "headline": "Weekend traffic Nov. 1-3: Closures planned on I-35W, I-94 in Minneapolis",
+    "url": "https://www.startribune.com/weekend-traffic-nov-1-3-closures-planned-on-i-35w-i-94-in-minneapolis/564162742",
+    "author": "Tim Harlow",
+    "pub_date": "2019-10-31T21:32:17.000Z",
+    "output_filename": "test2.json",
+    "locations": [
+      {
+        "original_text": "Closures of Interstates 94 and 35W in Minneapolis and lane reductions on Hwy. 12 in Wayzata could put a crimp on travel in the metro area this weekend.",
+        "location": "Minneapolis, MN",
+        "type": "city",
+        "importance": "primary",
+        "description": "Minneapolis is where the closures of Interstates 94 and 35W are taking place.",
+        "geocode": {
+          "geocode": "search",
+          "text": "Minneapolis, MN",
+          "results": {
+            "id": "85969169",
+            "label": "Minneapolis, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.266563,
+                44.96313
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969169",
+                "name": "Minneapolis"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded result matches the original text and context, referencing Minneapolis, MN. The highways mentioned are in the Minneapolis metro area. The geocoding is accurate and specific to the input."
+        }
+      },
+      {
+        "original_text": "Closures of Interstates 94 and 35W in Minneapolis and lane reductions on Hwy. 12 in Wayzata could put a crimp on travel in the metro area this weekend.",
+        "location": "Wayzata, MN",
+        "type": "city",
+        "importance": "primary",
+        "description": "Wayzata is where lane reductions on Hwy. 12 are occurring.",
+        "geocode": {
+          "geocode": "search",
+          "text": "Wayzata, MN",
+          "results": {
+            "id": "85969113",
+            "label": "Wayzata, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.51671,
+                44.971056
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969113",
+                "name": "Wayzata"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded location 'Wayzata, MN, USA' exactly matches the original context 'Wayzata, MN', and the match type is 'exact' with a high confidence score, making it a valid geocode."
+        }
+      },
+      {
+        "original_text": "The Minnesota Department of Transportation will shut down both directions of I-35W between I-94 and Crosstown Hwy. 62 from Friday night to Monday morning as crews prepare to shift all traffic to new pavement and start work on rebuilding the northbound lanes.",
+        "location": "Crosstown Hwy. 62, MN",
+        "type": "street_road",
+        "importance": "primary",
+        "description": "Crosstown Hwy. 62 is the endpoint of the I-35W closure.",
+        "geocode": {
+          "geocode": "search",
+          "text": "Crosstown Hwy. 62, MN",
+          "results": {
+            "id": "85671049",
+            "label": "Menia, Egypt",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                30.127598,
+                28.221692
+              ]
+            },
+            "confidence": {
+              "score": 0.3,
+              "match_type": "fallback",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": null,
+                "name": null
+              },
+              "county": {
+                "id": null,
+                "name": null
+              },
+              "state": {
+                "id": "whosonfirst:region:85671049",
+                "name": "Menia"
+              }
+            }
+          },
+          "validated": false,
+          "rationale": "The original location refers to Minnesota, USA (Crosstown Hwy. 62, MN), but the geocoded result is Menia, Egypt, which is a completely different country and context. Therefore, the geocoding is invalid."
+        }
+      },
+      {
+        "original_text": "Nightly closures on westbound I-94 between Hwy. 280 and I-35W will continue through Nov. 9.",
+        "location": "Hwy. 280, MN",
+        "type": "street_road",
+        "importance": "primary",
+        "description": "Hwy. 280 is the starting point of the nightly closures on westbound I-94.",
+        "geocode": {
+          "geocode": "search",
+          "text": "Hwy. 280, MN",
+          "results": {
+            "id": "polyline:24165200",
+            "label": "County Highway 280, Wheeler, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -94.697031,
+                48.838518
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": "whosonfirst:locality:1729477631",
+                "name": "Wheeler"
+              },
+              "county": {
+                "id": "whosonfirst:county:102086985",
+                "name": "Lake of the Woods County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The original text refers to 'Hwy. 280, MN' and the geocoded result matches 'County Highway 280, Wheeler, MN, USA.' Both specify Highway 280 in Minnesota, and the state matches. While the city information may differ or be less relevant for a highway, the geocoding is an accurate reflection of the original location."
+        }
+      },
+      {
+        "original_text": "Motorists can expect traffic jams on Hwy. 12 in the vicinity of Hwy. 101/Central Avenue in Wayzata.",
+        "location": "Hwy. 101/Central Avenue, Wayzata, MN",
+        "type": "intersection_road",
+        "importance": "primary",
+        "description": "Hwy. 101/Central Avenue is where traffic jams are expected on Hwy. 12.",
+        "geocode": {
+          "geocode": "geocodio",
+          "text": "Hwy. 101/Central Avenue, Wayzata, MN",
+          "results": {
+            "id": "us/mn/hennepin-addresses-county:0c012cf0a9c55267",
+            "label": "1042 Wayzata Boulevard East, Wayzata, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.502405,
+                44.97079
+              ]
+            },
+            "confidence": {
+              "score": 0.8,
+              "match_type": null,
+              "accuracy": "point"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969113",
+                "name": "Wayzata"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded location (1042 Wayzata Boulevard East, Wayzata, MN) is in Wayzata, MN and in close proximity to Hwy. 12 and Hwy. 101/Central Avenue. The city and state match the original context, and the location is within the expected area. Therefore, the geocoding appears to be a valid match."
+        }
+      },
+      {
+        "original_text": "Weather permitting, a number of roads that have been closed for construction are expected to open on Friday, including on Hwy. 3 at 60th Street in Inver Grove Heights, Century Avenue/Hwy. 120 at 27th Street in Maplewood and Hwy. 13 between Fairlawn Avenue and Franklin Trail in Prior Lake.",
+        "location": "Inver Grove Heights, MN",
+        "type": "city",
+        "importance": "secondary",
+        "description": "Inver Grove Heights is where Hwy. 3 at 60th Street is expected to open.",
+        "geocode": {
+          "geocode": "search",
+          "text": "Inver Grove Heights, MN",
+          "results": {
+            "id": "85968481",
+            "label": "Inver Grove Heights, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.063663,
+                44.820899
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": "whosonfirst:locality:85968481",
+                "name": "Inver Grove Heights"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087895",
+                "name": "Dakota County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded result matches the original context 'Inver Grove Heights, MN' exactly, including the city and state. There is a high confidence score and exact match type, so the geocoding is valid."
+        }
+      },
+      {
+        "original_text": "Weather permitting, a number of roads that have been closed for construction are expected to open on Friday, including on Hwy. 3 at 60th Street in Inver Grove Heights, Century Avenue/Hwy. 120 at 27th Street in Maplewood and Hwy. 13 between Fairlawn Avenue and Franklin Trail in Prior Lake.",
+        "location": "Maplewood, MN",
+        "type": "city",
+        "importance": "secondary",
+        "description": "Maplewood is where Century Avenue/Hwy. 120 at 27th Street is expected to open.",
+        "geocode": {
+          "geocode": "search",
+          "text": "Maplewood, MN",
+          "results": {
+            "id": "1729476003",
+            "label": "Maplewood, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -95.968555,
+                46.499499
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": "whosonfirst:locality:1729476003",
+                "name": "Maplewood"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087803",
+                "name": "Otter Tail County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The original text mentions an intersection in Maplewood, MN, and the geocoded result is for Maplewood, MN, which is appropriate as it matches the location at the city level. The geocoding reflects the original location string accurately."
+        }
+      },
+      {
+        "original_text": "Weather permitting, a number of roads that have been closed for construction are expected to open on Friday, including on Hwy. 3 at 60th Street in Inver Grove Heights, Century Avenue/Hwy. 120 at 27th Street in Maplewood and Hwy. 13 between Fairlawn Avenue and Franklin Trail in Prior Lake.",
+        "location": "Prior Lake, MN",
+        "type": "city",
+        "importance": "secondary",
+        "description": "Prior Lake is where Hwy. 13 between Fairlawn Avenue and Franklin Trail is expected to open.",
+        "geocode": {
+          "geocode": "search",
+          "text": "Prior Lake, MN",
+          "results": {
+            "id": "85952535",
+            "label": "Prior Lake, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.435285,
+                44.72818
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": "whosonfirst:locality:85952535",
+                "name": "Prior Lake"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087041",
+                "name": "Scott County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The original text refers to 'Hwy. 13 between Fairlawn Avenue and Franklin Trail in Prior Lake,' and the geocoded result is 'Prior Lake, MN, USA,' which accurately reflects the relevant portion of the original location. The city, state, and context all match. Therefore, the geocoding is valid."
+        }
+      },
+      {
+        "original_text": "1. I-35W: Both directions closed from 10 p.m. Friday to 5 a.m. Monday between I-94 and Crosstown Hwy. 62.",
+        "location": "I-35W, MN",
+        "type": "street_road",
+        "importance": "primary",
+        "description": "I-35W is closed in both directions between I-94 and Crosstown Hwy. 62.",
+        "geocode": {
+          "geocode": "search",
+          "text": "I-35W, MN",
+          "results": {
+            "id": "85671049",
+            "label": "Menia, Egypt",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                30.127598,
+                28.221692
+              ]
+            },
+            "confidence": {
+              "score": 0.3,
+              "match_type": "fallback",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": null,
+                "name": null
+              },
+              "county": {
+                "id": null,
+                "name": null
+              },
+              "state": {
+                "id": "whosonfirst:region:85671049",
+                "name": "Menia"
+              }
+            }
+          },
+          "validated": false,
+          "rationale": "The original location refers to a highway in Minnesota, USA, but the geocoded result is in Menia, Egypt, which is neither in the correct country nor state. The geocoding is incorrect."
+        }
+      },
+      {
+        "original_text": "2. Hennepin Avenue and 8th Street: Hennepin Avenue is a single lane in each direction between 7th and 12th streets; 8th Street closed from LaSalle Avenue to S. 2nd Avenue and Portland to Park avenues.",
+        "location": "Hennepin Avenue, Minneapolis, MN",
+        "type": "street_road",
+        "importance": "primary",
+        "description": "Hennepin Avenue is reduced to a single lane in each direction.",
+        "geocode": {
+          "geocode": "structured",
+          "text": "Hennepin Avenue, Minneapolis, MN",
+          "address": "Hennepin Avenue",
+          "locality": "Minneapolis",
+          "region": "MN",
+          "results": {
+            "id": "polyline:10385696",
+            "label": "Hennepin Avenue, Minneapolis, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.286512,
+                44.971573
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": "whosonfirst:neighbourhood:1108799611",
+                "name": "Loring Park"
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969169",
+                "name": "Minneapolis"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded result exactly matches the original location string, identifying Hennepin Avenue in Minneapolis, MN. The match is specific, the city and street are correct, and the confidence score is high."
+        }
+      },
+      {
+        "original_text": "2. Hennepin Avenue and 8th Street: Hennepin Avenue is a single lane in each direction between 7th and 12th streets; 8th Street closed from LaSalle Avenue to S. 2nd Avenue and Portland to Park avenues.",
+        "location": "8th Street, Minneapolis, MN",
+        "type": "street_road",
+        "importance": "primary",
+        "description": "8th Street is closed from LaSalle Avenue to S. 2nd Avenue and Portland to Park avenues.",
+        "geocode": {
+          "geocode": "structured",
+          "text": "8th Street, Minneapolis, MN",
+          "address": "8th Street",
+          "locality": "Minneapolis",
+          "region": "MN",
+          "results": {
+            "id": "polyline:32266800",
+            "label": "South 8th Street, Minneapolis, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.254153,
+                44.967886
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": "whosonfirst:neighbourhood:420525017",
+                "name": "Elliot Park"
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969169",
+                "name": "Minneapolis"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded location 'South 8th Street, Minneapolis, MN, USA' clearly matches the original text and context of '8th Street, Minneapolis, MN.' Both the street and city align, and the match type is exact with a high confidence score."
+        }
+      },
+      {
+        "original_text": "3. I-94: Westbound closed from nightly from 10 p.m. to 6 a.m. between Hwy. 280 and I-35W through Nov. 9.",
+        "location": "I-94, MN",
+        "type": "street_road",
+        "importance": "primary",
+        "description": "I-94 westbound is closed nightly between Hwy. 280 and I-35W.",
+        "geocode": {
+          "geocode": "search",
+          "text": "I-94, MN",
+          "results": {
+            "id": "85671049",
+            "label": "Menia, Egypt",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                30.127598,
+                28.221692
+              ]
+            },
+            "confidence": {
+              "score": 0.3,
+              "match_type": "fallback",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": null,
+                "name": null
+              },
+              "county": {
+                "id": null,
+                "name": null
+              },
+              "state": {
+                "id": "whosonfirst:region:85671049",
+                "name": "Menia"
+              }
+            }
+          },
+          "validated": false,
+          "rationale": "The original location refers to I-94 in Minnesota, USA, but the geocoded result is for Menia, Egypt. The geocoding is not in the correct country or context."
+        }
+      },
+      {
+        "original_text": "4. Lake Street: Both directions closed from 10 p.m. Friday to 5 a.m. Monday between 2nd and Stevens avenues S.",
+        "location": "Lake Street, Minneapolis, MN",
+        "type": "street_road",
+        "importance": "primary",
+        "description": "Lake Street is closed in both directions between 2nd and Stevens avenues S.",
+        "geocode": {
+          "geocode": "structured",
+          "text": "Lake Street, Minneapolis, MN",
+          "address": "Lake Street",
+          "locality": "Minneapolis",
+          "region": "MN",
+          "results": {
+            "id": "polyline:32266780",
+            "label": "West Lake Street, Minneapolis, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.291478,
+                44.948379
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": "whosonfirst:neighbourhood:85872583",
+                "name": "Lowry Hill East"
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969169",
+                "name": "Minneapolis"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded location, 'West Lake Street, Minneapolis, MN, USA,' clearly matches the input description of 'Lake Street' in Minneapolis, MN. The street, city, and state all align, and the confidence score is high with an exact match."
+        }
+      },
+      {
+        "original_text": "5. White Bear Avenue: Lane closures between Upper Afton Road and I-94 through early November.",
+        "location": "White Bear Avenue, MN",
+        "type": "street_road",
+        "importance": "primary",
+        "description": "White Bear Avenue has lane closures between Upper Afton Road and I-94.",
+        "geocode": {
+          "geocode": "search",
+          "text": "White Bear Avenue, MN",
+          "results": {
+            "id": "polyline:29634758",
+            "label": "White Bear Avenue, White Bear Lake, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.019905,
+                45.073421
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": "whosonfirst:locality:85953019",
+                "name": "White Bear Lake"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087007",
+                "name": "Ramsey County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded result is 'White Bear Avenue, White Bear Lake, MN, USA', which matches the original location of 'White Bear Avenue, MN'. White Bear Avenue runs through White Bear Lake in Minnesota, and the state and street both match exactly. The match type is exact and the confidence is high."
+        }
+      },
+      {
+        "original_text": "6. I-35W from Roseville to Lino Lakes: Lane reductions in both directions between Hwy. 36 in Roseville and Sunset Avenue in Lino Lakes.",
+        "location": "Roseville, MN",
+        "type": "city",
+        "importance": "primary",
+        "description": "Roseville is the starting point for lane reductions on I-35W.",
+        "geocode": {
+          "geocode": "search",
+          "text": "Roseville, MN",
+          "results": {
+            "id": "1729461361",
+            "label": "Roseville, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -95.944133,
+                45.803149
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": "whosonfirst:locality:1729461361",
+                "name": "Roseville"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087739",
+                "name": "Grant County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded location 'Roseville, MN, USA' exactly matches the location specified in the original text ('Roseville, MN'). The confidence score is high and the match type is exact, indicating an accurate geocode."
+        }
+      },
+      {
+        "original_text": "6. I-35W from Roseville to Lino Lakes: Lane reductions in both directions between Hwy. 36 in Roseville and Sunset Avenue in Lino Lakes.",
+        "location": "Lino Lakes, MN",
+        "type": "city",
+        "importance": "primary",
+        "description": "Lino Lakes is the endpoint for lane reductions on I-35W.",
+        "geocode": {
+          "geocode": "search",
+          "text": "Lino Lakes, MN",
+          "results": {
+            "id": "85953383",
+            "label": "Lino Lakes, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.107706,
+                45.153506
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": "whosonfirst:locality:85953383",
+                "name": "Lino Lakes"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087861",
+                "name": "Anoka County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded location matches the original context 'Lino Lakes, MN' and is an exact match within the correct city, state, and country."
+        }
+      },
+      {
+        "original_text": "7. I-35W, 35E and 35 in Columbus and Forest Lake: Lane closures in both directions on I-35 between the split and Hwy. 8.",
+        "location": "Columbus, MN",
+        "type": "city",
+        "importance": "primary",
+        "description": "Columbus is where lane closures are occurring on I-35.",
+        "geocode": {
+          "geocode": "search",
+          "text": "Columbus, MN",
+          "results": {
+            "id": "85953373",
+            "label": "Columbus, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.080943,
+                45.268496
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": "whosonfirst:locality:85953373",
+                "name": "Columbus"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087861",
+                "name": "Anoka County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded result matches the city (Columbus, MN) specified in the original text. The context and geographic location are consistent, making this a valid geocoding."
+        }
+      },
+      {
+        "original_text": "7. I-35W, 35E and 35 in Columbus and Forest Lake: Lane closures in both directions on I-35 between the split and Hwy. 8.",
+        "location": "Forest Lake, MN",
+        "type": "city",
+        "importance": "primary",
+        "description": "Forest Lake is where lane closures are occurring on I-35.",
+        "geocode": {
+          "geocode": "search",
+          "text": "Forest Lake, MN",
+          "results": {
+            "id": "85968255",
+            "label": "Forest Lake, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -92.958247,
+                45.253564
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": "whosonfirst:locality:85968255",
+                "name": "Forest Lake"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087659",
+                "name": "Washington County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded location 'Forest Lake, MN, USA' matches the original context 'Forest Lake, MN' and clearly reflects the intended area of the original text, which refers to highway lane closures in and near Forest Lake, MN."
+        }
+      },
+      {
+        "original_text": "8. Bottineau Boulevard/County Road 81 in Brooklyn Park: Closed between N. 71st Avenue and Brooklyn Boulevard.",
+        "location": "Brooklyn Park, MN",
+        "type": "city",
+        "importance": "primary",
+        "description": "Brooklyn Park is where Bottineau Boulevard/County Road 81 is closed.",
+        "geocode": {
+          "geocode": "search",
+          "text": "Brooklyn Park, MN",
+          "results": {
+            "id": "85969229",
+            "label": "Brooklyn Park, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.350542,
+                45.11953
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969229",
+                "name": "Brooklyn Park"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The original text references a location in Brooklyn Park, MN, and the geocoded result is Brooklyn Park, MN, USA with an exact match and high confidence. The geocoded city matches the city mentioned in the original text, making this a valid geocoding."
+        }
+      },
+      {
+        "original_text": "9. I-94 in Rogers and Maple Grove: Westbound lane closures between I-494 and Hwy. 241 from 7 p.m. Friday to noon Saturday and resuming at 7 p.m. Sunday.",
+        "location": "Rogers, MN",
+        "type": "city",
+        "importance": "primary",
+        "description": "Rogers is where I-94 westbound lane closures are occurring.",
+        "geocode": {
+          "geocode": "search",
+          "text": "Rogers, MN",
+          "results": {
+            "id": "1729462349",
+            "label": "Rogers, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -94.094465,
+                47.110464
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": "whosonfirst:locality:1729462349",
+                "name": "Rogers"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087905",
+                "name": "Cass County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded location 'Rogers, MN, USA' matches the original location string 'Rogers, MN' and falls within the correct state. The match type is exact with a high confidence score."
+        }
+      },
+      {
+        "original_text": "9. I-94 in Rogers and Maple Grove: Westbound lane closures between I-494 and Hwy. 241 from 7 p.m. Friday to noon Saturday and resuming at 7 p.m. Sunday.",
+        "location": "Maple Grove, MN",
+        "type": "city",
+        "importance": "primary",
+        "description": "Maple Grove is where I-94 westbound lane closures are occurring.",
+        "geocode": {
+          "geocode": "search",
+          "text": "Maple Grove, MN",
+          "results": {
+            "id": "1729463709",
+            "label": "Maple Grove, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -95.74195,
+                47.107293
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": "whosonfirst:locality:1729463709",
+                "name": "Maple Grove"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087001",
+                "name": "Becker County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded result 'Maple Grove, MN, USA' matches the location in the original text and context, which specifies 'I-94 in Rogers and Maple Grove' with additional context of 'Maple Grove, MN'. The city and state match, and the result is clear and unambiguous."
+        }
+      },
+      {
+        "original_text": "10. I-35W in Bloomington: Ramp from southbound I-35W to westbound I-494 closed until Nov. 7.",
+        "location": "Bloomington, MN",
+        "type": "city",
+        "importance": "primary",
+        "description": "Bloomington is where the ramp from southbound I-35W to westbound I-494 is closed.",
+        "geocode": {
+          "geocode": "search",
+          "text": "Bloomington, MN",
+          "results": {
+            "id": "1226671939",
+            "label": "Bloomington, MO, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -92.56019,
+                39.79698
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": "whosonfirst:locality:1226671939",
+                "name": "Bloomington"
+              },
+              "county": {
+                "id": "whosonfirst:county:102086189",
+                "name": "Macon County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688661",
+                "name": "Missouri"
+              }
+            }
+          },
+          "validated": false,
+          "rationale": "The original location is Bloomington, MN, but the geocoded result is Bloomington, MO, in Missouri. The geocoded location is not in the same state as the original location string."
+        }
+      },
+      {
+        "original_text": "11. Hwy. 12 in Wayzata: Closed in both directions at Hwy. 101/Central Avenue from 8 p.m. Friday to 5 a.m. Monday.",
+        "location": "Hwy. 12, Wayzata, MN",
+        "type": "street_road",
+        "importance": "primary",
+        "description": "Hwy. 12 is closed in both directions at Hwy. 101/Central Avenue.",
+        "geocode": {
+          "geocode": "structured",
+          "text": "Hwy. 12, Wayzata, MN",
+          "address": "Hwy. 12",
+          "locality": "Wayzata",
+          "region": "MN",
+          "results": {
+            "id": "85969113",
+            "label": "Wayzata, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.51671,
+                44.971056
+              ]
+            },
+            "confidence": {
+              "score": 0.6,
+              "match_type": "fallback",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969113",
+                "name": "Wayzata"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The original location refers to Hwy. 12 in Wayzata, MN, and the geocoded result is 'Wayzata, MN, USA'. While it does not include the specific highway, it correctly places the location in the same city and state. This is a valid city-level geocoding for a location along a major highway within the city."
+        }
+      },
+      {
+        "original_text": "2. Hennepin Avenue and 8th Street: Hennepin Avenue is a single lane in each direction between 7th and 12th streets; 8th Street closed from LaSalle Avenue to S. 2nd Avenue and Portland to Park avenues.",
+        "location": "LaSalle Avenue, Minneapolis, MN",
+        "type": "street_road",
+        "importance": "primary",
+        "description": "LaSalle Avenue is part of the closure on 8th Street.",
+        "geocode": {
+          "geocode": "structured",
+          "text": "LaSalle Avenue, Minneapolis, MN",
+          "address": "LaSalle Avenue",
+          "locality": "Minneapolis",
+          "region": "MN",
+          "results": {
+            "id": "polyline:29741009",
+            "label": "LaSalle Avenue, Minneapolis, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.279337,
+                44.970086
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": "whosonfirst:neighbourhood:1108799611",
+                "name": "Loring Park"
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969169",
+                "name": "Minneapolis"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded location 'LaSalle Avenue, Minneapolis, MN, USA' exactly matches the original context and fits within the area described in the original text. The city and state are correct, and there is no ambiguity in the street name."
+        }
+      },
+      {
+        "original_text": "2. Hennepin Avenue and 8th Street: Hennepin Avenue is a single lane in each direction between 7th and 12th streets; 8th Street closed from LaSalle Avenue to S. 2nd Avenue and Portland to Park avenues.",
+        "location": "S. 2nd Avenue, Minneapolis, MN",
+        "type": "street_road",
+        "importance": "primary",
+        "description": "S. 2nd Avenue is part of the closure on 8th Street.",
+        "geocode": {
+          "geocode": "structured",
+          "text": "S. 2nd Avenue, Minneapolis, MN",
+          "address": "S. 2nd Avenue",
+          "locality": "Minneapolis",
+          "region": "MN",
+          "results": {
+            "id": "polyline:10384911",
+            "label": "2nd Avenue South, Minneapolis, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.274071,
+                44.954106
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": "whosonfirst:neighbourhood:85872643",
+                "name": "Whittier"
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969169",
+                "name": "Minneapolis"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded result ('2nd Avenue South, Minneapolis, MN, USA') is a clear and accurate match for the original location context ('S. 2nd Avenue, Minneapolis, MN'). Both specify the same street, city, and state. The high confidence and exact match type further support validity."
+        }
+      },
+      {
+        "original_text": "2. Hennepin Avenue and 8th Street: Hennepin Avenue is a single lane in each direction between 7th and 12th streets; 8th Street closed from LaSalle Avenue to S. 2nd Avenue and Portland to Park avenues.",
+        "location": "Portland Avenue, Minneapolis, MN",
+        "type": "street_road",
+        "importance": "primary",
+        "description": "Portland Avenue is part of the closure on 8th Street.",
+        "geocode": {
+          "geocode": "structured",
+          "text": "Portland Avenue, Minneapolis, MN",
+          "address": "Portland Avenue",
+          "locality": "Minneapolis",
+          "region": "MN",
+          "results": {
+            "id": "polyline:29741208",
+            "label": "Portland Avenue South, Minneapolis, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.259523,
+                44.978822
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": "whosonfirst:neighbourhood:85872659",
+                "name": "Downtown East"
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969169",
+                "name": "Minneapolis"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded result 'Portland Avenue South, Minneapolis, MN, USA' clearly matches the original context 'Portland Avenue, Minneapolis, MN'. The location is in the same city and state, and the street name matches exactly. Confidence score is high and match type is exact."
+        }
+      },
+      {
+        "original_text": "2. Hennepin Avenue and 8th Street: Hennepin Avenue is a single lane in each direction between 7th and 12th streets; 8th Street closed from LaSalle Avenue to S. 2nd Avenue and Portland to Park avenues.",
+        "location": "Park Avenue, Minneapolis, MN",
+        "type": "street_road",
+        "importance": "primary",
+        "description": "Park Avenue is part of the closure on 8th Street.",
+        "geocode": {
+          "geocode": "structured",
+          "text": "Park Avenue, Minneapolis, MN",
+          "address": "Park Avenue",
+          "locality": "Minneapolis",
+          "region": "MN",
+          "results": {
+            "id": "polyline:29741211",
+            "label": "Park Avenue, Minneapolis, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.258168,
+                44.978247
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": "whosonfirst:neighbourhood:85872659",
+                "name": "Downtown East"
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969169",
+                "name": "Minneapolis"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded location 'Park Avenue, Minneapolis, MN, USA' exactly matches the original context 'Park Avenue, Minneapolis, MN', and both clearly refer to the same specific location in the same city and state."
+        }
+      },
+      {
+        "original_text": "4. Lake Street: Both directions closed from 10 p.m. Friday to 5 a.m. Monday between 2nd and Stevens avenues S.",
+        "location": "2nd Avenue S, Minneapolis, MN",
+        "type": "street_road",
+        "importance": "primary",
+        "description": "2nd Avenue S is part of the closure on Lake Street.",
+        "geocode": {
+          "geocode": "structured",
+          "text": "2nd Avenue S, Minneapolis, MN",
+          "address": "2nd Avenue S",
+          "locality": "Minneapolis",
+          "region": "MN",
+          "results": {
+            "id": "polyline:10384911",
+            "label": "2nd Avenue South, Minneapolis, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.274071,
+                44.954106
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": "whosonfirst:neighbourhood:85872643",
+                "name": "Whittier"
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969169",
+                "name": "Minneapolis"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded location matches the specific street and city described in the original text and context ('2nd Avenue South, Minneapolis, MN'). It is an exact match, indicating a valid geocode."
+        }
+      },
+      {
+        "original_text": "4. Lake Street: Both directions closed from 10 p.m. Friday to 5 a.m. Monday between 2nd and Stevens avenues S.",
+        "location": "Stevens Avenue S, Minneapolis, MN",
+        "type": "street_road",
+        "importance": "primary",
+        "description": "Stevens Avenue S is part of the closure on Lake Street.",
+        "geocode": {
+          "geocode": "structured",
+          "text": "Stevens Avenue S, Minneapolis, MN",
+          "address": "Stevens Avenue S",
+          "locality": "Minneapolis",
+          "region": "MN",
+          "results": {
+            "id": "polyline:10384616",
+            "label": "Stevens Avenue South, Minneapolis, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.275363,
+                44.942988
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": "whosonfirst:neighbourhood:85831755",
+                "name": "Lyndale"
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969169",
+                "name": "Minneapolis"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded result 'Stevens Avenue South, Minneapolis, MN, USA' matches the 'Stevens Avenue S, Minneapolis, MN' from the original context. The city and street are the same, and the geocoding is an exact match."
+        }
+      },
+      {
+        "original_text": "5. White Bear Avenue: Lane closures between Upper Afton Road and I-94 through early November.",
+        "location": "Upper Afton Road, MN",
+        "type": "street_road",
+        "importance": "primary",
+        "description": "Upper Afton Road is part of the lane closures on White Bear Avenue.",
+        "geocode": {
+          "geocode": "search",
+          "text": "Upper Afton Road, MN",
+          "results": {
+            "id": "polyline:29743453",
+            "label": "Upper Afton Road, St. Paul, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.023055,
+                44.943293
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": "whosonfirst:neighbourhood:1108800557",
+                "name": "Eastview-Conway-Battle Creek-Highwood Hills"
+              },
+              "city": {
+                "id": "whosonfirst:locality:85953191",
+                "name": "St. Paul"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087007",
+                "name": "Ramsey County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded result 'Upper Afton Road, St. Paul, MN, USA' matches the original text specifying 'Upper Afton Road, MN'. The matching road is located in the correct city and state, with an exact match type and high confidence score, making the geocoding valid."
+        }
+      },
+      {
+        "original_text": "6. I-35W from Roseville to Lino Lakes: Lane reductions in both directions between Hwy. 36 in Roseville and Sunset Avenue in Lino Lakes.",
+        "location": "Hwy. 36, Roseville, MN",
+        "type": "street_road",
+        "importance": "primary",
+        "description": "Hwy. 36 is part of the lane reductions on I-35W.",
+        "geocode": {
+          "geocode": "structured",
+          "text": "Hwy. 36, Roseville, MN",
+          "address": "Hwy. 36",
+          "locality": "Roseville",
+          "region": "MN",
+          "results": {
+            "id": "polyline:10155092",
+            "label": "State Highway 36 Service Road, Roseville, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.188273,
+                45.015384
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": "whosonfirst:locality:85953189",
+                "name": "Roseville"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087007",
+                "name": "Ramsey County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded location 'State Highway 36 Service Road, Roseville, MN, USA' closely matches the original location context 'Hwy. 36, Roseville, MN'. Both specify Highway 36 in Roseville, MN, and there are no discrepancies in state, city, or street. The result is valid."
+        }
+      },
+      {
+        "original_text": "6. I-35W from Roseville to Lino Lakes: Lane reductions in both directions between Hwy. 36 in Roseville and Sunset Avenue in Lino Lakes.",
+        "location": "Sunset Avenue, Lino Lakes, MN",
+        "type": "street_road",
+        "importance": "primary",
+        "description": "Sunset Avenue is part of the lane reductions on I-35W.",
+        "geocode": {
+          "geocode": "structured",
+          "text": "Sunset Avenue, Lino Lakes, MN",
+          "address": "Sunset Avenue",
+          "locality": "Lino Lakes",
+          "region": "MN",
+          "results": {
+            "id": "polyline:29635129",
+            "label": "Sunset Avenue, Lino Lakes, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.142659,
+                45.170304
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": "whosonfirst:locality:85953383",
+                "name": "Lino Lakes"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087861",
+                "name": "Anoka County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded location matches the original location string exactly, including the street, city, and state. The confidence score is high and the match type is exact."
+        }
+      },
+      {
+        "original_text": "7. I-35W, 35E and 35 in Columbus and Forest Lake: Lane closures in both directions on I-35 between the split and Hwy. 8.",
+        "location": "Hwy. 8, MN",
+        "type": "street_road",
+        "importance": "primary",
+        "description": "Hwy. 8 is part of the lane closures on I-35.",
+        "geocode": {
+          "geocode": "search",
+          "text": "Hwy. 8, MN",
+          "results": {},
+          "validated": false,
+          "rationale": "No geocoding results to validate"
+        }
+      },
+      {
+        "original_text": "7. I-35W, 35E and 35 in Columbus and Forest Lake: Lane closures in both directions on I-35 between the split and Hwy. 8.",
+        "location": "Hwy. 97, MN",
+        "type": "street_road",
+        "importance": "primary",
+        "description": "Hwy. 97 is part of the lane reductions on southbound I-35.",
+        "geocode": {
+          "geocode": "search",
+          "text": "Hwy. 97, MN",
+          "results": {
+            "id": "polyline:29365070",
+            "label": "County Highway 97, Fayal Township, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -92.441972,
+                47.458007
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": null,
+                "name": null
+              },
+              "county": {
+                "id": "whosonfirst:county:102087653",
+                "name": "St. Louis County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": false,
+          "rationale": "The original text refers to Hwy. 97 near I-35 in Columbus and Forest Lake, which are in Anoka and Washington counties, whereas the geocoded result is for County Highway 97 in Fayal Township, St. Louis County, which is a different part of Minnesota. The geocoding does not correspond to the correct geographic area."
+        }
+      },
+      {
+        "original_text": "8. Bottineau Boulevard/County Road 81 in Brooklyn Park: Closed between N. 71st Avenue and Brooklyn Boulevard.",
+        "location": "Bottineau Boulevard/County Road 81, Brooklyn Park, MN",
+        "type": "street_road",
+        "importance": "primary",
+        "description": "Bottineau Boulevard/County Road 81 is closed between N. 71st Avenue and Brooklyn Boulevard.",
+        "geocode": {
+          "geocode": "structured",
+          "text": "Bottineau Boulevard/County Road 81, Brooklyn Park, MN",
+          "address": "Bottineau Boulevard/County Road 81",
+          "locality": "Brooklyn Park",
+          "region": "MN",
+          "results": {
+            "id": "85969229",
+            "label": "Brooklyn Park, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.350542,
+                45.11953
+              ]
+            },
+            "confidence": {
+              "score": 0.6,
+              "match_type": "fallback",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969229",
+                "name": "Brooklyn Park"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded location 'Brooklyn Park, MN, USA' matches the city mentioned in the original text and context. Although the original input specifies the intersection of Bottineau Boulevard/County Road 81 and Brooklyn Boulevard, the geocode falls back to the broader city, which still accurately reflects the location. This is an appropriate match per the given guidelines."
+        }
+      },
+      {
+        "original_text": "8. Bottineau Boulevard/County Road 81 in Brooklyn Park: Closed between N. 71st Avenue and Brooklyn Boulevard.",
+        "location": "N. 71st Avenue, Brooklyn Park, MN",
+        "type": "street_road",
+        "importance": "primary",
+        "description": "N. 71st Avenue is part of the closure on Bottineau Boulevard/County Road 81.",
+        "geocode": {
+          "geocode": "structured",
+          "text": "N. 71st Avenue, Brooklyn Park, MN",
+          "address": "N. 71st Avenue",
+          "locality": "Brooklyn Park",
+          "region": "MN",
+          "results": {
+            "id": "polyline:10163568",
+            "label": "71st Avenue North, Brooklyn Park, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.374143,
+                45.083784
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969229",
+                "name": "Brooklyn Park"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded result accurately matches the original location, specifying 71st Avenue North in Brooklyn Park, MN, which is consistent with both the original text and context. The city, street, and state all align. The match type is exact and the confidence score is high."
+        }
+      },
+      {
+        "original_text": "8. Bottineau Boulevard/County Road 81 in Brooklyn Park: Closed between N. 71st Avenue and Brooklyn Boulevard.",
+        "location": "Brooklyn Boulevard, Brooklyn Park, MN",
+        "type": "street_road",
+        "importance": "primary",
+        "description": "Brooklyn Boulevard is part of the closure on Bottineau Boulevard/County Road 81.",
+        "geocode": {
+          "geocode": "structured",
+          "text": "Brooklyn Boulevard, Brooklyn Park, MN",
+          "address": "Brooklyn Boulevard",
+          "locality": "Brooklyn Park",
+          "region": "MN",
+          "results": {
+            "id": "polyline:29633961",
+            "label": "Brooklyn Boulevard, Brooklyn Park, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.364199,
+                45.094402
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969229",
+                "name": "Brooklyn Park"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded result exactly matches the original location string in terms of street, city, and state. The label includes 'Brooklyn Boulevard, Brooklyn Park, MN', which corresponds directly to the original context and text. Match type is marked as exact and confidence score is 1, indicating high accuracy."
+        }
+      },
+      {
+        "original_text": "9. I-94 in Rogers and Maple Grove: Westbound lane closures between I-494 and Hwy. 241 from 7 p.m. Friday to noon Saturday and resuming at 7 p.m. Sunday.",
+        "location": "I-494, MN",
+        "type": "street_road",
+        "importance": "primary",
+        "description": "I-494 is part of the lane closures on I-94.",
+        "geocode": {
+          "geocode": "search",
+          "text": "I-494, MN",
+          "results": {
+            "id": "85671049",
+            "label": "Menia, Egypt",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                30.127598,
+                28.221692
+              ]
+            },
+            "confidence": {
+              "score": 0.3,
+              "match_type": "fallback",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": null,
+                "name": null
+              },
+              "county": {
+                "id": null,
+                "name": null
+              },
+              "state": {
+                "id": "whosonfirst:region:85671049",
+                "name": "Menia"
+              }
+            }
+          },
+          "validated": false,
+          "rationale": "The geocoded location is in Egypt, which is not the same state or country as the original text referring to a location in Minnesota, USA (I-94/I-494)."
+        }
+      },
+      {
+        "original_text": "9. I-94 in Rogers and Maple Grove: Westbound lane closures between I-494 and Hwy. 241 from 7 p.m. Friday to noon Saturday and resuming at 7 p.m. Sunday.",
+        "location": "Hwy. 241, MN",
+        "type": "street_road",
+        "importance": "primary",
+        "description": "Hwy. 241 is part of the lane closures on I-94.",
+        "geocode": {
+          "geocode": "search",
+          "text": "Hwy. 241, MN",
+          "results": {
+            "id": "85671049",
+            "label": "Menia, Egypt",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                30.127598,
+                28.221692
+              ]
+            },
+            "confidence": {
+              "score": 0.3,
+              "match_type": "fallback",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": null,
+                "name": null
+              },
+              "county": {
+                "id": null,
+                "name": null
+              },
+              "state": {
+                "id": "whosonfirst:region:85671049",
+                "name": "Menia"
+              }
+            }
+          },
+          "validated": false,
+          "rationale": "The geocoded result is for Menia, Egypt, which is not in the same country or state as the original location in Minnesota, USA. The geocoding is clearly inaccurate."
+        }
+      },
+      {
+        "original_text": "10. I-35W in Bloomington: Ramp from southbound I-35W to westbound I-494 closed until Nov. 7.",
+        "location": "I-494, Bloomington, MN",
+        "type": "street_road",
+        "importance": "primary",
+        "description": "I-494 is part of the ramp closure from southbound I-35W.",
+        "geocode": {
+          "geocode": "search",
+          "text": "I-494, Bloomington, MN",
+          "results": {
+            "id": "polyline:32266735",
+            "label": "I 494 West, Bloomington, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.323793,
+                44.860414
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969239",
+                "name": "Bloomington"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The original text refers to I-494 in Bloomington, MN, and the geocoded result accurately reflects this location with matching city and state. The geocoded label clearly matches the highway and city referenced in the input."
+        }
+      },
+      {
+        "original_text": "10. I-35W in Bloomington: Ramp from southbound I-35W to westbound I-494 closed until Nov. 7.",
+        "location": "106th Street, Bloomington, MN",
+        "type": "street_road",
+        "importance": "primary",
+        "description": "106th Street is part of the lane restrictions on I-35W.",
+        "geocode": {
+          "geocode": "structured",
+          "text": "106th Street, Bloomington, MN",
+          "address": "106th Street",
+          "locality": "Bloomington",
+          "region": "MN",
+          "results": {
+            "id": "polyline:10380105",
+            "label": "West 106th Street, Bloomington, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.351443,
+                44.811954
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969239",
+                "name": "Bloomington"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded location (West 106th Street, Bloomington, MN) matches the original context (106th Street, Bloomington, MN) and is in the correct city and state, reflecting the specific intersection described in the original text."
+        }
+      },
+      {
+        "original_text": "10. I-35W in Bloomington: Ramp from southbound I-35W to westbound I-494 closed until Nov. 7.",
+        "location": "Cliff Road, Bloomington, MN",
+        "type": "street_road",
+        "importance": "primary",
+        "description": "Cliff Road is part of the lane restrictions on I-35W.",
+        "geocode": {
+          "geocode": "structured",
+          "text": "Cliff Road, Bloomington, MN",
+          "address": "Cliff Road",
+          "locality": "Bloomington",
+          "region": "MN",
+          "results": {
+            "id": "85969239",
+            "label": "Bloomington, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.317043,
+                44.827321
+              ]
+            },
+            "confidence": {
+              "score": 0.6,
+              "match_type": "fallback",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969239",
+                "name": "Bloomington"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The original text refers to a location in Bloomington, MN (I-35W and I-494 ramp). The geocoded result is also Bloomington, MN, which is a valid match at the city level, especially given the highway/ramp context where specific addresses are not required."
+        }
+      }
+    ]
+  },
+  {
+    "story_type": {
+      "headline": "Minneapolis residents step up to protect their neighborhoods \u2013 from Little Earth to Longfellow",
+      "category": "community_event",
+      "rationale": "The headline suggests a community-driven initiative where residents are actively involved in protecting their neighborhoods, which aligns with the concept of a community event or gathering.",
+      "confidence": 0.8
+    },
+    "text": "As fire and violence have raged through the Twin Cities, Pimento Jamaican Kitchen and Rum Bar has tried to help its community by serving as a pop-up food shelf.\n\nTo keep going, co-owner Tomme Beevas said he's had to turn it into something \"like a Fort Knox fortress.\" Beevas' business along Nicollet Avenue in Minneapolis has been overwhelmed with volunteers \u2014 growing from about seven people standing guard to more than 250 vigilantly watching from rooftops, street corners and alleyways.\n\nThe same has happened in neighborhoods across the Twin Cities \u2014 from Little Earth to Longfellow \u2014 as residents have galvanized after several long nights of worry about what could happen at a time when first responders have been spread thin.\n\n\"Let's be clear,\" Beevas said. \"We know that the police will not be there to protect us.\"\n\nWhen the word got out about Pimento being targeted with threats from white supremacists on social media, he said, the community came out to protect the safe space that's providing supplies and food to protesters and those in need.\n\n\"We knew that by taking that leadership role, we would naturally become a target. And so we've been prepared and planning for it accordingly,\" he said. \"We are holding steadfast, full speed ahead with taking care of our people and taking care of our community.\"\n\nIn and around Little Earth, neighbors and members of the American Indian Movement on Saturday patrolled streets and redirected incoming traffic after the 8 p.m. curfew to protect elders and children living in the south Minneapolis neighborhood. Several volunteer EMS workers from the Leech Lake Band of Ojibwe traveled 200 miles south to assist. Food shelf donations poured in.\n\nBobby Headbird said on Saturday evening that about 150 people were out protecting the surrounding Native American community with volunteers coming from Mille Lacs, Red Lake and Wisconsin.\n\n\"Leech Lake Twin Cities office was vandalized a little bit, but the neighbors are \u2026 standing out back in the alleyways out here protecting the neighborhood,\" he said. \"Now it's all boarded up and so now we're out here just making sure it doesn't happen again.\"\n\nWhile community members across Minneapolis came out to clean up neighborhoods after nights of unrest this week, the number out to guard against violence has swelled on subsequent nights.\n\nYouths in Cedar-Riverside lined the streets from Saturday evening to 6 a.m. Sunday.\n\nHesen Shire, owner of West Bank Furniture, said he hasn't seen any law enforcement along Cedar Avenue where businesses \u2014 many Somali-owned \u2014 are boarded up. He has called police but no one has come, he said.\n\nInstead, around 50 young people of different backgrounds and ethnicities came to support the neighborhood and keep it safe. Those efforts, he said, made a difference, noting Sunday morning that the situation on the street looked better despite recovering from vandals looting his store.\n\n\"This is life. Sometimes we struggle,\" he said. \"It's a difficult time, but we still fight. This is history.\"\n\nLongfellow residents coordinated efforts to block off side streets using caution tape, sawhorses and makeshift barricades to protect residential areas from rioters. Some communicated over handheld radios to alert one another about incoming danger. Some were armed with bats.\n\nHillary Oppmann watched vandals loot the corner Walgreens for three straight nights without interference before arsonists finally lit it on fire. It took more than seven hours for firefighters to make it to the scene.\n\n\"We can't lose any more community assets, like our libraries, pharmacies and post office,\" said Oppmann, who lives three doors down from Lake Street. \"They were simply left to burn.\"\n\nIn north Minneapolis, residents guarded what remained on the area's main commercial drag after several businesses along W. Broadway burned down.\n\nEli Darris of the ACLU Minnesota said the community patrolling effort came about out of a need to take care of critical infrastructure while standing up for justice.\n\n\"At the end of us making sure that we're standing up against the senseless, reckless and inhumane taking of our brother's life, we still want to make sure that our grandmas, our aunties, our uncles, our nephews are gonna have banks to go to, grocery stores to go inside of and shop, and what we've noticed is a very well-orchestrated, well-coordinated intentional attack against black businesses. And we made a determination that we will no longer allow these insidious rubes to come into our community,\" he said.\n\nBeevas at Pimento has the same mind-set of attending to immediate needs like protecting and feeding the neighborhood while striving for long-term change. As far as community policing efforts, he said neighbors should continue to look out for one another.\n\nStarting next weekend, Beevas said he's hosting a \"Pimento Summit\" to engage with community leaders and discuss meaningful legislation so that what happened to Floyd never happens again.\n\nHe said Pimento has traditionally stayed out of politics. But as a black-owned business in the city where Floyd's death occurred, he said they must rise to action.\n\n\"We are the ones being targeted by the system as black men \u2026 so if we don't speak up, who will speak up on our own behalf?\" he said. \"We are optimistic at Pimento that there is no better place for ground zero of this revolution than Minneapolis.\"\n\nStaff writers Liz Sawyer, Ryan Faircloth, Briana Bierschbach, Libor Jany and Matt McKinney contributed to this report. Kim Hyatt \u2022 612-673-4751",
+    "headline": "Minneapolis residents step up to protect their neighborhoods \u2013 from Little Earth to Longfellow",
+    "url": "https://www.startribune.com/minneapolis-residents-step-up-to-protect-their-neighborhoods-from-little-earth-to-longfellow/570910552",
+    "author": "Kim Hyatt",
+    "pub_date": "2020-06-01T15:24:31.000Z",
+    "output_filename": "test-3.json",
+    "locations": [
+      {
+        "original_text": "As fire and violence have raged through the Twin Cities, Pimento Jamaican Kitchen and Rum Bar has tried to help its community by serving as a pop-up food shelf.",
+        "location": "Pimento Jamaican Kitchen and Rum Bar, Minneapolis, MN",
+        "type": "place",
+        "importance": "primary",
+        "description": "Pimento Jamaican Kitchen and Rum Bar is a central location in the story, serving as a pop-up food shelf and community hub during the unrest.",
+        "geocode": {
+          "geocode": "search",
+          "text": "2524 Nicollet Ave, Minneapolis, MN 55404",
+          "results": {
+            "id": "node/4617523585",
+            "label": "2524 Nicollet Avenue South, Minneapolis, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.27806,
+                44.956478
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "point"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": "whosonfirst:neighbourhood:85872643",
+                "name": "Whittier"
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969169",
+                "name": "Minneapolis"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded result provides a specific street address in Minneapolis, MN, which matches the original context of Pimento Jamaican Kitchen and Rum Bar, Minneapolis, MN. The address is consistent with the known location of the establishment, and the city and state match. Therefore, the geocoding is valid."
+        }
+      },
+      {
+        "original_text": "Beevas' business along Nicollet Avenue in Minneapolis has been overwhelmed with volunteers",
+        "location": "Nicollet Avenue, Minneapolis, MN",
+        "type": "street_road",
+        "importance": "primary",
+        "description": "Nicollet Avenue is where Pimento Jamaican Kitchen and Rum Bar is located, a focal point of community efforts.",
+        "geocode": {
+          "geocode": "structured",
+          "text": "Nicollet Avenue, Minneapolis, MN",
+          "address": "Nicollet Avenue",
+          "locality": "Minneapolis",
+          "region": "MN",
+          "results": {
+            "id": "polyline:29740620",
+            "label": "Nicollet Avenue South, Minneapolis, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.27795,
+                44.920363
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": "whosonfirst:neighbourhood:420525015",
+                "name": "King Field"
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969169",
+                "name": "Minneapolis"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded location 'Nicollet Avenue South, Minneapolis, MN, USA' exactly matches the original location string, referring specifically to Nicollet Avenue in Minneapolis, MN. All details are consistent and precise."
+        }
+      },
+      {
+        "original_text": "The same has happened in neighborhoods across the Twin Cities \u2014 from Little Earth to Longfellow",
+        "location": "Little Earth, Minneapolis, MN",
+        "type": "neighborhood",
+        "importance": "primary",
+        "description": "Little Earth is a neighborhood in Minneapolis where community efforts to protect and support residents are taking place.",
+        "geocode": {
+          "geocode": "search",
+          "text": "Little Earth, Minneapolis, MN",
+          "results": {
+            "id": "polyline:10385497",
+            "label": "Little Earth Trail, Minneapolis, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.252423,
+                44.962258
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": "whosonfirst:neighbourhood:420781109",
+                "name": "Ventura Village"
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969169",
+                "name": "Minneapolis"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded location 'Little Earth Trail, Minneapolis, MN, USA' clearly matches the original location 'Little Earth, Minneapolis, MN'. Both the specific area and city are aligned, and the confidence score is high with an exact match."
+        }
+      },
+      {
+        "original_text": "The same has happened in neighborhoods across the Twin Cities \u2014 from Little Earth to Longfellow",
+        "location": "Longfellow, Minneapolis, MN",
+        "type": "neighborhood",
+        "importance": "primary",
+        "description": "Longfellow is a neighborhood in Minneapolis where residents are organizing to protect their community.",
+        "geocode": {
+          "geocode": "search",
+          "text": "Longfellow, Minneapolis, MN",
+          "results": {},
+          "validated": false,
+          "rationale": "No geocoding results to validate"
+        }
+      },
+      {
+        "original_text": "Several volunteer EMS workers from the Leech Lake Band of Ojibwe traveled 200 miles south to assist.",
+        "location": "Leech Lake, MN",
+        "type": "place",
+        "importance": "secondary",
+        "description": "Leech Lake is the origin of volunteer EMS workers who traveled to assist in Minneapolis.",
+        "geocode": {
+          "geocode": "search",
+          "text": "Leech Lake, MN",
+          "results": {
+            "id": "1729459963",
+            "label": "Leech Lake, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -94.600777,
+                47.193398
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": "whosonfirst:locality:1729459963",
+                "name": "Leech Lake"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087905",
+                "name": "Cass County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded location 'Leech Lake, MN, USA' exactly matches the original location string and context, with the correct city, state, and country. The high confidence score and exact match type further support validity."
+        }
+      },
+      {
+        "original_text": "Bobby Headbird said on Saturday evening that about 150 people were out protecting the surrounding Native American community with volunteers coming from Mille Lacs, Red Lake and Wisconsin.",
+        "location": "Mille Lacs, MN",
+        "type": "place",
+        "importance": "secondary",
+        "description": "Mille Lacs is a location from which volunteers came to support the Native American community in Minneapolis.",
+        "geocode": {
+          "geocode": "search",
+          "text": "Mille Lacs, MN",
+          "results": {
+            "id": "102087761",
+            "label": "Mille Lacs County, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.645495,
+                45.935249
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": null,
+                "name": null
+              },
+              "county": {
+                "id": "whosonfirst:county:102087761",
+                "name": "Mille Lacs County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The original context is 'Mille Lacs, MN', and the geocoded result is 'Mille Lacs County, MN, USA'. Mille Lacs refers to both a lake and a county in Minnesota, and the geocoded location is an appropriate and accurate match reflecting the correct area. There is no ambiguity or indication of geocoding outside the intended area."
+        }
+      },
+      {
+        "original_text": "Bobby Headbird said on Saturday evening that about 150 people were out protecting the surrounding Native American community with volunteers coming from Mille Lacs, Red Lake and Wisconsin.",
+        "location": "Red Lake, MN",
+        "type": "place",
+        "importance": "secondary",
+        "description": "Red Lake is a location from which volunteers came to support the Native American community in Minneapolis.",
+        "geocode": {
+          "geocode": "search",
+          "text": "Red Lake, MN",
+          "results": {},
+          "validated": false,
+          "rationale": "No geocoding results to validate"
+        }
+      },
+      {
+        "original_text": "Bobby Headbird said on Saturday evening that about 150 people were out protecting the surrounding Native American community with volunteers coming from Mille Lacs, Red Lake and Wisconsin.",
+        "location": "Wisconsin",
+        "type": "state",
+        "importance": "secondary",
+        "description": "Wisconsin is a state from which volunteers came to support the Native American community in Minneapolis.",
+        "geocode": {
+          "geocode": "structured",
+          "region": "Wisconsin",
+          "results": {
+            "id": "85688517",
+            "label": "Wisconsin, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -89.466198,
+                44.356004
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": null,
+                "name": null
+              },
+              "county": {
+                "id": null,
+                "name": null
+              },
+              "state": {
+                "id": "whosonfirst:region:85688517",
+                "name": "Wisconsin"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The original context specifies Wisconsin and the geocoded result is 'Wisconsin, USA' with high confidence and an exact match. The geocoded location accurately reflects the provided location string."
+        }
+      },
+      {
+        "original_text": "Leech Lake Twin Cities office was vandalized a little bit, but the neighbors are \u2026 standing out back in the alleyways out here protecting the neighborhood",
+        "location": "Leech Lake Twin Cities office, Minneapolis, MN",
+        "type": "place",
+        "importance": "primary",
+        "description": "The Leech Lake Twin Cities office was vandalized, prompting community protection efforts.",
+        "geocode": {
+          "geocode": "search",
+          "text": "2438 27th Ave S, Minneapolis, MN 55406",
+          "results": {
+            "id": "us/mn/hennepin-addresses-county:7cd308b51515408d",
+            "label": "2438 27th Avenue South, Minneapolis, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.233522,
+                44.957805
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "point"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": "whosonfirst:neighbourhood:85872665",
+                "name": "Seward"
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969169",
+                "name": "Minneapolis"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded result is an exact address in Minneapolis, MN, which matches the context of 'Leech Lake Twin Cities office, Minneapolis, MN'. The city and state are consistent and the result is specific; thus, the geocoding is valid."
+        }
+      },
+      {
+        "original_text": "Youths in Cedar-Riverside lined the streets from Saturday evening to 6 a.m. Sunday.",
+        "location": "Cedar-Riverside, Minneapolis, MN",
+        "type": "neighborhood",
+        "importance": "primary",
+        "description": "Cedar-Riverside is a neighborhood where youths organized to protect the community.",
+        "geocode": {
+          "geocode": "search",
+          "text": "Cedar-Riverside, Minneapolis, MN",
+          "results": {
+            "id": "85872621",
+            "label": "Cedar-Riverside, Minneapolis, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.241814,
+                44.967183
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": "whosonfirst:neighbourhood:85872621",
+                "name": "Cedar-Riverside"
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969169",
+                "name": "Minneapolis"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded result exactly matches the original location text, including the specific neighborhood, city, and state. The match type is exact with a high confidence score."
+        }
+      },
+      {
+        "original_text": "Hesen Shire, owner of West Bank Furniture, said he hasn't seen any law enforcement along Cedar Avenue where businesses \u2014 many Somali-owned \u2014 are boarded up.",
+        "location": "West Bank Furniture, Minneapolis, MN",
+        "type": "place",
+        "importance": "primary",
+        "description": "West Bank Furniture is a business affected by the unrest, with its owner noting the lack of law enforcement presence.",
+        "geocode": {
+          "geocode": "search",
+          "text": "415 Cedar Ave S, Minneapolis, MN 55454",
+          "results": {
+            "id": "polyline:10377349",
+            "label": "415 Cedar Avenue South, Minneapolis, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.247277,
+                44.969577
+              ]
+            },
+            "confidence": {
+              "score": 0.8,
+              "match_type": "interpolated",
+              "accuracy": "point"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": "whosonfirst:neighbourhood:85872665",
+                "name": "Seward"
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969169",
+                "name": "Minneapolis"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded result, 415 Cedar Avenue South, Minneapolis, MN, clearly matches the context of West Bank Furniture in Minneapolis on Cedar Avenue. The street and city both correspond to the original description, and there is no conflict in location. Therefore, it is a valid geocode."
+        }
+      },
+      {
+        "original_text": "Hesen Shire, owner of West Bank Furniture, said he hasn't seen any law enforcement along Cedar Avenue where businesses \u2014 many Somali-owned \u2014 are boarded up.",
+        "location": "Cedar Avenue, Minneapolis, MN",
+        "type": "street_road",
+        "importance": "primary",
+        "description": "Cedar Avenue is a street where businesses are boarded up and community protection efforts are taking place.",
+        "geocode": {
+          "geocode": "structured",
+          "text": "Cedar Avenue, Minneapolis, MN",
+          "address": "Cedar Avenue",
+          "locality": "Minneapolis",
+          "region": "MN",
+          "results": {
+            "id": "polyline:29743601",
+            "label": "Cedar Avenue South, Minneapolis, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.247275,
+                44.969107
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": "whosonfirst:neighbourhood:85872621",
+                "name": "Cedar-Riverside"
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969169",
+                "name": "Minneapolis"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded location 'Cedar Avenue South, Minneapolis, MN, USA' exactly matches the original context 'Cedar Avenue, Minneapolis, MN'. The state, city, and street all correspond, and there is no ambiguity. Therefore, the geocoding is valid."
+        }
+      },
+      {
+        "original_text": "Hillary Oppmann watched vandals loot the corner Walgreens for three straight nights without interference before arsonists finally lit it on fire.",
+        "location": "Walgreens, Lake Street, Minneapolis, MN",
+        "type": "place",
+        "importance": "primary",
+        "description": "The Walgreens on Lake Street was looted and set on fire, highlighting the unrest in the area.",
+        "geocode": {
+          "geocode": "search",
+          "text": "1221 W Lake St, Minneapolis, MN 55408",
+          "results": {
+            "id": "us/mn/hennepin-addresses-county:344f71680ceee8b8",
+            "label": "1221 Lake Street West, Minneapolis, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.295106,
+                44.948145
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "point"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": "whosonfirst:neighbourhood:85872635",
+                "name": "Carag"
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969169",
+                "name": "Minneapolis"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded location exactly matches the original location string, specifying a Walgreens on Lake Street in Minneapolis, MN. The address is precise, and both the city and street match, confirming a valid geocode."
+        }
+      },
+      {
+        "original_text": "Hillary Oppmann watched vandals loot the corner Walgreens for three straight nights without interference before arsonists finally lit it on fire.",
+        "location": "Lake Street, Minneapolis, MN",
+        "type": "street_road",
+        "importance": "primary",
+        "description": "Lake Street is a location of significant unrest, with businesses being looted and set on fire.",
+        "geocode": {
+          "geocode": "structured",
+          "text": "Lake Street, Minneapolis, MN",
+          "address": "Lake Street",
+          "locality": "Minneapolis",
+          "region": "MN",
+          "results": {
+            "id": "polyline:32266780",
+            "label": "West Lake Street, Minneapolis, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.291478,
+                44.948379
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": "whosonfirst:neighbourhood:85872583",
+                "name": "Lowry Hill East"
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969169",
+                "name": "Minneapolis"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded result matches the original context of 'Lake Street, Minneapolis, MN' with 'West Lake Street, Minneapolis, MN, USA'; the city and street are consistent, and the match type is exact with a high confidence score."
+        }
+      },
+      {
+        "original_text": "In north Minneapolis, residents guarded what remained on the area's main commercial drag after several businesses along W. Broadway burned down.",
+        "location": "W. Broadway, Minneapolis, MN",
+        "type": "street_road",
+        "importance": "primary",
+        "description": "W. Broadway is a street in north Minneapolis where businesses have been burned down, prompting community protection efforts.",
+        "geocode": {
+          "geocode": "structured",
+          "text": "W. Broadway, Minneapolis, MN",
+          "address": "W. Broadway",
+          "locality": "Minneapolis",
+          "region": "MN",
+          "results": {
+            "id": "polyline:29741294",
+            "label": "West Broadway Avenue, Minneapolis, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.277517,
+                44.999104
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": "whosonfirst:neighbourhood:85872625",
+                "name": "Hawthorne"
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969169",
+                "name": "Minneapolis"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded location 'West Broadway Avenue, Minneapolis, MN, USA' exactly matches the location described in the original text and context, which refers to W. Broadway in Minneapolis. The city, state, and street all match, indicating a valid geocoding."
+        }
+      },
+      {
+        "original_text": "We are optimistic at Pimento that there is no better place for ground zero of this revolution than Minneapolis.",
+        "location": "Minneapolis, MN",
+        "type": "city",
+        "importance": "primary",
+        "description": "Minneapolis is the city where the events and community efforts described in the story are taking place.",
+        "geocode": {
+          "geocode": "search",
+          "text": "Minneapolis, MN",
+          "results": {
+            "id": "85969169",
+            "label": "Minneapolis, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.266563,
+                44.96313
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969169",
+                "name": "Minneapolis"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087709",
+                "name": "Hennepin County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded location 'Minneapolis, MN, USA' exactly matches the original context 'Minneapolis, MN'. The city and state are consistent and the match type is exact."
+        }
+      },
+      {
+        "original_text": "As fire and violence have raged through the Twin Cities, Pimento Jamaican Kitchen and Rum Bar has tried to help its community by serving as a pop-up food shelf.",
+        "location": "Twin Cities, MN",
+        "type": "region_city",
+        "importance": "primary",
+        "description": "The Twin Cities is the region where the unrest and community efforts are taking place.",
+        "geocode": {
+          "geocode": "none",
+          "text": "Twin Cities, MN",
+          "results": {},
+          "validated": false,
+          "rationale": "No geocoding results to validate"
+        }
+      }
+    ]
+  },
+  {
+    "story_type": {
+      "headline": "Another inmate death at Red Lake jail under investigation",
+      "category": "crime_public_safety",
+      "rationale": "The story involves an investigation into an inmate's death, which is a discrete public safety incident likely involving law enforcement and possibly medical personnel.",
+      "confidence": 1.0
+    },
+    "text": "An inmate death at the Red Lake jail is under investigation by the FBI, and the inmate\u2019s family says there appears to be a troubling pattern at the facility.\n\n\u201cIt\u2019s just a torture chamber up there,\u201d said Angel Powers, 24, whose father died in the jail last week, marking the third inmate death at the facility since 2022.\n\nRobin Lee Hanson, 52, was found dead in the detention center April 2, the Red Lake Public Safety Department said in a news release Tuesday that identified the deceased and offered condolences to his family, who have held protests calling for accountability.\n\nRed Lake Tribal Chair Darrell Seki Sr. said in a phone interview Wednesday that he is aware of the inmate death and has been advised to not comment until the FBI completes its investigation.\n\nA spokesperson with the FBI declined to provide further information. The Bureau of Indian Affairs is also assisting in the investigation, said Red Lake public safety director Kendall Kingbird Sr. The BIA didn\u2019t respond to requests for comment.\n\nThe detention center is regulated by the BIA, which governs daily operations at the facility that houses pretrial defendants and those sentenced to one year or less.\n\nPowers said her dad and mom, Betty Ann Hanson, were both in custody for nearly three weeks in connection to trespassing charges. She said her mom had been banished from the reservation due to two raids at her house.\n\n\u201cShe was in [the jail] for trespassing, and then my dad was in there for aiding and abetting for hiding her,\u201d Powers said.\n\nRed Lake legal counsel Joe Plumer said in response to an email inquiring on Hanson\u2019s banishment that he cannot share information on the matter until the FBI investigation is complete, which he said may take up to a month.\n\nBetty Ann Hanson was informed of her husband\u2019s in-custody death while she was in jail and released on furlough the following day to make funeral arrangements.\n\nIn online tributes, many in the Red Lake community affectionately called Robin Hanson by his nickname, \u201cFats.\u201d\n\n\u201cHe used to be chubby back in the day, and everyone just knows him as this really nice person,\u201d Powers said. \u201cHe always would do something for you if you needed it. He fixed cars, give you rides. He was just a really great person.\u201d\n\nPowers said other families were at the protests Tuesday who have lost loved ones in custody at the jail.\n\nDwan White Owl died in 2023 and Joseph Fairbanks Jr. in 2022. The FBI did not say whether those inmate deaths remain under investigation.\n\nAccording to an online fundraiser made by White Owl\u2019s family, \u201cshe passed while in custody at the Red Lake Jail to negligence in the arms of her daughter Danitra [Warpaint]. Our family is asking for justice for the inhumane treatment she received while in the care of the Red Lake Tribal Jail.\u201d\n\nFairbanks\u2019 family filed a wrongful death lawsuit last year against the jail and BIA. The lawsuit accuses detention center staff of failing to provide necessary medical care for his hereditary angioedema, a rare genetic condition that can cause severe swelling, pain and, if untreated, fatal complications.\n\nHanson had diabetes, high blood pressure and kidney issues, Powers said. She believes her dad died from medical neglect, adding there was a cellphone video circulating of her dad in the jail defecating himself and not getting help.\n\n\u201cIt\u2019s super shocking,\u201d she said. \u201cIt\u2019s still unbelievable.\u201d\n\nPowers said she organized protests to raise awareness because the other inmate deaths haven\u2019t received answers or enough attention. She said she heard stories about issues at the jail but she \u201cdidn\u2019t realize it was such a huge problem until it happened to me.\u201d",
+    "headline": "Another inmate death at Red Lake jail under investigation",
+    "url": "https://www.startribune.com/inmate-death-at-red-lake-jail-under-investigation/601326371",
+    "author": "Kim Hyatt",
+    "pub_date": "2025-04-09T17:48:41.069Z",
+    "output_filename": "test-4.json",
+    "locations": [
+      {
+        "original_text": "An inmate death at the Red Lake jail is under investigation by the FBI, and the inmate\u2019s family says there appears to be a troubling pattern at the facility.",
+        "location": "Red Lake jail, Red Lake, MN",
+        "type": "place",
+        "importance": "primary",
+        "description": "The Red Lake jail is the facility where the inmate death occurred and is under investigation.",
+        "geocode": {
+          "geocode": "search",
+          "text": "Red Lake jail, Red Lake, MN",
+          "results": {
+            "id": "85969453",
+            "label": "Red Lake, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -95.008985,
+                47.869697
+              ]
+            },
+            "confidence": {
+              "score": 1,
+              "match_type": "exact",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": "whosonfirst:locality:85969453",
+                "name": "Red Lake"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087773",
+                "name": "Beltrami County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The geocoded result 'Red Lake, MN, USA' matches the original location 'Red Lake jail, Red Lake, MN'. The jail is within Red Lake, and while the geocoding does not specify the jail, it accurately captures the relevant city and state."
+        }
+      },
+      {
+        "original_text": "Robin Lee Hanson, 52, was found dead in the detention center April 2, the Red Lake Public Safety Department said in a news release Tuesday that identified the deceased and offered condolences to his family, who have held protests calling for accountability.",
+        "location": "Red Lake Public Safety Department, Red Lake, MN",
+        "type": "place",
+        "importance": "secondary",
+        "description": "The Red Lake Public Safety Department released a statement about the inmate's death.",
+        "geocode": {
+          "geocode": "search",
+          "text": "15761 Minnesota 1, Red Lake, MN 56667",
+          "results": {},
+          "validated": false,
+          "rationale": "No geocoding results to validate"
+        }
+      },
+      {
+        "original_text": "Red Lake Tribal Chair Darrell Seki Sr. said in a phone interview Wednesday that he is aware of the inmate death and has been advised to not comment until the FBI completes its investigation.",
+        "location": "Red Lake, MN",
+        "type": "place",
+        "importance": "secondary",
+        "description": "Red Lake is the location of the jail and the tribal chair's jurisdiction.",
+        "geocode": {
+          "geocode": "search",
+          "text": "Red Lake, MN",
+          "results": {},
+          "validated": false,
+          "rationale": "No geocoding results to validate"
+        }
+      },
+      {
+        "original_text": "Powers said her dad and mom, Betty Ann Hanson, were both in custody for nearly three weeks in connection to trespassing charges. She said her mom had been banished from the reservation due to two raids at her house.",
+        "location": "Red Lake Reservation, MN",
+        "type": "place",
+        "importance": "primary",
+        "description": "The Red Lake Reservation is where Betty Ann Hanson was banished from and where the jail is located.",
+        "geocode": {
+          "geocode": "search",
+          "text": "Red Lake Reservation, MN",
+          "results": {},
+          "validated": false,
+          "rationale": "No geocoding results to validate"
+        }
+      }
+    ]
+  },
+  {
+    "story_type": {
+      "headline": "Xcel fixing control valve problem at its Monticello nuclear power plant",
+      "category": "news_event",
+      "rationale": "The story is about a specific event involving a technical issue at a nuclear power plant, which does not fit into the more specific categories provided.",
+      "confidence": 0.8
+    },
+    "text": "Xcel Energy on Saturday was continuing to fix a problem with a control valve at its Monticello nuclear power plant that was discovered Wednesday morning, according to a company statement.\n\nThe problem on Wednesday led the system to take the reactor offline automatically, shutting it down as it is designed to do, Xcel spokesperson Josiah Mayo said.\n\nNo impact on electrical service to customers was expected, he said.\n\nThe nuclear team is \u201ctaking the necessary steps to bring the plant back to full operations,\u201d according to Mayo, and expects to be done soon.\n\nThe federal government renewed the Monticello plant\u2019s operating license in December, permitting it to continue operating through 2050.\n\nThe Monticello plant, located on the Mississippi River, opened in 1971. Xcel has spent billions of dollars maintaining it over the years.\n\nXcel, Minnesota\u2019s largest utility, provides most of the metro area\u2019s electricity and has 1.3 million customers. The company also has a nuclear plant in Red Wing.",
+    "headline": "Xcel fixing control valve problem at its Monticello nuclear power plant",
+    "url": "https://www.startribune.com/xcel-fixing-control-valve-problem-at-its-monticello-nuclear-power-plant/601242324",
+    "author": "Erin Adler",
+    "pub_date": "2025-03-23T02:03:49.350Z",
+    "output_filename": "test-5.json",
+    "locations": [
+      {
+        "original_text": "Xcel Energy on Saturday was continuing to fix a problem with a control valve at its Monticello nuclear power plant that was discovered Wednesday morning, according to a company statement.",
+        "location": "Nuclear power plant, Monticello, MN",
+        "type": "place",
+        "importance": "primary",
+        "description": "The Monticello nuclear power plant is where the control valve issue occurred.",
+        "geocode": {
+          "geocode": "search",
+          "text": "2807 W. County Rd 75, Monticello, MN 55362",
+          "results": {
+            "id": "1729479647",
+            "label": "Monticello, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -93.850762,
+                45.26586
+              ]
+            },
+            "confidence": {
+              "score": 0.6,
+              "match_type": "fallback",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": "whosonfirst:locality:1729479647",
+                "name": "Monticello"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087815",
+                "name": "Wright County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "The original location refers to the Monticello nuclear power plant, which is clearly located in Monticello, MN. The geocoded result points to Monticello, MN, which is a valid generalization as the plant is within the city and there are no ambiguities given the context."
+        }
+      },
+      {
+        "original_text": "The Monticello plant, located on the Mississippi River, opened in 1971.",
+        "location": "Mississippi River",
+        "type": "place",
+        "importance": "secondary",
+        "description": "The Monticello plant is located on the Mississippi River.",
+        "geocode": {
+          "geocode": "search",
+          "text": "Mississippi River",
+          "results": {},
+          "validated": false,
+          "rationale": "No geocoding results to validate"
+        }
+      },
+      {
+        "original_text": "The company also has a nuclear plant in Red Wing.",
+        "location": "Nuclear plant, Red Wing, MN",
+        "type": "place",
+        "importance": "secondary",
+        "description": "Xcel Energy also operates a nuclear plant in Red Wing.",
+        "geocode": {
+          "geocode": "search",
+          "text": "1717 Wakonade Dr, Welch, MN 55089",
+          "results": {
+            "id": "1729461181",
+            "label": "Welch, MN, USA",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -92.709105,
+                44.60028
+              ]
+            },
+            "confidence": {
+              "score": 0.6,
+              "match_type": "fallback",
+              "accuracy": "centroid"
+            },
+            "boundaries": {
+              "neighborhood": {
+                "id": null,
+                "name": null
+              },
+              "city": {
+                "id": "whosonfirst:locality:1729461181",
+                "name": "Welch"
+              },
+              "county": {
+                "id": "whosonfirst:county:102087843",
+                "name": "Goodhue County"
+              },
+              "state": {
+                "id": "whosonfirst:region:85688727",
+                "name": "Minnesota"
+              }
+            }
+          },
+          "validated": true,
+          "rationale": "Welch, MN is very close to Red Wing, MN and both are in Goodhue County, Minnesota. The nuclear plant near Red Wing is known as the Prairie Island Nuclear Generating Plant, which is actually located near Welch. The geocoding is an appropriate match reflecting this local geography."
+        }
+      }
+    ]
+  }
+]

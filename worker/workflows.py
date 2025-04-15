@@ -3,8 +3,11 @@ from celery import Celery
 from worker.tasks.base.scrape import _scrape_article
 from worker.tasks.base.classify import _classify_article
 from worker.tasks.locations.extract import _location_extraction_chain
-from worker.tasks.locations.relevance import _relevance_classification_chain
+from worker.tasks.locations.filter import _filter_chain
 from worker.tasks.locations.geocode import _geocoding_chain
+from worker.tasks.locations.localize import _localization_chain
+from worker.tasks.locations.review import _review_chain
+from worker.tasks.base.output import _save_to_azure
 from utils.slack import post_slack_log_message
 
 ########## CELERY INITIALIZATION ##########
@@ -64,8 +67,11 @@ def process_locations(url):
             _scrape_article.si(url, output_filename) | # Pass filename through chain
             _classify_article.s() |
             _location_extraction_chain() |
-            _relevance_classification_chain() |
-            _geocoding_chain()
+            _filter_chain() |
+            _geocoding_chain() |
+            _localization_chain() |
+            _review_chain() |
+            _save_to_azure.s()
         )
         
         # Execute the workflow

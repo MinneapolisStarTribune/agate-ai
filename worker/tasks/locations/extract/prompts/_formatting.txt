@@ -4,7 +4,7 @@
 
 Classify each location by the type of geography it represents. Valid types are:
 
-* place: A named place. For example: "Target Headquarters" or "Roseville Mall"
+* place: A named place. For example: "Target Headquarters," "Roseville Mall" or "Mount Everest"
 * address: A street address, including a house number. This might include block numbers, such as "500 block of Portland Ave."
 * intersection_road: An intersection of two non-highway roads, such as Main St. and 2nd St. Even if the story does not describe an intersection in a single string, you may infer it using other information in the article.
 * intersection_highway: An intersection where one or both components is an interstate or highway, such as "I-94 and Selby Ave." or "Hwy. 20 and Hwy. 36"
@@ -25,11 +25,12 @@ Classify each location by the type of geography it represents. Valid types are:
 Classify each location by its importance to the events in the story, in accordance with the following labels and rules.
 
 * primary: Locations at which the news event or news events described in the story took place. Locations that describe buildings, businesses or places that are the subjects of the story, or are relevant to the events of the story. Places that are directly affected by policies, legislation or issues that are central to the story.
+
 * secondary: Locations that a person in the story is from, or is in some way related to. The locations of direct observations, interviews and descriptions used in the story. Places that are cited in studies, reports or other documents that are the subject of the story. Locations that are cited for context and are not directly relevant to the events or issues being described in the story.
 
 ## FORMATTING RULES:
 
-* Return geocodable address strings in all cases where doing so is possible. For example, if a city is mentioned, like "Minnetonka" you should return "Minnetonka, MN" if it is clear from the story that Minnetonka, MN is the city being referenced. The same logic should be applied to places, addresses, intersections and other geographies. You may use the context of the story to fill out information that might not specifically be mentioned. States and countries can be presented on their own: "Minnesota" and not "Minnesota, MN" for example.
+* Return geocodable address strings in all cases where doing so is possible. For example, if a city is mentioned, like "Minnetonka" you should return "Minnetonka, MN" if it is clear from the story that Minnetonka, MN is the city being referenced. The same logic should be applied to places, addresses, intersections, streets and other geographies. You may use the context of the story to fill out information that might not specifically be mentioned. States and countries can be presented on their own: "Minnesota" and not "Minnesota, MN" for example.
 
 * Block numbers should be returned as addresses. For example, "200 block of Smith St." should be returned as "200 Smith St., Minneapolis, MN"
 
