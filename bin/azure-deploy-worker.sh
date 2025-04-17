@@ -93,7 +93,9 @@ az containerapp update \
     "CELERY_RESULT_BACKEND=rediss://:${REDIS_KEY}@${REDIS_HOST}:${REDIS_PORT}/0?ssl_cert_reqs=none" \
     "SLACK_LOG_WEBHOOK_URL=${SLACK_LOG_WEBHOOK_URL}" \
     "PYTHONPATH=/usr/src/app" \
-    "CONTEXT_API_URL=${CONTEXT_API_URL}"
+    "CONTEXT_API_URL=${CONTEXT_API_URL}" \
+    "GEOCODE_EARTH_API_KEY=${GEOCODE_EARTH_API_KEY}" \
+    "GEOCODIO_API_KEY=${GEOCODIO_API_KEY}"
 
 print_green "Worker container deployed successfully!"
 

@@ -173,10 +173,11 @@ def _geocode_locations(payload):
 
             # Further bespoke cleanup to results. For example, no neighborhoods for street_roads
             if item["type"] == "street_road":
-                item["geocode"]["results"]["boundaries"]["neighborhood"] = {
-                    "id": None,
-                    "name": None
-                }
+                if "boundaries" in item["geocode"]["results"]:
+                    item["geocode"]["results"]["boundaries"]["neighborhood"] = {
+                        "id": None,
+                        "name": None
+                    }
         else:
             logging.info('no results')
             item["geocode"]["results"] = {}
