@@ -5,6 +5,8 @@ Take into account any local knowledge you have about the locations, such as othe
 
 If no candidate specifically matches the input address, insread return the candidate that best matches the geography of which that address is a part. For instance, if no candidate is a good match for "123 Fake St., Monticello, MN" but one candidate is "Monticello, MN", return that one.
 
-If no candidate is a good match, respond with exactly "none". If multiple candidates are a good match, respond with the index number (1-based) of the first suitable candidate. Otherwise, respond with the index number (0-based) of the best matching candidate.
+In the case of cities, states and counties, the best candidate is generally the name that matches most closely.
+
+If no candidate is a good match, respond with exactly "none". If multiple candidates are an equally good match, respond with the index number (0-based) of the first suitable candidate. Otherwise, respond with the index number (0-based) of the best matching candidate.
 
 Respond ONLY with the number or "none", no other text.

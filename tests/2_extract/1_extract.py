@@ -2,7 +2,7 @@ import json
 from worker.tasks.locations.extract.extract import _extract_locations
 
 if __name__ == "__main__":
-    with open('../data/extract-input.json', 'r') as f:
+    with open('../data/0-extract-input.json', 'r') as f:
         articles = json.load(f)
 
     output = []

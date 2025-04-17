@@ -2,4 +2,20 @@ You will be given a JSON file containing the text of a news article, along with 
 
 The locations were extracted using a process designed to identify places for which the text of the news article might be relevant or meaningful. For example: places where news events occurred, where key people are from, or that might be affected by the events described in the story.
 
-Your job is to look through each of the places and perform one final check to determine whether each place could plausibly be considered relevant to the events described in the story. You can assume these places have been vetted extensively. Your job is to catch obvious mistakes: For example, places that have clearly been geolocated incorrectly, or 
+Your job is to look through each of the places and perform one final check to determine whether each place should be considered relevant to the events described in the story. You can assume these places have been vetted extensively. Your job is to catch obvious mistakes.
+
+Examples of those mistakes include:
+
+* Locations that clearly do not pertain to the story, either because they have been extracted incorrectly or geocoded incorrectly.
+
+* Vague locations, such as "store, Grand Marais, MN" or "rooftop, St. Cloud, MN"
+
+* Duplicate locations. If two objects represent the exact same location, mark only the first one as valid.
+
+The goal is to flag any location that a reasonable reader, or editor, would think appears wrong or out of place.
+
+Return an exact copy of the JSON you receive, adding three attributes to each location.
+
+"valid": A boolean that describes whether the location is valid or not
+"rationale": A brief one-sentence rationale describing your reasoning
+"description_new": A sentence or two describing all the ways the location is relevant to the story. Write this in a voice that does not reference the article itself.

@@ -1,0 +1,5 @@
+* If address or location information appears more than once for a single restaurant, mark only the single most detailed instance as relevant. For instance, the restaurant "Joe's Crab Shack" might be mentioned in narrative as being on "Main St." and then again with its complete address "123 Main St." In that case, mark only the "123 Main St." location as relevant and the other instance as irrelvant.
+
+* If a restaurant is listed as having more than one distinct location, be sure to mark all separate addresses or locations as relevant. Otherwise mark only one instance of a restaurant's location as relevant.
+
+* Generally, countries mentioned as being the sources of cuisines should be marked as irrelevant. For example "This restaurant cooks foods from Mexico" should not list "Mexico" as a relevant location.

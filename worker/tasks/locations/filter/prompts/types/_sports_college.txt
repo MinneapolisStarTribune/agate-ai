@@ -1,0 +1,3 @@
+* Locations mentioned metonymically, such as "Wisconsin" in reference to the Wisconsin Badgers, should be marked as irrelevant.
+
+* The same locations mentioned as geographic places, such as "the Timberwolves travelled to Wisconsin" should be marked as relevant.

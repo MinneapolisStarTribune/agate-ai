@@ -29,6 +29,8 @@ Generally, if an institution is mentioned in an abstract sense, without direct g
 
 ## Redundant locations
 
-Locations that are redundant should be marked irrelevant. In the case of locations that are mentioned multiple times, mark the first instance as relevant and subsequent instances as irrelevant.
+Locations that are redundant should be marked irrelevant. In the case of locations that are mentioned multiple times, mark the most detailed instance as relevant and less detailed instances as irrelevant. For example, if a location's address and other descriptive information (such as the street that it's on or the city that it it's in), mark only the address as relevant and the less detailed geographies as irrelevant.
 
-State and country-level geographies should also be considered redundant if they are implied by other more specific geographies. For instance, there is no need to include "Minnesota" as a distinct geography if the story also includes Minneapolis.
+## Ambiguous locations
+
+Locations that refer to generic or ambiguous places, such as "store, Minneapolis, MN" or "rooftop, St. Cloud, MN" should be marked as irrelevant — especially if the city, state and other more specific geographic information described therein are accounted for by another object.

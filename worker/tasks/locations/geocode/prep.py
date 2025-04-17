@@ -38,6 +38,8 @@ def _extract_best_address(query, search_results, max_retries=3):
 
     If no address is available, or you are not fully confident in the address, return "No address found"
 
+    Do not return any linebreaks or other formatting in the output. Simply return the address as a string.
+
     Query: {query}
     
     Search Results:
@@ -83,9 +85,10 @@ def _check_if_addressable(location_str):
     Returns:
         bool: True if location is likely addressable, False otherwise
     """
-    llm = ChatOpenAI(model="gpt-4o")
+    llm = ChatOpenAI(model="gpt-4.1-mini")
     
-    template = """Determine if the following location is likely a building or landmark with a physical street address. 
+    template = """You will be given a JSON object with details about a location and its context within a news story Determine if it is likely a building or landmark with a physical street address. 
+
     This might include:
     - Businesses
     - Landmarks
@@ -99,24 +102,66 @@ def _check_if_addressable(location_str):
     - Cities, counties or administrative divisions
     - Natural features like lakes or forests
     - Abstract concepts or non-physical locations
+
+    If the location already contains an address, return "has address".
     
     Location: {location}
     
-    Return ONLY "addressable" or "not addressable":"""
+    Return ONLY "addressable", "not addressable", or "has address":"""
     
     prompt = ChatPromptTemplate.from_template(template)
     chain = prompt | llm
     
     try:
         result = chain.invoke({"location": location_str})
-        return result.content.strip().lower() == "addressable"
+        return result.content
     except Exception as e:
         logging.error(f"Error checking if location is addressable: {str(e)}")
         return False
+
+def _parse_address(location_str):
+    """
+    Use LLM to determine if a location is likely to have a physical address.
     
+    Args:
+        location_str (str): Location string to check
+        
+    Returns:
+        str: The physical address
+    """
+    llm = ChatOpenAI(model="gpt-4.1-mini")
+    
+    template = """The following string contains a physical address, possibly including some additional text, such
+    as the name of a place or a business. Extract and return only the physical address, with no additional text.
+
+    Do not include linebreaks or other formatting in the output. Simply return the address as a string.
+    
+    Here is the string: {location}"""
+    
+    prompt = ChatPromptTemplate.from_template(template)
+    chain = prompt | llm
+    
+    try:
+        result = chain.invoke({"location": location_str})
+        return result.content.strip()
+    except Exception as e:
+        logging.error(f"Error parsing address from location: {str(e)}")
+        return False
+
 ########## COMPONENT FUNCTIONS ##########
 
 ## Places and addresses
+
+def prep_address(location):
+    """
+    Prep an address location for geocoding by returning the original text.
+    """
+    return {
+        'geocode': {
+            'geocode': "search",
+            'text': location['location']
+        }
+    }
 
 def prep_place(location):
     """
@@ -135,10 +180,10 @@ def prep_place(location):
             }
             
         # First check if location is likely to have an address
-        is_addressable = _check_if_addressable(loc_str)
+        is_addressable = _check_if_addressable(json.dumps(location))
         logging.info(f"Location '{loc_str}' addressable check result: {is_addressable}")
         
-        if is_addressable:
+        if is_addressable == "addressable":
             logging.info(f"Location '{loc_str}' is likely to have an address")
             
             # Search for the location
@@ -164,6 +209,18 @@ def prep_place(location):
                 'geocode': {
                     'geocode': "search",
                     'text': location['location']
+                }
+            }
+        elif is_addressable == "has address":
+            logging.info(f"Location '{loc_str}' already contains an address")
+
+            address = _parse_address(loc_str)
+            logging.info(f"Parsed address: {address}")
+            
+            return {
+                'geocode': {
+                    'geocode': "search",
+                    'text': address
                 }
             }
         else:
@@ -291,7 +348,7 @@ def prep_span(location):
         logging.info(f'Processing span: {loc_str}')
         
         # Set up LLM chain
-        llm = ChatOpenAI(model="gpt-4o")
+        llm = ChatOpenAI(model="gpt-4.1-mini")
         # Use single braces for our actual template variable
         template = system_prompt + "\n\nHere is the string:\n\n{input}"
         prompt = ChatPromptTemplate.from_template(template)
@@ -404,6 +461,19 @@ def prep_city(location):
     """
     Prep a city location for geocoding by returning the original text.
     """
+    city_state = get_city_state(location['location'])
+    city = city_state.get('city', '')
+    state = city_state.get('state', '')
+
+    if city and state:
+        return {
+            'geocode': {
+                'geocode': "structured",
+                'text': location['location'],
+                'locality': city,
+                'region': state
+            }
+        }
     return {
         'geocode': {
             'geocode': "search",
@@ -522,6 +592,10 @@ def _prep_locations(payload):
                 location['geocode'] = result['geocode']
         elif location.get('type') == 'region_national':
             result = prep_region_national(location)
+            if result and 'geocode' in result:
+                location['geocode'] = result['geocode']
+        elif location.get('type') == 'address':
+            result = prep_address(location)
             if result and 'geocode' in result:
                 location['geocode'] = result['geocode']
         elif location.get('type') == 'place':

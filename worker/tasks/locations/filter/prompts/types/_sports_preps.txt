@@ -1,0 +1,1 @@
+* Locations mentioned meyontmically, as fill-ins for team names, should be marked as relevant. For instance, in the case of something like "the team played Fergus Falls," "Fergus Falls, MN" should be marked as relevant.

@@ -4,6 +4,7 @@ import traceback
 from celery import Celery
 from celery.exceptions import MaxRetriesExceededError
 from utils.slack import post_slack_log_message
+from utils.geocode import pelias_geocode_search, get_city_state
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -15,8 +16,8 @@ celery = Celery(__name__)
 def _process_boundaries(locations):
     """
     Process locations to extract distinct boundaries and restructure the output.
-    Organizes boundaries by geographic level and associates places with each boundary.
-    Also handles description_new attribute if present.
+    Removes validation metadata from places, filters out places with empty geocoding,
+    and organizes them by boundary. Each boundary includes coordinates.
     
     Args:
         locations (list): List of location dictionaries with geocoding results
@@ -30,8 +31,7 @@ def _process_boundaries(locations):
             "states": [],
             "counties": [],
             "cities": [],
-            "neighborhoods": [],
-            "regions": []
+            "neighborhoods": []
         },
         "places": []
     }
@@ -41,8 +41,7 @@ def _process_boundaries(locations):
         "states": set(),
         "counties": set(),
         "cities": set(),
-        "neighborhoods": set(),
-        "regions": set()
+        "neighborhoods": set()
     }
     
     # Process each location
@@ -120,31 +119,14 @@ def _process_boundaries(locations):
                     "places": []  # Will be populated later
                 })
         
-        # Process regions
-        regions = boundaries.get('regions', [])
-        for region in regions:
-            if isinstance(region, dict):
-                region_id = region.get('id')
-                if region_id and region_id not in seen_boundaries["regions"]:
-                    seen_boundaries["regions"].add(region_id)
-                    result["boundaries"]["regions"].append({
-                        "id": region_id,
-                        "name": region.get('name'),
-                        "coordinates": {
-                            "lat": geometry.get('coordinates', [])[1] if geometry.get('coordinates') else None,
-                            "lng": geometry.get('coordinates', [])[0] if geometry.get('coordinates') else None
-                        },
-                        "places": []  # Will be populated later
-                    })
-        
         # Clean up and add the location to places
         place = location.copy()
-        place.pop('valid', None)  # Remove valid attribute
-        place.pop('rationale', None)  # Remove rationale attribute
-        
-        # Handle description_new if present
-        if 'description_new' in place:
-            place['description'] = place.pop('description_new')
+        if 'geocode' in place:
+            # Remove validation metadata
+            geocode_copy = place['geocode'].copy()
+            geocode_copy.pop('validated', None)
+            geocode_copy.pop('rationale', None)
+            place['geocode'] = geocode_copy
             
         result["places"].append(place)
     
@@ -174,108 +156,107 @@ def _process_boundaries(locations):
             for neighborhood in result["boundaries"]["neighborhoods"]:
                 if neighborhood["id"] == boundaries["neighborhood"]["id"]:
                     neighborhood["places"].append(place_id)
-                    
-        # Associate places with regions
-        for region in boundaries.get('regions', []):
-            if region.get('id') in seen_boundaries["regions"]:
-                for boundary_region in result["boundaries"]["regions"]:
-                    if boundary_region["id"] == region["id"]:
-                        boundary_region["places"].append(place_id)
     
     return result
 
 ########## CORE FUNCTION ##########
 
-def _finalize_locations(payload):
+def _consolidate_geocoded_locations(payload):
     """
-    Core logic for finalizing locations by filtering invalid ones and organizing boundaries.
-    This function:
-    - Removes locations where valid=false
-    - Restructures the output format
-    - Removes text and story_type attributes
-    - Handles description_new attribute if present
+    Core logic for consolidating geocoded locations.
+    Processes validation results and restructures the output format.
     
     Args:
         payload (dict): Dictionary containing locations and metadata
         
     Returns:
-        dict: Updated payload with only valid locations and organized boundaries
+        dict: Updated payload with consolidated locations and boundaries
     """
     locations = payload.get('locations', [])
     url = payload.get('url')
+
+    logging.info(f"Consolidating locations for {url}")
     
     if not locations:
-        logging.info("No locations provided, skipping finalization")
+        logging.info("No locations provided, skipping consolidation")
         return payload
-        
-    logging.info(f"Finalizing {len(locations)} locations for {url}")
     
-    # Filter out locations where valid is false
-    valid_locations = [
-        location for location in locations
-        if location.get('valid', False)
-    ]
+    # Find invalid locations and attempt to get best geography
+    logging.info("Calculating fallback locations for items with failed validation ...")
+    valid_locations = []
+    for item in locations:
+        geocode = item.get('geocode', {})
+        if geocode.get('validated') == True:
+            valid_locations.append(item)
+        else:
+            location = item.get('location')
+            city_state = get_city_state(location)
+            
+            city = city_state.get('city')
+            state = city_state.get('state')
+
+            if city and state:
+                results = pelias_geocode_search(f"{city}, {state}")
+                if results and len(results) > 0:
+                    top_result = results[0]
+                    if top_result.get('confidence', {}).get('score', 0) >= 0.9:
+                        item['geocode']['results'] = top_result
+                        item['geocode']['validated'] = True
+                        item['geocode']['rationale'] = "Fallback to city-state geocoding"
+                valid_locations.append(item)
     
-    # Log the results
-    removed_count = len(locations) - len(valid_locations)
-    if removed_count > 0:
-        logging.info(f"Removed {removed_count} invalid locations")
-        for location in locations:
-            if not location.get('valid', False):
-                logging.info(f"Invalid location: {location.get('location')} - Reason: {location.get('rationale', 'No rationale provided')}")
+    logging.info(f"Successfully processed {len(valid_locations)} locations")
     
     # Process boundaries and restructure output
     result = _process_boundaries(valid_locations)
     
-    # Update payload with new structure and remove text/story_type
+    # Update payload with new structure
     payload['boundaries'] = result['boundaries']
     payload['places'] = result['places']
     del payload['locations']  # Remove old locations key
     
-    # Remove text and story_type attributes
-    payload.pop('text', None)
-    payload.pop('story_type', None)
-    
-    logging.info("Finalized locations payload: %s" % json.dumps(payload, indent=2))    
+    logging.info("Consolidated locations payload: %s" % json.dumps(payload, indent=2))    
     return payload
 
 ########## TASKS ##########
 
-@celery.task(name="finalize_locations", bind=True, max_retries=3)
-def _finalize_locations_task(self, payload):
+@celery.task(name="consolidate_geocoded_locations", bind=True, max_retries=3)
+def _consolidate_geocoded_locations_task(self, payload):
     """
-    Celery task wrapper for finalizing locations.
+    Celery task wrapper for consolidating geocoded locations.
     Handles retries and error reporting.
     
     Args:
         payload (dict): Dictionary containing locations and metadata
         
     Returns:
-        dict: Updated payload with only valid locations and organized boundaries
+        dict: Updated payload with consolidated locations
     """
     try:
         url = payload.get('url')
         
         try:
-            return _finalize_locations(payload)
+            return _consolidate_geocoded_locations(payload)
             
         except Exception as e:
             backoff = 2 ** self.request.retries
-            logging.error(f"Location finalization failed, retrying in {backoff} seconds. Error: {str(e)}")
+            logging.error(f"Location consolidation failed, retrying in {backoff} seconds. Error: {str(e)}")
             raise self.retry(exc=e, countdown=backoff)
             
     except MaxRetriesExceededError as e:
-        logging.error(f"Max retries exceeded for finalization: {str(e)}")
-        post_slack_log_message('Error finalizing locations %s (max retries exceeded)' % url, {
+        logging.error(f"Max retries exceeded for consolidation: {str(e)}")
+        post_slack_log_message('Error consolidating locations %s (max retries exceeded)' % url, {
             'error_message': str(e.args[0]),
             'traceback': traceback.format_exc()
         }, 'create_error')
+        payload['locations'] = None
         return payload
         
     except Exception as err:
-        logging.error(f"Error in finalization: {err}")
-        post_slack_log_message('Error finalizing locations %s' % url, {
+        logging.error(f"Error in consolidation: {err}")
+        post_slack_log_message('Error consolidating locations %s' % url, {
             'error_message': str(err.args[0]),
             'traceback': traceback.format_exc()
         }, 'create_error')
+        payload['locations'] = None
         return payload

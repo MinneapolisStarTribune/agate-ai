@@ -1,7 +1,7 @@
 import logging, sys, os, redis, traceback, hashlib
 from celery import Celery
-from worker.tasks.base.scrape import _scrape_article
-from worker.tasks.base.classify import _classify_article
+from worker.tasks.base.scrape import _scrape_article_task
+from worker.tasks.base.classify import _classify_article_task
 from worker.tasks.locations.extract import _location_extraction_chain
 from worker.tasks.locations.filter import _filter_chain
 from worker.tasks.locations.geocode import _geocoding_chain
@@ -64,8 +64,8 @@ def process_locations(url):
         
         # Create a chain that executes once
         workflow = (
-            _scrape_article.si(url, output_filename) | # Pass filename through chain
-            _classify_article.s() |
+            _scrape_article_task.si(url, output_filename) | # Pass filename through chain
+            _classify_article_task.s() |
             _location_extraction_chain() |
             _filter_chain() |
             _geocoding_chain() |

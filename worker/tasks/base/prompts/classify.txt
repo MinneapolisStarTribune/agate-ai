@@ -30,7 +30,13 @@ promotion_appointment: Stories about people being promoted or appointed to new p
 
 nature_environment: Stories about natural places and phenomena
 
-restaurants: Stories about restaurants, including reviews eviews, news about a restaurant opening or closing, or descriptions of the dishes it serves (such as a "Five Things We Ate This Week" feature).
+restaurants: Stories about restaurants, bars, breweries and other food/drink establishments, including reviews eviews, news about a restaurant opening or closing, or descriptions of the dishes it serves (such as a "Five Things We Ate This Week" feature).
+
+sports_pro: A story related to professional sports, including games, transactions, profiles, etc.
+
+sports_college: A story related to college sports, including games, transactions, profiles, etc.
+
+sports_preps: A story related to high school and prep sports, including games, profiles, etc.
 
 Group 2 (medium specific):
 
@@ -41,6 +47,8 @@ place_feature: A story for which the primary subject is a place or institution a
 issue_feature: Story that explores or attempts to explain a topic or issue, often talking to experts, or presenting information in the form of an explainer.
 
 voice_commentary: A column or commentary piece that represents a writer's opinion or voice. These are typically written in the first or second person, and the headline often begins with the writer's name, like this "Smith:"
+
+sports_general: Any sports story that does not fit into pro, college or preps descriptions from above.
 
 Group 3 (most general):
 

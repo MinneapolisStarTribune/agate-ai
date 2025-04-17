@@ -17,6 +17,9 @@ def search_duckduckgo(query, max_results=5, max_retries=3):
     logging.info(f"Searching DuckDuckGo for: {query}")
     
     for attempt in range(max_retries):
+        # Stall because rate limit can be strict
+        time.sleep(1)
+        
         try:
             with DDGS() as ddgs:
                 results = list(ddgs.text(query, max_results=max_results))

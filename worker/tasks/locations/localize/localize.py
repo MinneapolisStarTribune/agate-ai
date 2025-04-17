@@ -41,61 +41,57 @@ def get_region_info(county_name, state_abbrev):
 
 def _localize_locations(payload):
     """
-    Core logic for adding region information to boundaries.
+    Core logic for adding region information to each place's boundaries.
     This function can be called independently for testing or used by the Celery task.
     
     Args:
-        payload (dict): Dictionary containing boundaries and places
+        payload (dict): Dictionary containing locations array
         
     Returns:
-        dict: Updated payload with region information added to boundaries
+        dict: Updated payload with region information added to each place's boundaries
     """
-    boundaries = payload.get('boundaries', {})
+    locations = payload.get('locations', [])
     
-    if not boundaries:
-        logging.info("No boundaries provided, skipping localization")
+    if not locations:
+        logging.info("No locations provided, skipping localization")
         return payload
         
-    # Initialize regions in boundaries if it doesn't exist
-    if 'regions' not in boundaries:
-        boundaries['regions'] = []
+    # Process each location
+    for location in locations:
+        geocode = location.get('geocode', {})
+        results = geocode.get('results', {})
+        boundaries = results.get('boundaries', {})
         
-    # Track unique regions by ID to avoid duplicates
-    seen_region_ids = set()
+        # Initialize regions in boundaries if it doesn't exist
+        if 'regions' not in boundaries:
+            boundaries['regions'] = []
+            
+        # Get county and state information
+        county = boundaries.get('county', {})
+        state = boundaries.get('state', {})
+        
+        if county.get('name') and state.get('name'):
+            state_abbrev = get_state_abbrev(state['name'])
+            if state_abbrev:
+                region_info = get_region_info(county['name'], state_abbrev)
+                
+                if region_info and region_info.get('regions'):
+                    # Add all regions found
+                    boundaries['regions'] = [
+                        {
+                            'id': region.get('id'),
+                            'name': region.get('name')
+                        }
+                        for region in region_info['regions']
+                    ]
+                    
+        # Update the location with modified boundaries
+        results['boundaries'] = boundaries
+        geocode['results'] = results
+        location['geocode'] = geocode
     
-    # Process each county to get its region information
-    counties = boundaries.get('counties', [])
-    for county in counties:
-        county_name = county.get('name')
-        # Get state name from the state that contains this county
-        state_id = None
-        for state in boundaries.get('states', []):
-            if any(place_id in state.get('places', []) for place_id in county.get('places', [])):
-                state_name = state.get('name')
-                if state_name:
-                    state_abbrev = get_state_abbrev(state_name)
-                    if state_abbrev:
-                        region_info = get_region_info(county_name, state_abbrev)
-                        
-                        if region_info and region_info.get('regions'):
-                            for region in region_info['regions']:
-                                region_id = region.get('id')
-                                if region_id and region_id not in seen_region_ids:
-                                    seen_region_ids.add(region_id)
-                                    
-                                    # Add region to boundaries with the same structure as other boundary types
-                                    boundaries['regions'].append({
-                                        'id': region_id,
-                                        'name': region.get('name'),
-                                        'coordinates': {
-                                            'lat': county.get('coordinates', {}).get('lat'),
-                                            'lng': county.get('coordinates', {}).get('lng')
-                                        },
-                                        'places': county.get('places', [])  # Associate the same places as the county
-                                    })
-    
-    # Update payload with modified boundaries
-    payload['boundaries'] = boundaries
+    # Update payload with modified locations
+    payload['locations'] = locations
     
     logging.info("Localized locations payload: %s" % json.dumps(payload, indent=2))    
     return payload
@@ -109,7 +105,7 @@ def _localize_locations_task(self, payload):
     Handles retries and error reporting.
     
     Args:
-        payload (dict): Dictionary containing boundaries and places
+        payload (dict): Dictionary containing locations array
         
     Returns:
         dict: Updated payload with region information
