@@ -17,39 +17,47 @@ celery = Celery(__name__)
 
 ########## AZURE NER INITIALIZATION ##########
 
-# Azure credentials from environment variables
-endpoint = AZURE_NER_ENDPOINT
-key = AZURE_KEY
-
-# Initialize the Azure client with timeout settings
-text_analytics_client = TextAnalyticsClient(
-    endpoint=endpoint, 
-    credential=AzureKeyCredential(key),
-    connection_timeout=5,  # Reduced timeout for faster failure
-    read_timeout=10       # Increased for processing multiple chunks
-)
+def get_text_analytics_client():
+    """
+    Initialize Azure Text Analytics client if credentials are configured.
+    Returns None if credentials are not properly configured.
+    """
+    try:
+        if not AZURE_NER_ENDPOINT or not AZURE_KEY:
+            logging.info("Azure NER credentials not configured")
+            return None
+            
+        return TextAnalyticsClient(
+            endpoint=AZURE_NER_ENDPOINT, 
+            credential=AzureKeyCredential(AZURE_KEY),
+            connection_timeout=5,
+            read_timeout=10
+        )
+    except Exception as e:
+        logging.warning(f"Failed to initialize Azure Text Analytics client: {str(e)}")
+        return None
 
 ########## HELPER FUNCTIONS ##########
 
-def extract_locations(text):
+def extract_locations(text, client=None):
     """
-    Extract locations from text using Azure's NER service.
+    Extract locations from text using Azure's NER service if available.
     
     Args:
         text: The text to analyze
+        client: Optional TextAnalyticsClient instance
         
     Returns:
-        List of location entities
+        List of location entities or empty list if service unavailable
     """
-    if not AZURE_NER_ENDPOINT or not AZURE_KEY:
-        logging.error("Azure NER endpoint or key not found")
+    if not client:
         return []
     
     try:
         # Prepare document
         document = {"id": "1", "language": "en", "text": text}
         
-        result = text_analytics_client.recognize_entities(documents=[document])[0]
+        result = client.recognize_entities(documents=[document])[0]
         
         # Filter for only Location entities
         locations = [
@@ -91,6 +99,7 @@ def split_into_chunks(text, words_per_chunk=100):
 def process_text_ner(text):
     """
     Process text by splitting into chunks and extracting locations from each.
+    If Azure NER is not available, returns empty list.
     
     Args:
         text: The full text to analyze
@@ -98,6 +107,12 @@ def process_text_ner(text):
     Returns:
         List of unique location entities
     """
+    # Try to get Azure client
+    client = get_text_analytics_client()
+    if not client:
+        logging.info("Azure NER service not available, skipping NER extraction")
+        return []
+    
     # Split text into chunks
     chunks = split_into_chunks(text)
     
@@ -108,7 +123,7 @@ def process_text_ner(text):
     
     for i, chunk in enumerate(chunks, 1):
         logging.info(f"Processing chunk {i}/{len(chunks)}")
-        locations = extract_locations(chunk)
+        locations = extract_locations(chunk, client)
         
         # Add only unique locations
         for loc in locations:
@@ -121,7 +136,7 @@ def process_text_ner(text):
 
 def _extract_locations_review(payload):
     """
-    Core logic for reviewing extracted locations using LLM and conventional NER.
+    Core logic for reviewing extracted locations using LLM and conventional NER if available.
     This function can be called independently for testing or used by the Celery task.
     
     Args:
@@ -167,7 +182,7 @@ def _extract_locations_review(payload):
     # The list of locations from the LLM
     llm_locations = payload.get('locations', [])
 
-    # The list of locations from the NER
+    # The list of locations from the NER (empty if service not available)
     ner_locations = process_text_ner(text)
 
     # Combine the prompts
@@ -188,6 +203,8 @@ def _extract_locations_review(payload):
 
     if ner_locations:
         prompt += f"\n\nThe locations extracted from the NER service are: {ner_locations}\n\n"
+    else:
+        logging.info("No NER locations available, proceeding with LLM locations only")
 
     prompt += f"{output_prompt}"
 

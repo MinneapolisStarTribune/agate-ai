@@ -18,6 +18,7 @@ celery = Celery(__name__)
 def get_region_info(county_name, state_abbrev):
     """
     Get region information from the external service for a given county and state.
+    Returns None if the service is not configured or request fails.
     
     Args:
         county_name (str): Name of the county
@@ -26,6 +27,10 @@ def get_region_info(county_name, state_abbrev):
     Returns:
         dict: Region information including match quality and region details
     """
+    if not CONTEXT_API_URL:
+        logging.info("Context API URL not configured, skipping region lookup")
+        return None
+        
     base_url = CONTEXT_API_URL + "/locations/county"
     query = f"{county_name},{state_abbrev}"
     
@@ -42,7 +47,7 @@ def get_region_info(county_name, state_abbrev):
 def _localize_locations(payload):
     """
     Core logic for adding region information to each place's boundaries.
-    This function can be called independently for testing or used by the Celery task.
+    If CONTEXT_API_URL is not configured, returns the payload unmodified.
     
     Args:
         payload (dict): Dictionary containing locations array
@@ -50,6 +55,10 @@ def _localize_locations(payload):
     Returns:
         dict: Updated payload with region information added to each place's boundaries
     """
+    if not CONTEXT_API_URL:
+        logging.info("Context API URL not configured, skipping localization")
+        return payload
+        
     locations = payload.get('locations', [])
     
     if not locations:
@@ -102,6 +111,7 @@ def _localize_locations(payload):
 def _localize_locations_task(self, payload):
     """
     Celery task wrapper for adding region information.
+    If CONTEXT_API_URL is not configured, passes through the payload unmodified.
     Handles retries and error reporting.
     
     Args:

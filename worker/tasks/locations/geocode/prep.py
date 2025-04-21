@@ -4,6 +4,7 @@ from celery import Celery
 from celery.exceptions import MaxRetriesExceededError
 from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
+from conf.settings import GEOCODIO_API_KEY
 from utils.slack import post_slack_log_message
 from utils.geocode import get_city_state
 from utils.search import search_duckduckgo
@@ -436,14 +437,23 @@ def prep_intersection_highway(location):
 def prep_intersection_road(location):
     """
     Prep a road_intersection location for geocoding by returning the original text.
+    Default to geocodio because it is more effective at this for some reason. If
+    geocodio isn't available, use Pelias search.
     """
-    return {
-        'geocode': {
-            'geocode': "geocodio",
-            'text': location['location']
+    if GEOCODIO_API_KEY:
+        return {
+            'geocode': {
+                'geocode': "geocodio",
+                'text': location['location']
+            }
         }
-    }
-
+    else:
+        return {
+            'geocode': {
+                'geocode': "search",
+                'text': location['location']
+            }
+        }
 ## Administrative divisions
 
 def prep_neighborhood(location):

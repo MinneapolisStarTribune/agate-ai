@@ -2,11 +2,13 @@
 
 Agate is a service that uses large language models to extract structured data from unstructured news articles, supplying context and other information that are useful in creating products specific to news.
 
-Whereas traditional entity extraction techniques are effective at identifying strings representing people names, places and other named entities, Agate goes a couple steps further. It supplies context about the entity and its relevance to the story — for example, noting that an address is where a crime took place. And it cleans and collapses entities to eliminate redundancy. The same techniques being used here can also extract data from articles that traditional entity extraction models might not be trained to identify, such as recipes and box scores.
+Whereas traditional entity extraction techniques are effective at identifying strings representing people names, places and other named entities, Agate goes a couple steps further. It is able to limit its extraction to places that are editorially relevant; annotates them with additional information (such as addresses, in the case of named places); and it cleans and collapses entities to eliminate redundancy.
 
 The resulting information can be used both to create products that might be useful to readers and journalists (think: mapping restaurant reviews, or crafting hyperlocal newsletters and alerts). And, when placed into a knowledge graph, the extracted entities enable more comprehensive and accurate searching and summarization than traditional retrieval-augmented generation, reducing the risk of hallucination and returning more useful results.
 
-This tool is in early development, but it works well enough to be promising ...
+The current version focuses only supports locations, but the same techniques can be applied to other entities, such as people and institutions, or more specific bits of structured information, such as recipes, sports statistics, and other pieces of information often captured in news stories.
+
+Agate is currently in early development, but given early interest from some of our partners we've elected to work in the open. The code here is available under an MIT license.
 
 ## Why "Agate?"
 
@@ -14,13 +16,54 @@ This tool is in early development, but it works well enough to be promising ...
 
 Agate AI turns unstructured data into structured data. The connection seemed to make sense ...
 
-## Endpoints
+## Running locally
 
-Agate exposes endpoints for different types of entity extraction. Each endpoint currently accepts a public URL to a Star Tribune article, via the `?url=` GET parameter. Ultimately it will accept URLs from other news websites, as well as raw text.
+Agate has a lot of dependencies, but we tried to make it simple to run locally for demonstration purposes. Doing so requires subscribing to several external services, most of which have free tiers. Here's how you can quickly bootstrap the service and see it in action.
 
-**/locations:**: Extracts and characterizes location information from the article and places the result in an Azure storage container.
+First, install [Docker](https://www.docker.com/) and docker-compose.
 
-Endpoints coming soon will include `/people`, `/organizations`, `/events`, `/quotes` and other, more specific cases.
+Second, fill out the following API keys in `conf/env/local`:
+
+  - `OPENAI_API_KEY`: LLM calls only support [OpenAI](https://openai.com/) for now.
+  - `GEOCODE_EARTH_API_KEY`: API key for [Geocode Earth](https://geocode.earth/) (free tier available). Alternatively, you could run your own local [Pelias](https://github.com/pelias/pelias?tab=readme-ov-file) instance. This is the primary service that geocodes places.
+
+Third, `cd bin` and `./run-local.sh`.
+
+Agate will expose different endpoints for different types of entity extraction. Each endpoint currently accepts a public URL to a Star Tribune article, via the `?url=` GET parameter. Ultimately it will accept URLs from other news websites, as well as raw text.
+
+Once the service is running, make a request like [this](http://127.0.0.1:5004/locations?url=https://www.startribune.com/easter-morning-fight-on-interstate-minneapolis/601335244) and the output should show up in your Docker logs.
+
+## Adding a new news organization
+
+Agate is designed to work for any publisher, including small ones with limited technical resources. Following from the assumption that not all publishers can provide API endpoints or raw data dumps of their articles, the service (for now) prioritizes using public URLs as inputs.
+
+Until we are able to support using a service like [Jina](https://jina.ai/) or [Firecrawl](https://www.firecrawl.dev/) to handle generic HTML processing from abitrary websites, supporting a new news organization requires writing a custom scraper to extract article text and headlines from each website's unique layout.
+
+The code for this is in `utils/scrape.py` and `utils/scrapers/`. We can help you get up and running if the logic is unclear.
+
+## Deployment
+
+A full-service Agate deployment requires enabling more external services — notably Microsoft Azure.
+
+This work is funded in part by a [grant from the Lenfest Institute](https://www.niemanlab.org/2024/10/the-lenfest-institute-launches-10-million-ai-news-program-for-big-city-dailies-with-backing-from-openai-and-microsoft/), with support from Microsoft and OpenAI. As a result, we've prioritized that platform over AWS and other options for now.
+
+The best advice we can offer on deployment is: If you want to do it, reach out to us and we'll help. We've scripted in the infrastructure in `terraform/` and `bin/azure-provision.sh` and the deployment process in `bin/azure-deploy-web.sh` and `bin/azure-deploy-worker.sh` but it still takes some lifting to get everything working properly.
+
+The short version is: Set the proper API keys and environment variables in `conf/env/local.env` for running locally and `conf/env/azure.env` for deployment to Azure. Sample files with all required keys are included. Set the keys, run `bin/azure-provision.sh` and then, if that works, use the provided deploy scripts. Again, we can help if you need it.
+
+That said, you can enable further capabilies of Agate — even locally — by supplying credentials to some additional services. This is a good next step after the initial bootstrapping. Those services are:
+
+  - `AZURE_NER_ENDPOINT`: Optional endpoint for an [Azure Cognitive Services named-entity recognition endpoint](https://learn.microsoft.com/en-us/azure/ai-services/language-service/named-entity-recognition/overview). This can enrich the list of candidates for the initial location extraction and helps ensure nothing gets missed.
+
+  - `SCRAPER_API_KEY`: Optional key for [ScraperAPI](https://www.scraperapi.com/) proxy service. If your news organization has measures in place to keep you from scraping a URL (like ours does), a service like this can be helpful. Obviously only use this on sites you are authorized to scrape.
+
+  - `GEOCODIO_API_KEY`: [Geocodio](https://www.geocod.io/) is used as a fallback geocoder to handle some special cases where it is simply more effective than geocode.earth. Free/trial tier available.
+
+  - `SLACK_LOG_WEBHOOK_URL`: A URL to a Slack webhook, which can be used to log output and errors in a Slack channel. We sometimes find that more convenient than having to dig through Docker logs. Logic for this is mostly in `utils/slack.py`.
+
+  - `BRAINTRUST_API_KEY`: We don't yet have a comprehensive eval suite set up for this version of Agate, but we do like using [Braintrust](https://braintrust.dev) for evals generally. You can see how that works in `evals/`.
+
+Those variables are all optional but recommended even for running locally.
 
 ## Project layout
 
@@ -30,32 +73,15 @@ Endpoints coming soon will include `/people`, `/organizations`, `/events`, `/quo
 
 `/conf`: Various configuration files for local development and deploys
 
-`/evals`: Some early [Braintrust](https://www.braintrust.dev/) evals. They work, but don't trust them yet.
+`/evals`: Some early [Braintrust](https://www.braintrust.dev/) evals. Not especially helpful, but they provide a code pattern for creating more.
 
 `/terraform`: Infrastructure definitions
 
-`/tests`: Eventually these will be real tests. For now they are mostly scripts that execute different parts of the pipeline.
+`/tests`: Not actually tests (for now). Just scripts that allow us to run parts of the pipeline one at a tiem for debugging purposes. Needs a lot of work.
 
 `/utils`: Various utilities relied on by the API and worker to perform critical tasks. This includes LLM prompts.
 
-`/worker`: Worker functions that actually perform the information extraction and data processing. They work async using [Celery](https://github.com/celery/celery).
-
-## Local development
-
-At minimum, the Agate prototype requires a subscription to Azure and an Azure storage bucket. This will change soon to allow pure local development using the filesystem. It also requires API keys for OpenAI, Google Maps and ScraperAPI. Again, these will eventually be optional (except probably OpenAI).
-
-To run the application locally, first apply the proper environment variables to `conf/env/local.env` (you can use `local.sample.env` as a starting point). Then make sure you have `docker-compose` installed and run:
-
-```
-cd bin
-./run-local.sh
-```
-
-The application should be available at [http://127.0.0.1:5004](http://127.0.0.1:5004).
-
-## Deployment
-
-Agate is currently set up for deployment on Microsoft Azure infrastructure, using Terraform. The Terraform definitions are in `terraform/azure/prd`. The provisioning process is outlined in `./bin/azure-provision.sh`. Until things are cleaned up a bit, YMMV.
+`/worker`: Worker functions that actually perform the information extraction and data processing. They work async using [Celery](https://github.com/celery/celery). Most of the logic is in here.
 
 ## Sample input/output
 
@@ -63,14 +89,6 @@ Given an article like [this](https://www.startribune.com/weather-today-winter-st
 
 ```
 {
-  "story_type": {
-    "headline": "Winter storm wallops metro, southern Minnesota with rain, wind and largest snowfall of the season",
-    "category": "weather",
-    "rationale": "The headline describes a weather event, specifically a winter storm affecting a region with rain, wind, and snowfall.",
-    "confidence": 1.0
-  },
-  "text": "Residents in the metro area and much of southern Minnesota put their snow blowers and shovels to work Wednesday as they dug out from the season\u2019s largest storm that dropped up to a foot of snow in places and took down power lines, closed schools and crippled the morning commute.\n\nGov. Tim Walz declared a peacetime emergency Wednesday and authorized the Minnesota National Guard to provide support for emergency storm operations.\n\nThe storm dropped 13 inches of snow in Dennison, about an hour southeast of the Twin Cities, with 11 inches or more reported in Northfield, Elko New Market, Apple Valley, Stillwater and Owatonna, the National Weather Service said.\n\nThe official yardstick for the metro area at the Minneapolis-St. Paul International Airport measured 9.5 inches as of midday Wednesday, the Weather Service said. That was the most of the season in the Twin Cities, which previously had been 5.5 inches on Dec. 19.\n\nSome in the Twin Cities were glad to see the snow.\n\n\u201cI love this,\u201d said Nam Bang O, as he plowed out of his driveway in Burnsville on Wednesday morning.\n\n\u201cI even went for a walk in this last night,\u201d he said.\n\nBut for anybody who tried to get around via car, the freshly fallen snow was anything but lovely. Even plows encountered difficulty. Snowdrifts with reduced visibility and whiteout conditions caused by 45-mph winds led to three plows landing in the ditch in southern Minnesota.\n\n\u201cIt was quite a storm,\u201d said Anne Meyer, a MnDOT spokeswoman.\n\nMotorists didn\u2019t fare much better. From 5 a.m. to 11:30 a.m., the State Patrol responded to 158 crashes and 236 vehicles that went off the road.\n\nSeveral hundred Metro Transit buses had begun their morning trips Wednesday, but the agency soon called them back to their garages with roads impassable in some places.\n\n\u201cBuses were running into trouble right away,\u201d said spokesman Drew Kerr. \u201cThis was an extremely rare occurrence.\u201d\n\nMetro Transit suspended bus service for the first time since 2023 and suburban agencies followed suit. But many routes were rolling again by midmorning.\n\nSnow tapered off by early afternoon across the area and many blizzard warnings and winter storm warnings were downgraded to winter weather advisories.\n\nTreacherous conditions led St. Paul Public Schools to call an e-learning day. In Minneapolis, students in kindergarten through fifth grade got the day off for a \u201csevere weather day.\u201d Students in grades six through 12 had an e-learning day, the district said.\n\nMinneapolis and St. Paul declared snow emergencies putting into place parking rules that go into effect at 9 p.m. Wednesday. Several other cities including Robbinsdale, Richfield, Osseo, Plymouth, Coon Rapids, Eden Prairie, Crystal, Golden Valley and West St. Paul also called snow emergencies.\n\nAbout 7,500 Xcel Energy customers lost power at some point during the storm as heavy snow, icing and strong winds took down power lines. Most who lost electricity were in the metro area.\n\nIn a bit of irony, even with the all the snow, Welch Village ski area was closed on Wednesday due to a power outage.\n\nFor spring lovers, the ground will likely be bare again by early next week. Temperatures in the 30s through Friday will warm into the 40s over the weekend and into the mid 50s early next week, the Weather Service said.",
-  "headline": "Winter storm wallops metro, southern Minnesota with rain, wind and largest snowfall of the season",
   "url": "https://www.startribune.com/weather-today-winter-storm-minnesota/601231214",
   "author": "Tim Harlow",
   "pub_date": "2025-03-06T00:44:14.473Z",

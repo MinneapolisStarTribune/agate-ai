@@ -8,36 +8,57 @@ from conf.settings import AZURE_STORAGE_CONNECTION_STRING, AZURE_STORAGE_CONTAIN
 
 celery = Celery(__name__)
 
-# Initialize Azure Blob Storage client
-AZURE_BLOB_SERVICE_CLIENT = BlobServiceClient.from_connection_string(
-    AZURE_STORAGE_CONNECTION_STRING)
-AZURE_STORAGE_CONTAINER_NAME = AZURE_STORAGE_CONTAINER_NAME
+def get_azure_client():
+    """
+    Lazily initialize Azure Blob Storage client.
+    Returns None if credentials are not properly configured.
+    """
+    try:
+        if not AZURE_STORAGE_CONNECTION_STRING:
+            logging.info("Azure connection string not configured")
+            return None
+            
+        return BlobServiceClient.from_connection_string(AZURE_STORAGE_CONNECTION_STRING)
+    except ValueError as e:
+        logging.warning(f"Invalid Azure connection string: {str(e)}")
+        return None
+    except Exception as e:
+        logging.error(f"Error initializing Azure client: {str(e)}")
+        return None
 
 ########### TASKS ##########
 
 @celery.task(name="save_to_azure", bind=True, max_retries=3)
 def _save_to_azure(self, payload):
     """
-    Saves the payload to Azure Blob Storage.
+    Saves the payload to Azure Blob Storage if credentials are configured.
+    If Azure credentials are not set or invalid, logs the output locally.
     """
     try:
-        logging.info('Saving to Azure:')
+        logging.info('Saving output:')
         logging.info(json.dumps(payload, indent=2))
 
-        logging.info(f"Payload: {json.dumps(payload, indent=2)}")
-        
+        # Get Azure client
+        azure_client = get_azure_client()
+
+        # Check if Azure is properly configured
+        if not azure_client or not AZURE_STORAGE_CONTAINER_NAME or not AZURE_STORAGE_ACCOUNT_NAME:
+            logging.info("Azure storage not properly configured. Skipping blob storage upload.")
+            logging.info("Final payload:")
+            logging.info(json.dumps(payload, indent=2))
+            return
+
         # Get task ID and URL from the request
         task_id = self.request.id
         url = payload.get('url')
         
         try:
             # Get container client
-            container_client = AZURE_BLOB_SERVICE_CLIENT.get_container_client(
+            container_client = azure_client.get_container_client(
                 AZURE_STORAGE_CONTAINER_NAME)
             
             # Get output filename from payload
             blob_name = payload.get('output_filename')
-            logging.info(f"Payload contents: {json.dumps(payload, indent=2)}")
             logging.info(f"Container name: {AZURE_STORAGE_CONTAINER_NAME}, Blob name: {blob_name}")
             
             if not blob_name:

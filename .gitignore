@@ -93,3 +93,7 @@ dump.rdb
 *.tfstate
 *.tfstate.*
 *.tfvars
+
+# Test data
+tests/data/*
+!tests/data/input.json
