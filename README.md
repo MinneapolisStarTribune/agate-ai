@@ -70,17 +70,17 @@ That said, you can enable further capabilies of Agate — even locally — by su
 
   - `BRAINTRUST_API_KEY`: We don't yet have a comprehensive eval suite set up for this version of Agate, but we do like using [Braintrust](https://braintrust.dev) for evals generally. You can see how that works in `evals/`.
 
+Those services are all optional but recommended even for running locally.
+
 Finally, if you'd like to save the outputs to Azure blob storage, you will need to fill out the Azure variables as well, specifically:
 
   - `AZURE_STORAGE_CONNECTION_STRING`: The [connection string](https://learn.microsoft.com/en-us/azure/storage/common/storage-configure-connection-string) for accessing your storage account
   - `AZURE_STORAGE_CONTAINER_NAME`: The name of your storage container
   - `AZURE_STORAGE_ACCOUNT_NAME`: The name of your storage account
 
-One other helpful variable might be:
+One other helpful variable is:
 
   - `PYTHONPATH`: Defined in `.env` this will make sure relative imports are set up properly if you run scripts from this project outside of the Docker environment. Helps with tests and evals. Set this to the absolute path of the root of your project in your filesystem (for example `/Users/yourname/apps/agate-ai`).
-
-Those variables are all optional but recommended even for running locally.
 
 ## Project layout
 
@@ -90,7 +90,7 @@ Those variables are all optional but recommended even for running locally.
 
 `/conf`: Various configuration files for local development and deploys
 
-`/evals`: Some early [Braintrust](https://www.braintrust.dev/) evals. Not especially helpful, but they provide a code pattern for creating more.
+`/evals`: Some [Braintrust](https://www.braintrust.dev/) eval stubs. Not especially helpful, but they provide a code pattern for creating more.
 
 `/terraform`: Infrastructure definitions
 
