@@ -6,7 +6,7 @@ Whereas traditional entity extraction techniques are effective at identifying st
 
 The resulting information can be used both to create products that might be useful to readers and journalists (think: mapping restaurant reviews, or crafting hyperlocal newsletters and alerts). And, when placed into a knowledge graph, the extracted entities enable more comprehensive and accurate searching and summarization than traditional retrieval-augmented generation, reducing the risk of hallucination and returning more useful results.
 
-The current version focuses only supports locations, but the same techniques can be applied to other entities, such as people and institutions, or more specific bits of structured information, such as recipes, sports statistics, and other pieces of information often captured in news stories.
+The current version focuses only supports locations, but the same techniques can (and will!) be applied to other entities, such as people and institutions, or more specific bits of structured information, such as recipes, sports statistics, and other pieces of data that are often captured in unstructured forms within news stories.
 
 Agate is currently in early development, but given early interest from some of our partners we've elected to work in the open. The code here is available under an MIT license.
 
@@ -54,7 +54,7 @@ A full-service Agate deployment requires enabling more external services — not
 
 This work is funded in part by a [grant from the Lenfest Institute](https://www.niemanlab.org/2024/10/the-lenfest-institute-launches-10-million-ai-news-program-for-big-city-dailies-with-backing-from-openai-and-microsoft/), with support from Microsoft and OpenAI. As a result, we've prioritized that platform over AWS and other options for now.
 
-The best advice we can offer on deployment is: If you want to do it, reach out to us and we'll help. We've scripted in the infrastructure in `terraform/` and `bin/azure-provision.sh` and the deployment process in `bin/azure-deploy-web.sh` and `bin/azure-deploy-worker.sh` but it still takes some lifting to get everything working properly.
+The best advice we can offer on deployment is: At this early stage, if you want to deploy this to your own infrastructure, reach out to us and we'll help. We've scripted the infrastructure in `terraform/` and `bin/azure-provision.sh` and the deployment process in `bin/azure-deploy-web.sh` and `bin/azure-deploy-worker.sh` but it still takes some lifting to get everything working properly.
 
 The short version is: Set the proper API keys and environment variables in `conf/env/local.env` for running locally and `conf/env/azure.env` for deployment to Azure. Sample files with all required keys are included. Set the keys, run `bin/azure-provision.sh` and then, if that works, use the provided deploy scripts. Again, we can help if you need it.
 
@@ -69,6 +69,16 @@ That said, you can enable further capabilies of Agate — even locally — by su
   - `SLACK_LOG_WEBHOOK_URL`: A URL to a Slack webhook, which can be used to log output and errors in a Slack channel. We sometimes find that more convenient than having to dig through Docker logs. Logic for this is mostly in `utils/slack.py`.
 
   - `BRAINTRUST_API_KEY`: We don't yet have a comprehensive eval suite set up for this version of Agate, but we do like using [Braintrust](https://braintrust.dev) for evals generally. You can see how that works in `evals/`.
+
+Finally, if you'd like to save the outputs to Azure blob storage, you will need to fill out the Azure variables as well, specifically:
+
+  - `AZURE_STORAGE_CONNECTION_STRING`: The [connection string](https://learn.microsoft.com/en-us/azure/storage/common/storage-configure-connection-string) for accessing your storage account
+  - `AZURE_STORAGE_CONTAINER_NAME`: The name of your storage container
+  - `AZURE_STORAGE_ACCOUNT_NAME`: The name of your storage account
+
+One other helpful variable might be:
+
+  - `PYTHONPATH`: Defined in `.env` this will make sure relative imports are set up properly if you run scripts from this project outside of the Docker environment. Helps with tests and evals. Set this to the absolute path of the root of your project in your filesystem (for example `/Users/yourname/apps/agate-ai`).
 
 Those variables are all optional but recommended even for running locally.
 
@@ -88,7 +98,7 @@ Those variables are all optional but recommended even for running locally.
 
 `/utils`: Various utilities relied on by the API and worker to perform critical tasks. This includes LLM prompts.
 
-`/worker`: Worker functions that actually perform the information extraction and data processing. They work async using [Celery](https://github.com/celery/celery). Most of the logic is in here.
+`/worker`: Worker functions that actually perform the information extraction and data processing. They work async using [Celery](https://github.com/celery/celery). Most of the business logic is in here.
 
 ## Sample input/output
 
