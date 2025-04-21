@@ -22,12 +22,19 @@ Agate has a lot of dependencies, but we tried to make it simple to run locally f
 
 First, install [Docker](https://www.docker.com/) and docker-compose.
 
-Second, fill out the following API keys in `conf/env/local`:
+Then do the following:
+
+```
+cd conf/env
+cp local.minimal.env local.env
+```
+
+Next, fill out the following API keys in `conf/env/local.env`:
 
   - `OPENAI_API_KEY`: LLM calls only support [OpenAI](https://openai.com/) for now.
   - `GEOCODE_EARTH_API_KEY`: API key for [Geocode Earth](https://geocode.earth/) (free tier available). Alternatively, you could run your own local [Pelias](https://github.com/pelias/pelias?tab=readme-ov-file) instance. This is the primary service that geocodes places.
 
-Third, `cd bin` and `./run-local.sh`.
+Finally, `cd bin` and `./run-local.sh`.
 
 Agate will expose different endpoints for different types of entity extraction. Each endpoint currently accepts a public URL to a Star Tribune article, via the `?url=` GET parameter. Ultimately it will accept URLs from other news websites, as well as raw text.
 
