@@ -100,6 +100,24 @@ One other helpful variable is:
 
 `/worker`: Worker functions that actually perform the information extraction and data processing. They work async using [Celery](https://github.com/celery/celery). Most of the business logic is in here.
 
+## How it works
+
+Here's a broad-strokes rundown of how the service works. Most of this logic is stored in `worker/`.
+
+**Step 1: [Scrape](https://github.com/MinneapolisStarTribune/agate-ai/blob/main/worker/tasks/base/scrape.py) and [classify](https://github.com/MinneapolisStarTribune/agate-ai/blob/main/worker/tasks/base/classify.py) the article**: Once the URL is submitted to the API, it is scraped and processed and then classified into an article type. Different article types can have different processing workflows, with different acceptance criteria for relevant locations.
+
+**Step 2: [Extract locations](https://github.com/MinneapolisStarTribune/agate-ai/tree/main/worker/tasks/locations/extract)**: All locations are extracted from the article — first using an LLM, and second (optionally) using a conventional named-entity recognition system. The goal of this step is to be maximalist, extracting all locations regardless of their editorial relevance.
+
+**Step 3: [Filter out irrelevant locations](https://github.com/MinneapolisStarTribune/agate-ai/tree/main/worker/tasks/locations/filter)**: The locations extracted from Step 2 are assessed for editorial relevance and reviewed. This step discards locations that might be used figuratively, be duplicative, or otherwise are not relevant to the events described in the story. This step also performs some light classification to determine each location's importance to the story.
+
+**Step 4: [Geocode the locations](https://github.com/MinneapolisStarTribune/agate-ai/tree/main/worker/tasks/locations/geocode)**: The goal of this step is to assign a lat/lon to each location. The logic in `prep.py` processes the locations from the story into geocodable strings and assigns them to different geocoding methods based on their types. Among other things, the prep step also performs light web research to find addresses for named places, which are then vetted using an LLM. The logic in `geocode.py` performs the geocoding, using the services described above. The results are then reviewed by the logic in `review.py`, which uses LLMs to help determine whether the geocoded result makes sense and helps to select the best match in cases where the geocoder returns multiple options. Finally, the `consolidate.py` step organizes and deduplicate the output.
+
+**Step 5: [Localize](https://github.com/MinneapolisStarTribune/agate-ai/tree/main/worker/tasks/locations/localize)**: This generally isn't applicable to the public version of this project, but this step offers a chance to incorporate information specific to a given publication. We use it to add regions that correspond to areas covered by our regional newsletters.
+
+**Step 6: [Review](https://github.com/MinneapolisStarTribune/agate-ai/tree/main/worker/tasks/locations/review)**: This is a final review step, in which we ask the LLM to basically make sure every location makes sense given the context of the story. It also assigns brief descriptions to each location, explaining their relevance to the story.
+
+**Step 7: [Output](https://github.com/MinneapolisStarTribune/agate-ai/blob/main/worker/tasks/base/output.py)**: This step saves the results to Azure blob storage.
+
 ## Sample input/output
 
 Given an article like [this](https://www.startribune.com/weather-today-winter-storm-minnesota/601231214), Agate will return output like this:
