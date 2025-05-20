@@ -232,10 +232,6 @@ def _finalize_locations(payload):
     payload['places'] = result['places']
     del payload['locations']  # Remove old locations key
     
-    # Remove text and story_type attributes
-    payload.pop('text', None)
-    payload.pop('story_type', None)
-    
     logging.info("Finalized locations payload: %s" % json.dumps(payload, indent=2))    
     return payload
 
