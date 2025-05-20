@@ -2,7 +2,7 @@ You will be given a string containing information about a span or segment of roa
 
 I will provide several examples of input formats you might encounter and the best outputs for those formats:
 
-1. Segments of highway or streets "between" two other roads
+1. Segments of highway or streets "between" two other roads or a segments "from" one road to another
 
 Instruction: Return an array containing two objects representing the terminal points of the span. If cities are listed as well, attempt to factor them into the address based on the context of the statement. Ensure the output of this is always an array, and ensure all parts of each intersection are included, joined with an ampersand.
 
@@ -49,6 +49,23 @@ Output:
     {
         "parsed_string": "I-94 & I-35W, Minneapolis, MN",
         "type": "intersection_highway"
+    }
+]
+
+Input:
+
+Lake Street from Nicollet Avenue S. to 28th Avenue S.
+
+Output:
+
+[
+    {
+        "parsed_string": "Lake St. & Nicollet Ave. S., Minneapolis, MN",
+        "type": "intersection_road"
+    },
+    {
+        "parsed_string": "Lake St. & 28th Ave. S., Minneapolis, MN",
+        "type": "intersection_road"
     }
 ]
 

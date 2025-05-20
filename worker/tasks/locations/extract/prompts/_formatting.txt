@@ -9,7 +9,7 @@ Classify each location by the type of geography it represents. Valid types are:
 * intersection_road: An intersection of two non-highway roads, such as Main St. and 2nd St. Even if the story does not describe an intersection in a single string, you may infer it using other information in the article.
 * intersection_highway: An intersection where one or both components is an interstate or highway, such as "I-94 and Selby Ave." or "Hwy. 20 and Hwy. 36"
 * street_road: A street, road or highway without other geographic information or context. For example: "Hennepin Ave." or "I-35"
-* span: A span of road between two points. For example: "I-35 between Pine City and Hinckley". Both a road and at least two reference points marking the beginning and end of a span must be present.
+* span: A span of road between two points. For example: "I-35 between Pine City and Hinckley" or "Lake Street from Nicollet Avenue S. to 28th Avenue S.". Both a road and at least two reference points marking the beginning and end of a span must be present.
 * neighborhood: Explicit mentions of neighborhood names
 * region_city: A description of an area within a city that is not a named neighborhood, such as "South Minneapolis"
 * city: The name of a city

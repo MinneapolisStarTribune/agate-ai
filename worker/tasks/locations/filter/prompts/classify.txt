@@ -27,6 +27,8 @@ The names of large businesses or institutions are a special case. They may be re
 
 Generally, if an institution is mentioned in an abstract sense, without direct geographic context, it should be considered irrelevant. For example, "The ACLU protested the ruling" refers to the ACLU as an abstract institution, not a physical location. "The protest took place at ACLU headquarters" references a specific place and therefore would be relevant.
 
+City, county and state agencies, such as the Minnesota Department of Education or St. Paul Public Works, should generally not be marked as relevant unless key news events are noted to have taken place at their headquarters, buildings or properties.
+
 ## Redundant locations
 
 Locations that are redundant should be marked irrelevant. In the case of locations that are mentioned multiple times, mark the most detailed instance as relevant and less detailed instances as irrelevant. For example, if a location's address and other descriptive information (such as the street that it's on or the city that it it's in), mark only the address as relevant and the less detailed geographies as irrelevant.
