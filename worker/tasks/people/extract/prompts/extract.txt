@@ -1,0 +1,2 @@
+Extract the names of all people mentioned in the following article.
+Return the result as a JSON object with a single field "people" that is a list of person names.

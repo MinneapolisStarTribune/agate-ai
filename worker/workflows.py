@@ -9,6 +9,11 @@ from worker.tasks.locations.localize import _localization_chain
 from worker.tasks.locations.review import _review_chain
 from worker.tasks.base.output import _save_to_azure
 from utils.slack import post_slack_log_message
+# People processing pipeline
+from worker.tasks.people.extract import _people_extraction_chain
+from worker.tasks.people.filter import _people_filter_chain
+from worker.tasks.people.canonicalize import _people_canonicalize_chain
+from worker.tasks.people.review import _people_review_chain
 
 ########## CELERY INITIALIZATION ##########
 
@@ -83,5 +88,32 @@ def process_locations(url):
         post_slack_log_message('Error processing locations %s' % url, {
             'error_message':  str(e.args[0]),
             'traceback':  traceback.format_exc()
+        }, 'create_error')
+        return {"status": "error", "error": str(e)}
+    
+@celery.task(name="process_people")
+def process_people(url):
+    """
+    Process people from text
+    """
+    try:
+        logging.info(f"Processing people from url: {url}")
+        output_filename = f"{hashlib.sha256(url.encode()).hexdigest()[:20]}.json"
+        workflow = (
+            _scrape_article_task.si(url, output_filename) |
+            _classify_article_task.s() |
+            _people_extraction_chain() |
+            _people_filter_chain() |
+            _people_canonicalize_chain() |
+            _people_review_chain() |
+            _save_to_azure.s()
+        )
+        result = workflow.apply_async()
+        return {"status": "success", "task_id": result.id}
+    except Exception as e:
+        logging.error(f"Error processing people: {str(e)}")
+        post_slack_log_message('Error processing people %s' % url, {
+            'error_message': str(e.args[0]),
+            'traceback': traceback.format_exc()
         }, 'create_error')
         return {"status": "error", "error": str(e)}
