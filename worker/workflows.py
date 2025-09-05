@@ -7,7 +7,7 @@ from worker.tasks.locations.filter import _filter_chain
 from worker.tasks.locations.geocode import _geocoding_chain
 from worker.tasks.locations.localize import _localization_chain
 from worker.tasks.locations.review import _review_chain
-from worker.tasks.base.output import _save_to_azure
+from worker.tasks.base.output import _save_to_neo4j
 from utils.slack import post_slack_log_message
 # People processing pipeline
 from worker.tasks.people.extract import _people_extraction_chain
@@ -76,7 +76,7 @@ def process_locations(url):
             _geocoding_chain() |
             _localization_chain() |
             _review_chain() |
-            _save_to_azure.s()
+            _save_to_neo4j.s()
         )
         
         # Execute the workflow
@@ -106,7 +106,7 @@ def process_people(url):
             _people_filter_chain() |
             _people_canonicalize_chain() |
             _people_review_chain() |
-            _save_to_azure.s()
+            _save_to_neo4j.s()
         )
         result = workflow.apply_async()
         return {"status": "success", "task_id": result.id}

@@ -18,6 +18,12 @@ ACR_NAME = os.getenv('ACR_NAME') or ''
 SERVICE_BUS_CONNECTION_STRING = os.getenv('SERVICE_BUS_CONNECTION_STRING') or ''
 WEB_URL = os.getenv('WEB_URL') or ''
 
+# Neo4j settings
+NEO4J_URI = os.getenv('NEO4J_URI') or ''
+NEO4J_USER = os.getenv('NEO4J_USER') or ''
+NEO4J_PASSWORD = os.getenv('NEO4J_PASSWORD') or ''
+NEO4J_DATABASE = os.getenv('NEO4J_DATABASE') or 'neo4j'
+
 # Redis settings
 REDIS_HOST = os.getenv('REDIS_HOST') or 'redis'
 REDIS_PORT = os.getenv('REDIS_PORT') or 6379

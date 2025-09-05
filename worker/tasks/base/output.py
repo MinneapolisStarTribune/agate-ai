@@ -5,6 +5,9 @@ from celery import Celery
 from celery.exceptions import MaxRetriesExceededError
 from utils.slack import post_slack_log_message
 from conf.settings import AZURE_STORAGE_CONNECTION_STRING, AZURE_STORAGE_CONTAINER_NAME, AZURE_STORAGE_ACCOUNT_NAME
+import uuid
+from neo4j import GraphDatabase
+from conf.settings import NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD, NEO4J_DATABASE
 
 celery = Celery(__name__)
 
@@ -103,11 +106,137 @@ def _save_to_azure(self, payload):
             'traceback':  traceback.format_exc()
         }, 'create_error')
         return payload
-        
+
+# -------------------- Neo4j Integration --------------------
+def get_neo4j_driver():
+    """
+    Lazily initialize Neo4j driver. Returns None if not configured.
+    """
+    try:
+        if not NEO4J_URI or not NEO4J_USER or not NEO4J_PASSWORD:
+            logging.info("Neo4j not configured, skipping graph write.")
+            return None
+        return GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
     except Exception as e:
-        logging.error(f"Error in saving to Azure: {e}")
-        post_slack_log_message('Error saving to Azure %s' % url, {
-            'error_message':  str(e.args[0]),
-            'traceback':  traceback.format_exc()
-        }, 'create_error')
+        logging.error(f"Error initializing Neo4j driver: {e}")
+        return None
+
+def _create_article_node(tx, uuid, fk_id, headline, url, author, pub_date, story_type):
+    tx.run(
+        "MERGE (a:Article {uuid: $uuid})"
+        " SET a.fk_id = $fk_id, a.headline = $headline, a.url = $url,"
+        " a.author = $author, a.pub_date = $pub_date, a.story_type = $story_type",
+        {"uuid": uuid, "fk_id": fk_id, "headline": headline, "url": url,
+         "author": author, "pub_date": pub_date, "story_type": story_type}
+    )
+
+def _create_location_node(tx, uuid, name, original_text, loc_type, importance, description, latitude, longitude):
+    tx.run(
+        "MERGE (l:Location {uuid: $uuid})"
+        " SET l.name = $name, l.original_text = $original_text, l.type = $loc_type,"
+        " l.importance = $importance, l.description = $description,"
+        " l.latitude = $latitude, l.longitude = $longitude",
+        {"uuid": uuid, "name": name, "original_text": original_text,
+         "loc_type": loc_type, "importance": importance, "description": description,
+         "latitude": latitude, "longitude": longitude}
+    )
+
+def _create_person_node(tx, uuid, name, wikidata_id, wikidata_label):
+    tx.run(
+        "MERGE (p:Person {uuid: $uuid})"
+        " SET p.name = $name, p.wikidata_id = $wikidata_id, p.wikidata_label = $wikidata_label",
+        {"uuid": uuid, "name": name,
+         "wikidata_id": wikidata_id, "wikidata_label": wikidata_label}
+    )
+
+def _create_mention_rel(tx, from_uuid, to_uuid, rel_type="LOCATION"):
+    # rel_type unused: always MENTIONED_IN
+    tx.run(
+        "MATCH (src {uuid: $from_uuid}), (dst {uuid: $to_uuid})"
+        " MERGE (src)-[:MENTIONED_IN]->(dst)",
+        {"from_uuid": from_uuid, "to_uuid": to_uuid}
+    )
+
+def _create_person_mention_rel(tx, person_uuid, article_uuid):
+    tx.run(
+        "MATCH (p:Person {uuid: $person_uuid}), (a:Article {uuid: $article_uuid})"
+        " MERGE (p)-[:MENTIONED_IN]->(a)",
+        {"person_uuid": person_uuid, "article_uuid": article_uuid}
+    )
+
+@celery.task(name="save_to_neo4j", bind=True, max_retries=3)
+def _save_to_neo4j(self, payload):
+    """
+    Saves the payload into Neo4j as Article, Location, and Person nodes,
+    with MENTIONED_IN relationships. Skips if Neo4j is not configured.
+    """
+    try:
+        logging.info("Saving payload to Neo4j")
+        driver = get_neo4j_driver()
+        if not driver:
+            logging.info("Neo4j driver unavailable, skipping save_to_neo4j.")
+            return payload
+
+        # Generate identifiers
+        article_url = payload.get('url', '')
+        article_uuid = str(uuid.uuid5(uuid.NAMESPACE_URL, article_url))
+        fk_id = payload.get('output_filename') or ''
+        headline = payload.get('headline', '')
+        author = payload.get('author', '')
+        pub_date = payload.get('pub_date', '')
+        story_type = payload.get('story_type', '')
+
+        with driver.session(database=NEO4J_DATABASE) as session:
+            # Create or update Article node
+            session.write_transaction(
+                _create_article_node,
+                article_uuid, fk_id, headline, article_url,
+                author, pub_date, story_type
+            )
+            # Create Location nodes and relationships
+            for place in payload.get('places', []):
+                loc_name = place.get('location', '')
+                place_uuid = str(uuid.uuid5(uuid.NAMESPACE_URL, loc_name))
+                original_text = place.get('original_text', '')
+                loc_type = place.get('type', '')
+                importance = place.get('importance', '')
+                description = place.get('description', '')
+                # Extract coordinates
+                coords = []
+                geores = place.get('geocode', {}).get('results', {})
+                geometry = geores.get('geometry', {}) or {}
+                coords = geometry.get('coordinates', []) or []
+                longitude = coords[0] if len(coords) > 0 else None
+                latitude = coords[1] if len(coords) > 1 else None
+                session.write_transaction(
+                    _create_location_node,
+                    place_uuid, loc_name, original_text,
+                    loc_type, importance, description,
+                    latitude, longitude
+                )
+                session.write_transaction(
+                    _create_mention_rel,
+                    place_uuid, article_uuid
+                )
+            # Create Person nodes and relationships
+            for person in payload.get('people', []):
+                name = person.get('name', '')
+                person_uuid = str(uuid.uuid5(uuid.NAMESPACE_URL, name)) if name else None
+                if not person_uuid:
+                    continue
+                wikidata = person.get('wikidata', {}) or {}
+                wikidata_id = wikidata.get('id', '')
+                wikidata_label = wikidata.get('label', '')
+                session.write_transaction(
+                    _create_person_node,
+                    person_uuid, name, wikidata_id, wikidata_label
+                )
+                session.write_transaction(
+                    _create_person_mention_rel,
+                    person_uuid, article_uuid
+                )
         return payload
+    except Exception as e:
+        logging.error(f"Error saving to Neo4j: {e}")
+        return payload
+        
