@@ -1,6 +1,6 @@
 import logging, sys, hashlib
 from flask import Blueprint, jsonify, Flask, request
-from worker.workflows import process_locations, process_people
+from worker.workflows import process_locations
 from utils.scrape import _normalize_url
 from utils.slack import post_slack_log_message
 
@@ -62,47 +62,10 @@ def process_url(url=None):
             "url": url,
             "output_filename": f"{hashlib.sha256(url.encode()).hexdigest()[:20]}.json"
         }), 202  # 202 Accepted
+    except Exception as e:
+        logging.error(f"LOCATION ERROR: {str(e)}")
+        return jsonify({"error": str(e)}), 500
     
-@main_blueprint.route("/people/<path:url>", methods=["GET"])
-@main_blueprint.route("/people", methods=["GET"])
-def process_people_route(url=None):
-    """
-    Returns people from provided URL
-    """
-    try:
-        if url is None:
-            url = request.args.get("url", "")
-            if not url:
-                return jsonify({"error": "No URL provided"}), 400
-        # Normalize URL
-        url = _normalize_url(url)
-        logging.info(f"PEOPLE REQUEST: Processing URL: {url}")
-        task = process_people.apply_async(args=[url])
-        logging.info(f"PEOPLE TASK CREATED: Task ID: {task.id} for URL: {url}")
-        return jsonify({
-            "status": "submitted",
-            "message": "People processing started",
-            "task_id": task.id,
-            "url": url,
-            "output_filename": f"{hashlib.sha256(url.encode()).hexdigest()[:20]}.json"
-        }), 202
-    except Exception as e:
-        logging.error(f"PEOPLE ERROR: Error processing URL: {str(e)}")
-        import traceback
-        logging.error(f"PEOPLE ERROR TRACEBACK: {traceback.format_exc()}")
-        return jsonify({
-            "status": "error",
-            "error": str(e)
-        }), 500
-        
-    except Exception as e:
-        logging.error(f"LOCATION ERROR: Error processing URL: {str(e)}")
-        import traceback
-        logging.error(f"LOCATION ERROR TRACEBACK: {traceback.format_exc()}")
-        return jsonify({
-            "status": "error",
-            "error": str(e)
-        }), 500
 
 
 # Register blueprint

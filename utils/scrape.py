@@ -5,7 +5,6 @@ import urllib.parse
 from conf.settings import SCRAPER_API_KEY
 from utils.scrapers.strib import StarTribuneArticle
 from utils.scrapers.philly import PhillyInquirerArticle
-from fake_useragent import UserAgent
 logging.basicConfig(level=logging.INFO)
 
 # More realistic browser user agent
@@ -125,9 +124,8 @@ def _get_with_requests(url):
     """
     Attempt to get URL content using simple requests with Chrome-like user agent
     """
-    ua = UserAgent()
     headers = {
-        'User-Agent': ua.chrome,
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
         'Accept-Language': 'en-US,en;q=0.5',
         'Connection': 'keep-alive',

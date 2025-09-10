@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/prichbr/agate_test/**)",
+      "Bash(git remote add:*)",
+      "Bash(python3.11:*)",
+      "Bash(python3.12:*)",
+      "Bash(rm:*)",
+      "Bash(source:*)",
+      "Bash(pip install:*)",
+      "Bash(python3:*)",
+      "Bash(env)",
+      "Bash(python:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
