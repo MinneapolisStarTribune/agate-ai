@@ -9,7 +9,7 @@ load_dotenv(dotenv_path)
 ENV = os.getenv('ENV') or 'dev'
 
 # Azure settings
-AZURE_NER_ENDPOINT = os.getenv('AZURE_NER_ENDPOINT') or 'https://strib-ai-ner.cognitiveservices.azure.com/'
+AZURE_NER_ENDPOINT = os.getenv('AZURE_NER_ENDPOINT') 
 AZURE_KEY = os.getenv('AZURE_KEY') or ''
 ACR_NAME = os.getenv('ACR_NAME') or ''
 SERVICE_BUS_CONNECTION_STRING = os.getenv('SERVICE_BUS_CONNECTION_STRING') or ''
