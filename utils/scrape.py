@@ -160,6 +160,11 @@ def scrape(url):
             soup = _get_with_proxy(url)
             logging.info("Scraper API request successful")
         
+        # Check if soup was successfully created
+        if not soup:
+            logging.error("Failed to fetch URL content")
+            return None
+        
         # Get article content, using appropriate parser
         if "startribune.com" in url:
             article = StarTribuneArticle(soup)

@@ -22,19 +22,24 @@ Agate has a lot of dependencies, but we tried to make it simple to run locally f
 
 First, install [Docker](https://www.docker.com/) and docker-compose.
 
-Then do the following:
-
-```
-cd conf/env
-cp local.minimal.env local.env
-```
-
-Next, fill out the following API keys in `conf/env/local.env`:
+Next, fill out the following API keys in your `.env` file:
 
   - `OPENAI_API_KEY`: LLM calls only support [OpenAI](https://openai.com/) for now.
   - `GEOCODE_EARTH_API_KEY`: API key for [Geocode Earth](https://geocode.earth/) (free tier available). Alternatively, you could run your own local [Pelias](https://github.com/pelias/pelias?tab=readme-ov-file) instance. This is the primary service that geocodes places.
 
-Finally, `cd bin` and `./run-local.sh`.
+Finally, run:
+
+```bash
+docker-compose up
+```
+
+This will start all services including:
+- **Neo4j**: Local graph database for storing extracted entities and relationships
+- **Redis**: Local cache and message broker for Celery tasks
+- **Web API**: Flask application accepting extraction requests
+- **Worker**: Celery workers processing article data
+
+The Neo4j browser interface will be available at [http://localhost:7474](http://localhost:7474) (username: `neo4j`, password: `password123`).
 
 Agate will expose different endpoints for different types of entity extraction. Each endpoint currently accepts a public URL to a Star Tribune article, via the `?url=` GET parameter. Ultimately it will accept URLs from other news websites, as well as raw text.
 

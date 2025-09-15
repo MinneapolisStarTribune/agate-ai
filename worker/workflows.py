@@ -63,14 +63,15 @@ def process_locations(url):
         output_filename = f"{hashlib.sha256(url.encode()).hexdigest()[:20]}.json"
         
         # Create a chain that executes once
-        workflow = (
-            _scrape_article_task.si(url, output_filename) | # Pass filename through chain
-            _classify_article_task.s() |
-            _location_extraction_chain() |
-            _filter_chain() |
-            _geocoding_chain() |
-            _localization_chain() |
-            _review_chain() |
+        from celery import chain
+        workflow = chain(
+            _scrape_article_task.si(url, output_filename), # Pass filename through chain
+            _classify_article_task.s(),
+            _location_extraction_chain(),
+            _filter_chain(),
+            _geocoding_chain(),
+            _localization_chain(),
+            _review_chain(),
             _save_to_neo4j.s()
         )
         

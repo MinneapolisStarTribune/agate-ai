@@ -1,4 +1,5 @@
 .env
+.env.local
 .env.bak
 conf/env/azure.env
 conf/env/local.env
@@ -97,4 +98,9 @@ dump.rdb
 
 # Test data
 tests/data/*
-!tests/data/input.json
+!tests/data/input.jsonvenv/
+
+# Ignore project-specific documentation and change logs
+NEO4J_SCHEMA.md
+CLAUDE.md
+9_12changes.txt

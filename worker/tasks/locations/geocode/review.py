@@ -133,6 +133,9 @@ def _validate_locations(payload):
         if not geocode.get('results'):
             geocode['validated'] = False
             geocode['rationale'] = "No geocoding results to validate"
+            # Also set the location-level valid field for the finalize step
+            item['valid'] = False
+            item['rationale'] = "No geocoding results to validate"
             continue
             
         validation = _validate_geocoding(
@@ -143,6 +146,10 @@ def _validate_locations(payload):
         
         geocode['validated'] = validation.get('validated', False)
         geocode['rationale'] = validation.get('rationale', '')
+
+        # Also set the location-level valid field for the finalize step
+        item['valid'] = validation.get('validated', False)
+        item['rationale'] = validation.get('rationale', '')
 
     logging.info("Validated locations payload: %s" % json.dumps(payload, indent=2))
     return payload
@@ -189,4 +196,3 @@ def _validate_locations_task(self, payload):
         }, 'create_error')
         payload['locations'] = None
         return payload
-

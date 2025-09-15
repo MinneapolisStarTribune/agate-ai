@@ -10,7 +10,8 @@
       "Bash(pip install:*)",
       "Bash(python3:*)",
       "Bash(env)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []

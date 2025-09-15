@@ -2,7 +2,7 @@ import json, os, logging
 from openai import OpenAI
 from conf.settings import OPENAI_API_KEY
 
-OPENAI_MODEL = "gpt-4"
+OPENAI_MODEL = "gpt-4o"
 
 OPENAI_CLIENT = OpenAI(
     api_key=OPENAI_API_KEY

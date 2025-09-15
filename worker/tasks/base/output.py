@@ -1,111 +1,13 @@
 import os, logging, json, traceback
-from azure.core.credentials import AzureKeyCredential
-from azure.storage.blob import BlobServiceClient
 from celery import Celery
-from celery.exceptions import MaxRetriesExceededError
 from utils.slack import post_slack_log_message
-from conf.settings import AZURE_STORAGE_CONNECTION_STRING, AZURE_STORAGE_CONTAINER_NAME, AZURE_STORAGE_ACCOUNT_NAME
 import uuid
 from neo4j import GraphDatabase
 from conf.settings import NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD, NEO4J_DATABASE
 
 celery = Celery(__name__)
 
-def get_azure_client():
-    """
-    Lazily initialize Azure Blob Storage client.
-    Returns None if credentials are not properly configured.
-    """
-    try:
-        if not AZURE_STORAGE_CONNECTION_STRING:
-            logging.info("Azure connection string not configured")
-            return None
-            
-        return BlobServiceClient.from_connection_string(AZURE_STORAGE_CONNECTION_STRING)
-    except ValueError as e:
-        logging.warning(f"Invalid Azure connection string: {str(e)}")
-        return None
-    except Exception as e:
-        logging.error(f"Error initializing Azure client: {str(e)}")
-        return None
-
 ########### TASKS ##########
-
-@celery.task(name="save_to_azure", bind=True, max_retries=3)
-def _save_to_azure(self, payload):
-    """
-    Saves the payload to Azure Blob Storage if credentials are configured.
-    If Azure credentials are not set or invalid, logs the output locally.
-    """
-    try:
-        logging.info('Saving output:')
-        logging.info(json.dumps(payload, indent=2))
-
-        # Get Azure client
-        azure_client = get_azure_client()
-
-        # Check if Azure is properly configured
-        if not azure_client or not AZURE_STORAGE_CONTAINER_NAME or not AZURE_STORAGE_ACCOUNT_NAME:
-            logging.info("Azure storage not properly configured. Skipping blob storage upload.")
-            logging.info("Final payload:")
-            logging.info(json.dumps(payload, indent=2))
-            return
-
-        # Get task ID and URL from the request
-        task_id = self.request.id
-        url = payload.get('url')
-        
-        try:
-            # Get container client
-            container_client = azure_client.get_container_client(
-                AZURE_STORAGE_CONTAINER_NAME)
-            
-            # Get output filename from payload
-            blob_name = payload.get('output_filename')
-            logging.info(f"Container name: {AZURE_STORAGE_CONTAINER_NAME}, Blob name: {blob_name}")
-            
-            if not blob_name:
-                raise ValueError("Missing output_filename in payload")
-                          
-            # Convert payload to JSON string
-            json_data = json.dumps(payload, indent=2)
-            
-            # Upload to blob storage
-            blob_client = container_client.get_blob_client(blob_name)
-            blob_client.upload_blob(
-                json_data, 
-                overwrite=True,
-                content_type='application/json'
-            )
-            
-            # Construct the blob URL
-            storage_account = AZURE_STORAGE_ACCOUNT_NAME
-            container_name = AZURE_STORAGE_CONTAINER_NAME
-            blob_url = f"https://{storage_account}.blob.core.windows.net/{container_name}/{blob_name}"
-            
-            logging.info(f"Successfully saved payload to blob: {blob_name}")
-            post_slack_log_message(f"Successfully processed locations!", {
-                'agate_update_msg': "View the payload below:",
-                'storage_url': blob_url,
-                'headline': payload.get('headline', ''),
-                'article_url': payload.get('url', '')
-            }, 'create_success')
-
-            return payload
-            
-        except Exception as e:
-            # Calculate backoff time: 2^retry_count seconds
-            backoff = 2 ** self.request.retries
-            logging.error(f"Save to Azure failed, retrying in {backoff} seconds. Error: {str(e)}")
-            raise self.retry(exc=e, countdown=backoff)
-            
-    except MaxRetriesExceededError as e:
-        logging.error(f"Max retries exceeded for Azure save: {str(e)}")
-        post_slack_log_message('Error saving to Azure %s (max retries exceeded)' % url, {
-            'error_message':  str(e.args[0]),
-            'traceback':  traceback.format_exc()
-        }, 'create_error')
-        return payload
 
 from .neo4j_client import get_neo4j_driver, write_article_with_entities
 
@@ -114,6 +16,20 @@ def _save_to_neo4j(self, payload):
     """
     Saves the payload into Neo4j as Article, Location, and Person nodes,
     with MENTIONED_IN relationships. Skips if Neo4j is not configured.
+    """
+    return _save_to_neo4j_impl(self, payload)
+
+@celery.task(name="save_to_azure", bind=True, max_retries=3)
+def _save_to_azure(self, payload):
+    """
+    Alias for save_to_neo4j to handle misnamed task calls.
+    """
+    logging.warning("save_to_azure task called - redirecting to save_to_neo4j")
+    return _save_to_neo4j_impl(self, payload)
+
+def _save_to_neo4j_impl(self, payload):
+    """
+    Implementation for saving payload to Neo4j.
     """
     try:
         logging.info("Saving payload to Neo4j")
@@ -124,6 +40,8 @@ def _save_to_neo4j(self, payload):
 
         # Prepare article data
         article_url = payload.get("url", "")
+        story_type = payload.get("story_type", {})
+        
         article_data = {
             "uuid": str(uuid.uuid5(uuid.NAMESPACE_URL, article_url)),
             "fk_id": payload.get("output_filename") or "",
@@ -131,28 +49,61 @@ def _save_to_neo4j(self, payload):
             "url": article_url,
             "author": payload.get("author", ""),
             "pub_date": payload.get("pub_date", ""),
-            "story_type": payload.get("story_type", "")
+            "story_type_category": story_type.get("category", "") if isinstance(story_type, dict) else str(story_type),
+            "story_type_headline": story_type.get("headline", "") if isinstance(story_type, dict) else "",
+            "story_type_rationale": story_type.get("rationale", "") if isinstance(story_type, dict) else "",
+            "story_type_confidence": story_type.get("confidence", 0) if isinstance(story_type, dict) else 0
         }
 
         # Prepare locations list
         locations = []
-        for place in payload.get("places", []):
-            loc_name = place.get("location", "")
-            place_uuid = str(uuid.uuid5(uuid.NAMESPACE_URL, loc_name))
-            georesults = place.get("geocode", {}).get("results", {}) or {}
-            geometry = georesults.get("geometry", {}) or {}
-            coords = geometry.get("coordinates", []) or []
-            location_data = {
-                "uuid": place_uuid,
-                "name": loc_name,
-                "original_text": place.get("original_text", ""),
-                "type": place.get("type", ""),
-                "importance": place.get("importance", ""),
-                "description": place.get("description", ""),
-                "latitude": coords[1] if len(coords) > 1 else None,
-                "longitude": coords[0] if len(coords) > 0 else None
-            }
-            locations.append(location_data)
+        # After finalization, locations are in 'places' key, before finalization in 'locations' key
+        payload_locations = payload.get("places", payload.get("locations", []))
+        logging.info(f"Processing {len(payload_locations)} locations for Neo4j save")
+        
+        for place in payload_locations:
+            try:
+                loc_name = place.get("location", "")
+                if not loc_name:
+                    logging.warning("Skipping location with empty name")
+                    continue
+                    
+                logging.info(f"Processing location: {loc_name}")
+                place_uuid = str(uuid.uuid5(uuid.NAMESPACE_URL, loc_name))
+                
+                # Extract geocoded coordinates if available
+                georesults = place.get("geocode", {}).get("results", {}) or {}
+                geometry = georesults.get("geometry", {}) or {}
+                coords = geometry.get("coordinates", []) or []
+                
+                # Safe coordinate extraction
+                latitude = None
+                longitude = None
+                if isinstance(coords, list) and len(coords) >= 2:
+                    try:
+                        longitude = float(coords[0]) if coords[0] is not None else None
+                        latitude = float(coords[1]) if coords[1] is not None else None
+                    except (ValueError, TypeError) as e:
+                        logging.warning(f"Invalid coordinates for {loc_name}: {coords} - {e}")
+                        
+                location_data = {
+                    "uuid": place_uuid,
+                    "name": loc_name,
+                    "original_text": place.get("original_text", ""),
+                    "type": place.get("type", ""),
+                    "importance": place.get("importance", ""),
+                    "description": place.get("description", ""),
+                    "latitude": latitude,
+                    "longitude": longitude
+                }
+                locations.append(location_data)
+                coord_info = f"({latitude}, {longitude})" if latitude and longitude else "no coordinates"
+                logging.info(f"Prepared location data for {loc_name} with {coord_info}")
+            except Exception as e:
+                logging.error(f"Error processing location {place}: {e}")
+                continue
+            
+        logging.info(f"Prepared {len(locations)} locations for Neo4j save")
 
         # Execute the transaction - only locations for now
         write_article_with_entities(driver, article_data, locations, [])

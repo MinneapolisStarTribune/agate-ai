@@ -18,15 +18,27 @@ def get_neo4j_driver():
 
 def create_article(tx, article_data):
     query = """
-    CREATE (a:Article {
-        uuid: $uuid,
-        fk_id: $fk_id,
-        headline: $headline,
-        url: $url,
-        author: $author,
-        pub_date: $pub_date,
-        story_type: $story_type
-    })
+    MERGE (a:Article {uuid: $uuid})
+    ON CREATE SET
+        a.fk_id = $fk_id,
+        a.headline = $headline,
+        a.url = $url,
+        a.author = $author,
+        a.pub_date = $pub_date,
+        a.story_type_category = $story_type_category,
+        a.story_type_headline = $story_type_headline,
+        a.story_type_rationale = $story_type_rationale,
+        a.story_type_confidence = $story_type_confidence
+    ON MATCH SET
+        a.fk_id = $fk_id,
+        a.headline = $headline,
+        a.url = $url,
+        a.author = $author,
+        a.pub_date = $pub_date,
+        a.story_type_category = $story_type_category,
+        a.story_type_headline = $story_type_headline,
+        a.story_type_rationale = $story_type_rationale,
+        a.story_type_confidence = $story_type_confidence
     RETURN a.uuid as uuid
     """
     result = tx.run(query, article_data)
@@ -65,12 +77,35 @@ def write_article_with_entities(driver, article_data, locations, persons):
     Wraps creation of Article and Location nodes and their relationships in a transaction.
     """
     with driver.session(database=NEO4J_DATABASE) as session:
-        with session.begin_transaction() as tx:
-            article_uuid = create_article(tx, article_data)
-            if not article_uuid:
-                return None
-            for loc in locations:
-                loc_uuid = create_location(tx, loc)
-                if loc_uuid:
-                    create_location_mention(tx, loc_uuid, article_uuid)
-            return article_uuid
+        try:
+            with session.begin_transaction() as tx:
+                article_uuid = create_article(tx, article_data)
+                if not article_uuid:
+                    logging.error("Failed to create article node")
+                    return None
+                
+                logging.info(f"Created article node with UUID: {article_uuid}")
+                
+                location_count = 0
+                for i, loc in enumerate(locations):
+                    try:
+                        loc_name = loc.get('name', 'unknown')
+                        logging.info(f"Processing location {i+1}/{len(locations)}: {loc_name}")
+                        
+                        loc_uuid = create_location(tx, loc)
+                        if loc_uuid:
+                            create_location_mention(tx, loc_uuid, article_uuid)
+                            location_count += 1
+                            logging.info(f"Successfully created location node and relationship: {loc_name}")
+                        else:
+                            logging.error(f"Failed to create location node: {loc_name}")
+                    except Exception as e:
+                        loc_name = loc.get('name', 'unknown')
+                        logging.error(f"Error processing location '{loc_name}': {e}")
+                        # Continue with other locations rather than failing entire transaction
+                
+                logging.info(f"Transaction completed: Article {article_uuid} with {location_count}/{len(locations)} locations")
+                return article_uuid
+        except Exception as e:
+            logging.error(f"Transaction failed: {e}")
+            return None
